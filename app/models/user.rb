@@ -1,5 +1,7 @@
 class User < ApplicationRecord
-
+  has_many :role_grants
+  has_many :roles, through: :role_grants
+  
   before_save do
     self.email = email.downcase
   end

@@ -1,0 +1,1 @@
+json.partial! "role_grants/role_grant", role_grant: @role_grant

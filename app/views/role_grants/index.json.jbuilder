@@ -1,0 +1,1 @@
+json.array! @role_grants, partial: 'role_grants/role_grant', as: :role_grant

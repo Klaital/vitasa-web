@@ -1,0 +1,2 @@
+class RoleGrant < ApplicationRecord
+end
