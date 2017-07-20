@@ -3,7 +3,8 @@
   <aside class="col-md-4">
     <section class="user_info">
       <h1>User Profile</h1>
-      <p><%= @user.email %></p>
+      <p>Email: <%= @user.email %></p>
+      <p>Roles: <%= @user.roles.collect {|r| r.name }.join(', ') %></p>
     </section>
   </aside>
 </div>

@@ -1,6 +1,6 @@
 module ApplicationHelper
   def full_title(page_title='')
-    base_title = 'Set me in app/helpers/application_helper.rb'
+    base_title = 'VITA Locations'
     page_title.empty? ? base_title : "#{page_title} | #{base_title}"
   end
 end
