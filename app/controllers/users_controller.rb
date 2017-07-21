@@ -12,15 +12,17 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       # Create the starting role as well
-      default_role = Role.find_by(name: 'NewUser')
-
-      @user.roles = [ default_role ]
+      @user.roles = [ Role.find_by(name: 'NewUser') ]
       log_in @user
       flash[:success] = "Welcome, new user!"
       redirect_to @user
     else
       render 'new'
     end
+  end
+
+  def edit
+    
   end
 
   def show

@@ -5,10 +5,4 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-
-Role::VALID_ROLE_NAMES.each do |name|
-  Role.create(
-  {
-    name: name
-  })
-end
+Role.create(Role::VALID_ROLE_NAMES.collect {|r| {name: r}})
