@@ -15,6 +15,15 @@ module SessionsHelper
     !current_user.nil?
   end
 
+  def is_admin?
+    current_user.roles.each do |role|
+      return true if role.name == 'Admin'
+    end
+
+    return false
+  end
+
+
   # Logs out the current user
   def log_out
     session.delete(:user_id)

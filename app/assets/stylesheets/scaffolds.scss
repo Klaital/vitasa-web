@@ -87,3 +87,14 @@ div {
 label {
   display: block;
 }
+
+table {
+  tr {
+    th {
+      border-bottom: 1px solid black;
+    }
+    td,th {
+      padding-right: 15px;
+    }
+  }
+}
