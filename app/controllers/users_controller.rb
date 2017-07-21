@@ -44,7 +44,7 @@ class UsersController < ApplicationController
     end
 
     # Only update the Role Grants if any are set at all
-    new_roles = params[:user][:roles].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact
+    new_roles = params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact
     @user.roles = new_roles unless new_roles.empty?
 
     respond_to do |format|

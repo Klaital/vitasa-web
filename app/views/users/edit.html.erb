@@ -17,9 +17,20 @@
     <% end %>
     
         <h3> Update Role Grants </h3>
-        <p>Current Roles: <%= @user.roles.collect{|r| r.name}.join(', ') %>
-        <%= f.select(:roles, Role.all.collect {|role| [role.name, role.id]}, {prompt: 'Select Roles'}, {multiple: true}) %>
-
+        <p>(hold down the Ctrl key while clicking to select or deselect roles)</p>
+        <%= select_tag "role_ids[]", 
+                options_from_collection_for_select(
+                    Role.all,
+                    "id",
+                    "name",
+                    selected: RoleGrant.where(:user_id => @user.id).collect {|grant| grant.role_id}
+                ),
+                {
+                    multiple: true,
+                    size: Role::VALID_ROLE_NAMES.length
+                }
+        %>
+        
       <%= f.submit "Update account", class: "btn btn-primary" %>
     <% end %>
   </div>
