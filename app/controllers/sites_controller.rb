@@ -14,16 +14,28 @@ class SitesController < ApplicationController
 
   # GET /sites/new
   def new
+    unless is_admin?
+      return head 403
+    end
+
     @site = Site.new
   end
 
   # GET /sites/1/edit
   def edit
+    unless is_admin?
+      return head 403
+    end
+
   end
 
   # POST /sites
   # POST /sites.json
   def create
+    unless is_admin?
+      return head 403
+    end
+
     @site = Site.new(site_params)
 
     respond_to do |format|
@@ -40,6 +52,10 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
+    unless is_admin?
+      return head 403
+    end
+
     respond_to do |format|
       if @site.update(site_params)
         format.html { redirect_to @site, notice: 'Site was successfully updated.' }
@@ -54,6 +70,10 @@ class SitesController < ApplicationController
   # DELETE /sites/1
   # DELETE /sites/1.json
   def destroy
+    unless is_admin?
+      return head 403
+    end
+
     @site.destroy
     respond_to do |format|
       format.html { redirect_to sites_url, notice: 'Site was successfully destroyed.' }
