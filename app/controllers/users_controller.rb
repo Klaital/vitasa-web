@@ -23,7 +23,7 @@ class UsersController < ApplicationController
 
   # GET /users/edit
   def edit
-    unless logged_in?
+    unless logged_in? && (current_user == @user || is_admin?)
       return head 403
     end
   end
@@ -31,6 +31,13 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    unless logged_in? && (current_user == @user || is_admin?)
+      return head 403
+    end
+    unless logged_in?
+      return head 403
+    end
+
     if user_params[:password] == ''
       user_params.delete(:password)
       user_params.delete(:password_confirmation)
@@ -52,6 +59,20 @@ class UsersController < ApplicationController
   end
 
   def show
+  end
+
+  def destroy
+    unless is_admin?
+      return head 403
+    end
+
+    if @user.delete
+        format.html { redirect_to users_path, notice: 'User was successfully deleted.' }
+        format.json { render :show, status: :ok, location: users_path }
+      else
+        format.html { render users_path }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
   end
 
   private
