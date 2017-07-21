@@ -1,4 +1,5 @@
-# README
+# vitasa-web README
+Web App app for maintaining site status for the VITA (Volunteer Income Tax Assistance) program in San Antonio.
 
 Developed with:
 * ruby 2.3
