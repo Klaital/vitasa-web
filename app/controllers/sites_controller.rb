@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  skip_before_action :verify_authenticity_token
 
   # GET /sites
   # GET /sites.json
@@ -14,16 +15,28 @@ class SitesController < ApplicationController
 
   # GET /sites/new
   def new
+    unless is_admin?
+      return head 403
+    end
+
     @site = Site.new
   end
 
   # GET /sites/1/edit
   def edit
+    unless is_admin?
+      return head 403
+    end
+
   end
 
   # POST /sites
   # POST /sites.json
   def create
+    unless is_admin?
+      return head 403
+    end
+
     @site = Site.new(site_params)
 
     respond_to do |format|
@@ -40,6 +53,17 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
+    if not logged_in?
+      render :json => { :errors => 'No user logged in'}, :status => 403
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+    unless is_admin?
+      render :json => { :errors => 'Not an admin logged in'}, :status => 403
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+
     respond_to do |format|
       if @site.update(site_params)
         format.html { redirect_to @site, notice: 'Site was successfully updated.' }
@@ -54,6 +78,10 @@ class SitesController < ApplicationController
   # DELETE /sites/1
   # DELETE /sites/1.json
   def destroy
+    unless is_admin?
+      return head 403
+    end
+
     @site.destroy
     respond_to do |format|
       format.html { redirect_to sites_url, notice: 'Site was successfully destroyed.' }
