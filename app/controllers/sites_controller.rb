@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  skip_before_action :verify_authenticity_token
 
   # GET /sites
   # GET /sites.json
@@ -52,8 +53,15 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
+    if not logged_in?
+      render :json => { :errors => 'No user logged in'}, :status => 403
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
     unless is_admin?
-      return head 403
+      render :json => { :errors => 'Not an admin logged in'}, :status => 403
+      response.set_header('Content-Type', 'application/json')
+      return
     end
 
     respond_to do |format|

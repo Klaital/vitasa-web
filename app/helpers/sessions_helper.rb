@@ -17,11 +17,7 @@ module SessionsHelper
 
   def is_admin?
     return false if !logged_in?
-    current_user.roles.each do |role|
-      return true if role.name == 'Admin'
-    end
-
-    return false
+    current_user.is_admin?
   end
 
 

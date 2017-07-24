@@ -25,5 +25,12 @@ class User < ApplicationRecord
         BCrypt::Engine.cost
     BCrypt::Password.create(s, cost: cost)
   end
+
+  def is_admin?
+    self.roles.each do |role|
+      return true if role.name == 'Admin'
+    end
+    return false
+  end
 end
 
