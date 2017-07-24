@@ -14,14 +14,20 @@ http.set_debug_output(logger)
 puts "> Login"
 uri = URI("http://#{host}/login")
 request = Net::HTTP::Post.new uri
-request.body = "session%5Bemail%5D=kenkaku%40gmail.com&session%5Bpassword%5D=h0Shinokoe&commit=Log+in"
+request.body = {
+    'email': 'kenkaku@gmail.com',
+    'password': 'h0Shinokoe'
+}.to_json
 response = http.request(request)
 
 puts ">> Got #{response.code} #{response.message}"
 puts ">> Cookies: #{response['Set-Cookie']}"
 session_cookie = response['Set-Cookie']
-# puts ">> Body: #{response.body}"
+puts ">> Body: #{response.body}"
 
+if response.code !~ /[23]\d\d/
+    exit(0)
+end
 
 puts "> Get Site #1"
 uri = URI("http://#{host}/sites/1")
