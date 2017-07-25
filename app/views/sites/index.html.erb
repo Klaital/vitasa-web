@@ -10,8 +10,8 @@
       <th>Zip</th>
       <th>Latitude</th>
       <th>Longitude</th>
-      <th>Sitecoordinator</th>
-      <th>Sitestatus</th>
+      <th>Site Coordinator</th>
+      <th>Site Status</th>
       <% if is_admin? %>
       <th colspan="2"></th>
       <% end %>
@@ -20,6 +20,7 @@
 
   <tbody>
     <% @sites.each do |site| %>
+      <% sc = User.find(site.sitecoordinator) %>
       <tr>
         <td><%= link_to site.name, site %></td>
         <td><%= site.street %></td>
@@ -28,7 +29,7 @@
         <td><%= site.zip %></td>
         <td><%= site.latitude %></td>
         <td><%= site.longitude %></td>
-        <td><%= site.sitecoordinator %></td>
+        <td><%= (sc.nil?) ? 'None Assigned' : sc.email %></td>
         <td><%= site.sitestatus %></td>
         <% if is_admin? %>
         <td><%= link_to 'Edit', edit_site_path(site) %></td>

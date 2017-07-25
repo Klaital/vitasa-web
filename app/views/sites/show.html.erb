@@ -34,12 +34,12 @@
 </p>
 
 <p>
-  <strong>Sitecoordinator:</strong>
-  <%= @site.sitecoordinator %>
+  <strong>Site Coordinator:</strong>
+  <%= (@sitecoordinator.nil?) ? 'None Assigned' : @sitecoordinator.email %>
 </p>
 
 <p>
-  <strong>Sitestatus:</strong>
+  <strong>Site Status:</strong>
   <%= @site.sitestatus %>
 </p>
 
