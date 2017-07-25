@@ -17,7 +17,7 @@
   </div>
 
   <div class="field">
-    <%= f.label :google_place_id %>
+    <%= f.label :google_place_id, 'Google Maps Place ID' %>
     <%= f.text_field :google_place_id %>
   </div>
 
@@ -58,13 +58,18 @@
                     @eligible_sitecoordinators,
                     @site.sitecoordinator
                 )
-        %>
+    %>
   </div>
 
 
   <div class="field">
     <%= f.label :sitestatus, 'Current Status' %>
-    <%= f.text_field :sitestatus %>
+    <%= f.select :sitestatus,
+                options_for_select(
+                  Site::VALID_SITE_STATUSES,
+                  @site.sitestatus
+                )
+    %>
   </div>
 
   <div class="actions">
