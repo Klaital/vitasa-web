@@ -15,6 +15,9 @@ class SitesController < ApplicationController
 
   # GET /sites/new
   def new
+    @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? u : nil}.compact
+    @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
+
     @site = Site.new
     respond_to do |format|
       if is_admin?
@@ -29,6 +32,9 @@ class SitesController < ApplicationController
 
   # GET /sites/1/edit
   def edit
+    @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
+    @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
+
     respond_to do |format|
       if logged_in? && (is_admin? || @site.sitecoordinator == current_user.id)
         format.html { render :edit }
@@ -44,7 +50,7 @@ class SitesController < ApplicationController
   # POST /sites.json
   def create
     @site = Site.new(site_params)
-
+    
     respond_to do |format|
       if is_admin?
         if @site.save

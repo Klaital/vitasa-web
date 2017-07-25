@@ -48,8 +48,14 @@
 
   <div class="field">
     <%= f.label :sitecoordinator, 'Site Coordinator' %>
-    <%= f.number_field :sitecoordinator %>
+    <%= f.select :sitecoordinator,
+                options_for_select(
+                    @eligible_sitecoordinators,
+                    @site.sitecoordinator
+                )
+        %>
   </div>
+
 
   <div class="field">
     <%= f.label :sitestatus, 'Current Status' %>
