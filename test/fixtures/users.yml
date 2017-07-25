@@ -1,9 +1,21 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+# User One is a newly regiestered NewUser
 one:
-  email: MyString
-  password_digest: MyString
+  email: user-one@example.org
+  password_digest: <%= User.digest('user-one-password') %>
 
+# User Two is a SiteCoordinator and Admin
 two:
-  email: MyString
-  password_digest: MyString
+  email: user-two@example.org
+  password_digest: <%= User.digest('user-two-password') %>
+
+# User Three is a SiteCoordinator for Site the_alamo
+three:
+  email: user-three@example.org
+  password_digest: <%= User.digest('user-three-password') %>
+
+# User Four is a SiteCoordinator for Site the_cathedral
+four:
+  email: user-four@example.org
+  password_digest: <%= User.digest('user-four-password') %>

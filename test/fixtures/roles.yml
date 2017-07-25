@@ -1,7 +1,14 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
+new-user:
+  name: NewUser
 
-two:
-  name: MyString
+site-coordinator:
+  name: SiteCoordinator
+
+site-coordinator-inactive:
+  name: SiteCoordinatorInactive
+
+admin:
+  name: Admin
+

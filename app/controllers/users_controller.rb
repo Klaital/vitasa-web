@@ -3,6 +3,12 @@ class UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
+    unless is_admin?
+      render :json => { :errors => 'Not an admin logged in'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+
     @users = User.all
   end
 
@@ -25,7 +31,9 @@ class UsersController < ApplicationController
   # GET /users/edit
   def edit
     unless logged_in? && (current_user == @user || is_admin?)
-      return head 403
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
     end
   end
 
@@ -33,12 +41,11 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     unless logged_in? && (current_user == @user || is_admin?)
-      return head 403
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
     end
-    unless logged_in?
-      return head 403
-    end
-
+    
     if user_params[:password] == ''
       user_params.delete(:password)
       user_params.delete(:password_confirmation)
@@ -60,11 +67,18 @@ class UsersController < ApplicationController
   end
 
   def show
+    unless logged_in? && (current_user == @user || is_admin?)
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
   end
 
   def destroy
     unless is_admin?
-      return head 403
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
     end
 
     if @user.delete

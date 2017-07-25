@@ -4,6 +4,12 @@ class User < ApplicationRecord
   
   before_save do
     self.email = email.downcase
+
+    # By default, users should get the NewUser role, which restricts them from
+    # modifying anything until an Admin approves them.
+    if self.roles.empty?
+      self.roles = [ Role.find_by(name: 'NewUser') ]
+    end
   end
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
@@ -29,6 +35,13 @@ class User < ApplicationRecord
   def is_admin?
     self.roles.each do |role|
       return true if role.name == 'Admin'
+    end
+    return false
+  end
+
+  def has_role?(role_name)
+    self.roles.each do |role|
+      return true if role.name == role_name
     end
     return false
   end

@@ -15,37 +15,48 @@ class SitesController < ApplicationController
 
   # GET /sites/new
   def new
-    unless is_admin?
-      return head 403
-    end
-
     @site = Site.new
+    respond_to do |format|
+      if is_admin?
+        format.html { render :new }
+        format.json { render json: { :errors => 'This is a web function. No JSON to be provided.'}, :status => 406}
+      else
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render json: { :errors => 'Not authorized' }, :status => :unauthorized }
+      end
+    end
   end
 
   # GET /sites/1/edit
   def edit
-    unless is_admin?
-      return head 403
+    respond_to do |format|
+      if logged_in? && (is_admin? || @site.sitecoordinator == current_user.id)
+        format.html { render :edit }
+        format.json { render json: { :errors => 'This is a web function. No JSON to be provided.'}, :status => 406}
+      else
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render json: { :errors => 'Not authorized' }, :status => :unauthorized }
+      end
     end
-
   end
 
   # POST /sites
   # POST /sites.json
   def create
-    unless is_admin?
-      return head 403
-    end
-
     @site = Site.new(site_params)
 
     respond_to do |format|
-      if @site.save
-        format.html { redirect_to @site, notice: 'Site was successfully created.' }
-        format.json { render :show, status: :created, location: @site }
+      if is_admin?
+        if @site.save
+          format.html { redirect_to @site, notice: 'Site was successfully created.' }
+          format.json { render :show, status: :created, location: @site }
+        else
+          format.html { render :new }
+          format.json { render json: @site.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render :new }
-        format.json { render json: @site.errors, status: :unprocessable_entity }
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
       end
     end
   end
@@ -53,24 +64,18 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
-    if not logged_in?
-      render :json => { :errors => 'No user logged in'}, :status => 403
-      response.set_header('Content-Type', 'application/json')
-      return
-    end
-    unless is_admin?
-      render :json => { :errors => 'Not an admin logged in'}, :status => 403
-      response.set_header('Content-Type', 'application/json')
-      return
-    end
-
     respond_to do |format|
-      if @site.update(site_params)
-        format.html { redirect_to @site, notice: 'Site was successfully updated.' }
-        format.json { render :show, status: :ok, location: @site }
+      if is_admin? || (logged_in? && current_user.id = @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+        if @site.update(site_params)
+          format.html { redirect_to @site, notice: 'Site was successfully updated.' }
+          format.json { render :show, status: :ok, location: @site }
+        else
+          format.html { render :edit }
+          format.json { render json: @site.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render :edit }
-        format.json { render json: @site.errors, status: :unprocessable_entity }
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
       end
     end
   end
@@ -79,7 +84,9 @@ class SitesController < ApplicationController
   # DELETE /sites/1.json
   def destroy
     unless is_admin?
-      return head 403
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
     end
 
     @site.destroy
