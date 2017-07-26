@@ -20,7 +20,7 @@
 
   <tbody>
     <% @sites.each do |site| %>
-      <% sc = User.find(site.sitecoordinator) %>
+      <% sc = (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) %>
       <tr>
         <td><%= link_to site.name, site %></td>
         <td><%= site.street %></td>

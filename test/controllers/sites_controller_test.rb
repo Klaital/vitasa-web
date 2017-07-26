@@ -34,6 +34,14 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should get index even with a site without a coordinator" do
+    @site.sitecoordinator = nil
+    @site.save
+    assert_nil(Site.find(@site.id).sitecoordinator)
+    get sites_url
+    assert_response :success
+  end
+
   test "should not get new when not logged in" do
     get new_site_url
     assert_response :unauthorized
@@ -51,6 +59,14 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     get site_url(@site)
     assert_response :success
   end
+  test "should show site even without a coordinator" do
+    @site.sitecoordinator = nil
+    @site.save
+    assert_nil(Site.find(@site.id).sitecoordinator)
+    get site_url(@site)
+    assert_response :success
+  end
+
 
   test "should not get edit when not logged in" do
     get edit_site_url(@site)
