@@ -71,7 +71,7 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1.json
   def update
     respond_to do |format|
-      if is_admin? || (logged_in? && current_user.id = @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+      if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
         if @site.update(site_params)
           format.html { redirect_to @site, notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
