@@ -136,10 +136,10 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should  create site when logged in as a Admin" do
+  test "should create site when logged in as a Admin" do
     post login_path, params: {session: {email: @admin.email, password: 'user-two-password'}}
     assert_difference('Site.count', 1) do
-      post sites_url, params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
+      post sites_url, params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name+" new site", sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
     end
 
     assert_redirected_to(site_url(Site.last.id))
@@ -151,13 +151,13 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should not update site when logged in as a Admin" do
+  test "should update site when logged in as a Admin" do
     post login_path, params: {session: {email: @admin.email, password: 'user-two-password'}}
     patch site_url(@site), params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
     assert_redirected_to(site_url(@site))
   end
 
-  test "should not destroy site when logged in as a Admin" do
+  test "should destroy site when logged in as a Admin" do
     post login_path, params: {session: {email: @admin.email, password: 'user-two-password'}}
     assert_difference('Site.count', -1) do
       delete site_url(@site)

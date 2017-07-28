@@ -10,6 +10,8 @@ the_alamo:
   longitude:  -98.486277
   sitecoordinator: null
   sitestatus: Open
+  slug: the-alamo
+  google_place_id: hIJX4k2TVVfXIYRIsTnhA-P-Rc
 
 the_cathedral:
   name: San Fernando Cathedral
@@ -21,3 +23,4 @@ the_cathedral:
   longitude: -98.493928
   sitecoordinator: null
   sitestatus: Closed
+  slug: san-fernando-cathedral

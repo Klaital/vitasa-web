@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725214549) do
+ActiveRecord::Schema.define(version: 20170728203139) do
 
   create_table "role_grants", force: :cascade do |t|
     t.integer  "role_id"
@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(version: 20170725214549) do
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
     t.string   "google_place_id"
+    t.string   "slug"
+    t.index ["slug"], name: "index_sites_on_slug"
   end
 
   create_table "users", force: :cascade do |t|
