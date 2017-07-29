@@ -116,7 +116,20 @@ class SitesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_site
-      @site = Site.find(params[:id])
+      @site = if params[:id] =~ /\A\d+\z/
+        Site.find(params[:id])
+      else
+        Site.find_by(slug: params[:id])
+      end
+
+      if @site.nil?
+        respond_to do |format|
+          format.html { render :file => 'public/404', :status => :not_found, :layout => false }
+          format.json { render :json => {:errors => "Invalid ID or slug. Site not found for '#{params[:id]}'"}, :status => :not_found }
+        end
+        return
+      end
+
       @sitecoordinator = if @site.sitecoordinator.nil?
         nil
       else

@@ -59,6 +59,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     get site_url(@site)
     assert_response :success
   end
+
   test "should show site even without a coordinator" do
     @site.sitecoordinator = nil
     @site.save
