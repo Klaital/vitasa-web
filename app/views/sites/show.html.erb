@@ -4,33 +4,23 @@
 </p>
 
 <p>
-  <strong>Street:</strong>
-  <%= @site.street %>
+  <strong>Slug:</strong>
+  <%= @site.slug %>
 </p>
 
 <p>
-  <strong>City:</strong>
-  <%= @site.city %>
+  <strong>Address</strong>
+  <%= @site.street %>, <%= @site.city %>, <%= @site.state %> <%= @site.zip %>
 </p>
 
 <p>
-  <strong>State:</strong>
-  <%= @site.state %>
+  <strong>Google Place ID:</strong>
+  <%= @site.google_place_id %>
 </p>
 
 <p>
-  <strong>Zip:</strong>
-  <%= @site.zip %>
-</p>
-
-<p>
-  <strong>Latitude:</strong>
-  <%= @site.latitude %>
-</p>
-
-<p>
-  <strong>Longitude:</strong>
-  <%= @site.longitude %>
+  <strong>Coordinates:</strong>
+  <%= @site.latitude %>, <%= @site.longitude %>
 </p>
 
 <p>

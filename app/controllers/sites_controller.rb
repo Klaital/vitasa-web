@@ -50,6 +50,9 @@ class SitesController < ApplicationController
   # POST /sites.json
   def create
     @site = Site.new(site_params)
+    if @site.slug.to_s.strip.empty?
+      @site.slug = @site.name.parameterize
+    end
     
     respond_to do |format|
       if is_admin?
@@ -57,7 +60,11 @@ class SitesController < ApplicationController
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
-          format.html { render :new }
+          format.html do
+            @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
+            @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
+            render :new
+          end
           format.json { render json: @site.errors, status: :unprocessable_entity }
         end
       else
@@ -76,7 +83,11 @@ class SitesController < ApplicationController
           format.html { redirect_to @site, notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else
-          format.html { render :edit }
+          format.html do
+            @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
+            @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
+            render :edit
+          end
           format.json { render json: @site.errors, status: :unprocessable_entity }
         end
       else
@@ -105,7 +116,20 @@ class SitesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_site
-      @site = Site.find(params[:id])
+      @site = if params[:id] =~ /\A\d+\z/
+        Site.find(params[:id])
+      else
+        Site.find_by(slug: params[:id])
+      end
+
+      if @site.nil?
+        respond_to do |format|
+          format.html { render :file => 'public/404', :status => :not_found, :layout => false }
+          format.json { render :json => {:errors => "Invalid ID or slug. Site not found for '#{params[:id]}'"}, :status => :not_found }
+        end
+        return
+      end
+
       @sitecoordinator = if @site.sitecoordinator.nil?
         nil
       else
@@ -115,7 +139,7 @@ class SitesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def site_params
-      params.require(:site).permit(:name, 
+      params.require(:site).permit(:name, :slug,
         :google_place_id, :street, :city, :state, :zip, :latitude, :longitude, 
         :sitecoordinator, :sitestatus)
     end

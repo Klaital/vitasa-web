@@ -4,12 +4,10 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Street</th>
-      <th>City</th>
-      <th>State</th>
-      <th>Zip</th>
-      <th>Latitude</th>
-      <th>Longitude</th>
+      <th>Slug</th>
+      <th>Address</th>
+      <th>Coordinates</th>
+      <th>Place ID</th>
       <th>Site Coordinator</th>
       <th>Current Status</th>
       <% if is_admin? %>
@@ -23,12 +21,10 @@
       <% sc = (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) %>
       <tr>
         <td><%= link_to site.name, site %></td>
-        <td><%= site.street %></td>
-        <td><%= site.city %></td>
-        <td><%= site.state %></td>
-        <td><%= site.zip %></td>
-        <td><%= site.latitude %></td>
-        <td><%= site.longitude %></td>
+        <td><%= site.slug %></td>
+        <td><%= site.street %>, <%= site.city %>, <%= site.state %> <%= site.zip %></td>
+        <td><%= site.latitude %>, <%= site.longitude %></td>
+        <td><%= site.google_place_id %>
         <td><%= (sc.nil?) ? 'None Assigned' : sc.email %></td>
         <td><%= site.sitestatus %></td>
         <% if is_admin? %>

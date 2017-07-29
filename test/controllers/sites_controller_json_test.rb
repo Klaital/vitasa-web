@@ -419,7 +419,38 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_difference('Site.count', 1) do
       post sites_url, 
         params: {
-          city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip 
+          slug: "admin-create-test-slug", city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name+" new site", sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip 
+        }.to_json,
+        headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+          'Cookie' => cookie,
+        }
+    end
+
+    assert_response :success
+  end
+
+  test "should create site without a slug when logged in to a Admin via JSON" do
+    # Login
+    post login_url, 
+      params: {
+        email: @admin.email,
+        password: 'user-two-password'
+      }.to_json,
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+      }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    assert_difference('Site.count', 1) do
+      post sites_url, 
+        params: {
+          city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name+" new site", sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip 
         }.to_json,
         headers: {
           'Accept' => 'application/json',
