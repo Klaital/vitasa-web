@@ -10,7 +10,7 @@ class ApacheAccessLine
         match_groups = line.strip.match(DREAMHOST_ACCESS_PATTERN).captures
         a = ApacheAccessLine.new
         a.client_ip = match_groups[0]
-        a.timestamp = DateTime.strptime( match_groups[3], "%d/%b/%Y:%H:%M:%S %Z")
+        a.timestamp = DateTime.strptime( match_groups[3], "%d/%b/%Y:%H:%M:%S %Z").to_time
         a.method, a.path, a.protocol = match_groups[4].split(' ')
         a.status = match_groups[5]
         a.response_bytes = match_groups[6].to_i
@@ -41,7 +41,7 @@ class MinuteReport
     end
 
     def increment_request(timestamp, request_str, status)
-        minute = timestamp.strftime("%d/%b/%Y:%H:%M:00 %Z")
+        minute = timestamp.utc.strftime("%Y-%m-%dT%H:%M:00 %Z")
         unless @data.keys.include?(minute)
             @data[minute] = {}
         end
@@ -84,7 +84,8 @@ class ApacheParser
 end
 
 if __FILE__ == $0
-    parser = ApacheParser.new(File.join(__dir__, '..', 'data', 'apache', 'access.log'))
+    # parser = ApacheParser.new(File.join(__dir__, '..', 'data', 'apache', 'access.log'))
+    parser = ApacheParser.new('/home/vitasa/log/vitasa.abandonedfactory.net/http/access.log')
     parser.parse
     puts JSON.pretty_generate(parser.report_by_minute.data)
     File.open(File.join(__dir__, '..', '..', 'public', 'access.json'), 'w') do |f|
