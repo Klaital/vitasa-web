@@ -2,6 +2,7 @@ namespace :monitoring do
   desc "Update a static data file describing the current system performance"
   task compile: :environment do
     current_log = "log/#{Rails.env}.log"
+    puts "> Pulling from logfile #{current_log}"
     # find the most recent log line currently in the database. We'll only write records if the timestamp is newer
     newest_hit = SiteHit.last
     if newest_hit.nil?
@@ -19,6 +20,7 @@ namespace :monitoring do
       begin 
         data = JSON.load(line)
       rescue
+        print 'x'
         next
       end
 
