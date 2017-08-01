@@ -6,6 +6,7 @@ Rails.application.configure do
         { 
             time: event.time,
             params: event.payload[:params],
+            cookie: event.payload[:cookie],
         }
     end
 end
