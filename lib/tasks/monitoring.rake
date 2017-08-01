@@ -15,11 +15,12 @@ namespace :monitoring do
     File.foreach(current_log) do |line|
       # Parse the log line. If it's not JSON, skip it.
       # Dreamhost's Passenger implementation seems to forcibly prepend some data to Rails' log lines. Remove that if present.
-      line.gsub(/\A\w, \[.+\]  INFO -- : \[[\h-]+\] {/, '{')
+      line.gsub!(/\A\w, \[.+\]  INFO -- : \[[\h-]+\] {/, '{')
       data = nil
       begin 
         data = JSON.load(line)
       rescue
+        warn line
         print 'x'
         next
       end
