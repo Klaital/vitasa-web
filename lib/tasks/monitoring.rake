@@ -20,7 +20,7 @@ namespace :monitoring do
       begin 
         data = JSON.load(line)
       rescue
-        warn line
+        # warn line
         print 'x'
         next
       end
@@ -38,7 +38,7 @@ namespace :monitoring do
         hit.view = data['view']
         hit.db = data['db']
         hit.timestamp = Time.parse(data['time'])
-        hit.cookie = data['cookie']
+        hit.cookie = data['cookie'].to_s.truncate(100)
 
         hit.save
         new_record_count += 1
