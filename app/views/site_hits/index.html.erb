@@ -1,0 +1,80 @@
+<h1>Recent Site Traffic, last 24 hours</h1>
+
+<h2>Stats</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Count</th>
+            <th>Response Mean</th>
+            <th>Response Min</th>
+            <th>Response Max</th>
+            <th>View Mean</th>
+            <th>View Min</th>
+            <th>View Max</th>
+            <th>Database Mean</th>
+            <th>Database Min</th>
+            <th>Database Max</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Overall</td>
+            <td><%= @overall[:duration].count %></td>
+            <td><%= @overall[:duration].mean %></td>
+            <td><%= @overall[:duration].min %></td>
+            <td><%= @overall[:duration].max %></td>
+            <td><%= @overall[:view].mean %></td>
+            <td><%= @overall[:view].min %></td>
+            <td><%= @overall[:view].max %></td>
+            <td><%= @overall[:db].mean %></td>
+            <td><%= @overall[:db].min %></td>
+            <td><%= @overall[:db].max %></td>
+        </tr>
+            <% @codes.each_pair do |status, data| %>
+        <tr>
+            <td><%= status %></td>
+            <td><%= data[:duration].count %></td>
+            <td><%= data[:duration].mean %></td>
+            <td><%= data[:duration].min %></td>
+            <td><%= data[:duration].max %></td>
+            <td><%= data[:view].mean %></td>
+            <td><%= data[:view].min %></td>
+            <td><%= data[:view].max %></td>
+            <td><%= data[:db].mean %></td>
+            <td><%= data[:db].min %></td>
+            <td><%= data[:db].max %></td>
+        </tr>
+            <% end %>
+    </tbody>
+</table>
+
+<h2>List</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Verb</th>
+            <th>Path</th>
+            <th>Status</th>
+            <th>Total ms</th>
+            <th>View ms</th>
+            <th>DB ms</th>
+        </tr>
+    </thead>
+    <tbody>
+    <% @site_hits.each do |site_hit| %>
+        <tr>
+            <td><%= site_hit.timestamp.in_time_zone('America/Chicago').iso8601 %></td>
+            <td><%= site_hit.method %></td>
+            <td><%= site_hit.path %></td>
+            <td><%= site_hit.status %></td>
+            <td><%= site_hit.duration %></td>
+            <td><%= site_hit.view %></td>
+            <td><%= site_hit.db %></td>
+        </tr>
+    <% end %>
+    </tbody>
+</table>

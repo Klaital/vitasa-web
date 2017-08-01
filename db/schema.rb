@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170728203139) do
+ActiveRecord::Schema.define(version: 20170801183811) do
 
   create_table "role_grants", force: :cascade do |t|
     t.integer  "role_id"
@@ -25,6 +25,27 @@ ActiveRecord::Schema.define(version: 20170728203139) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "site_hits", force: :cascade do |t|
+    t.string   "method"
+    t.string   "path"
+    t.string   "format"
+    t.string   "controller"
+    t.string   "action"
+    t.integer  "status"
+    t.float    "duration"
+    t.float    "view"
+    t.float    "db"
+    t.datetime "timestamp"
+    t.string   "cookie"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["format"], name: "index_site_hits_on_format"
+    t.index ["method"], name: "index_site_hits_on_method"
+    t.index ["path"], name: "index_site_hits_on_path"
+    t.index ["status"], name: "index_site_hits_on_status"
+    t.index ["timestamp"], name: "index_site_hits_on_timestamp"
   end
 
   create_table "sites", force: :cascade do |t|
