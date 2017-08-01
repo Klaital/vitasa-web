@@ -599,7 +599,7 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_not_nil(cookie, 'No cookie harvested')
     
     # Query Under Test
-    patch site_url(@site.slug),  # TODO: figure out how to manually set the slug in the path
+    patch site_url(@site.slug),
       params: {
         city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip 
       }.to_json,
