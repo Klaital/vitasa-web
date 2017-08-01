@@ -72,6 +72,19 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
       }
     assert_response :success
   end
+
+  test "should show site slug" do
+    get site_url(@site),
+      :headers => {
+        'Accept' => 'application/json'
+      }
+    assert_response :success
+
+    site = JSON.load(response.body)
+    assert_equal('the-alamo', site['slug'])
+  end
+  
+
   test "should show site even without a coordinator" do
     @site.sitecoordinator = nil
     @site.save
