@@ -582,6 +582,36 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should update site via slug when logged in to a Admin via JSON" do
+    # Login
+    post login_url, 
+      params: {
+        email: @admin.email,
+        password: 'user-two-password'
+      }.to_json,
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+      }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    # Query Under Test
+    patch site_url(@site.slug),  # TODO: figure out how to manually set the slug in the path
+      params: {
+        city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip 
+      }.to_json,
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie
+      }
+      
+    assert_response :success
+  end
+
   test "should destroy site when logged in to a Admin via JSON" do
     # Login
     post login_url, 
