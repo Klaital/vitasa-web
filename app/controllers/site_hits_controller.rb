@@ -4,7 +4,7 @@ class SiteHitsController < ApplicationController
     skip_before_action :verify_authenticity_token
 
     def index
-        @site_hits = SiteHit.where(timestamp: (Time.now - (3600*24))..(Time.now) ).order(:timestamp)
+        @site_hits = SiteHit.where(timestamp: (Time.now - (3600*24))..(Time.now) ).order(:timestamp => :desc)
         @overall = {
             :duration => Accumulator.new,
             :view => Accumulator.new,

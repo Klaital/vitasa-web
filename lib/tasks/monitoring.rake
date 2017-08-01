@@ -20,8 +20,6 @@ namespace :monitoring do
       begin 
         data = JSON.load(line)
       rescue
-        # warn line
-        print 'x'
         next
       end
 
