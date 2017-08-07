@@ -1,0 +1,181 @@
+#!/usr/bin/env ruby
+require 'net/http'
+require 'json'
+require 'thread'
+
+class LoadTester
+    attr_accessor :host
+    attr_reader :start_time, :end_time, :results
+
+    def initialize(host="http://localhost:3000")
+        @start_time = nil
+        @end_time = nil
+        @results = Queue.new
+        @host = host
+    end
+
+    def test_apis
+        @start_time = Time.now
+
+        # Build a huge master list of all test requests to be executed
+        puts "> Building request list"
+        build_request_list(1000)
+        total_request_count = @requests.length
+        puts "\n> Built #{@requests.length} test requests"
+
+        # Multithread the requests
+        puts "> Spawning 10 worker threads"
+        consumer_threads = []
+        16.times do |i|
+            consumer_threads << Thread.new do
+                test_request(@requests.pop) until(@requests.empty?)
+            end
+        end
+        # Wait for all threads to finish
+        consumer_threads.each {|t| t.join}
+        @end_time = Time.now
+        puts "\n> Done"
+
+        runtime = ((@end_time.to_f - @start_time.to_f) * 1000.0).round(2)
+        status_codes = {}
+        until(@results.empty?)
+            run = @results.pop
+            unless status_codes.keys.include?(run[:status])
+                status_codes[run[:status]] = {
+                    :count => 0,
+                    :total_ms => 0,
+                }
+            end
+
+            status_codes[run[:status]][:count] += 1
+            status_codes[run[:status]][:total_ms] += run[:runtime]
+        end
+        status_codes.each_pair do |code, data|
+            status_codes[code][:mean_runtime] = status_codes[code][:total_ms] / status_codes[code][:count]
+        end
+        report = {
+            :runtime_ms => runtime,
+            :tps        => (total_request_count * 1000 / runtime).round(2),
+            :status     => status_codes,
+        }
+    end
+
+    def build_request_list(count=100)
+        @requests = Queue.new
+        slugs = ["cody-library", "thousand-oaks-library", "westfall-library", "claude-black-community-center", "ella-austin-community-center", "st-philips-college", "bazan-library", "forest-hills-library"]
+        # Get Site Details
+        count.times do
+            endpoint = '/sites'
+            uri = URI("#{@host}#{endpoint}")
+            @requests << {
+                :api => 'GET /sites',
+                :endpoint => endpoint,
+                :verb => 'GET',
+                :uri => uri,
+                :request => Net::HTTP::Get.new(uri)
+            }
+            print '.'
+        end
+        count.times do
+            endpoint = "/sites/#{slugs.sample}"
+            uri = URI("#{@host}#{endpoint}")
+            @requests << {
+                :api => 'GET /sites/{slug}',
+                :endpoint => endpoint,
+                :verb => 'GET',
+                :uri => uri,
+                :request => Net::HTTP::Get.new(uri)
+            }
+            print '.'
+        end
+    end
+
+    def test_request(request_config)
+        Net::HTTP.start(request_config[:uri].host, request_config[:uri].port) do |http|
+            test_start = Time.now
+            response = http.request(request_config[:request])
+            test_end = Time.now
+            results_data = request_config.dup
+            results_data.delete(:uri)
+            results_data.delete(:request)
+            @results << results_data.merge({
+                :runtime => (test_end.to_f - test_start.to_f) * 1000.0,
+                :status => response.code,
+            })
+
+            if response.kind_of?(Net::HTTPSuccess)
+                print '.'
+            else
+                print 'x'
+            end
+        end
+    end
+
+
+    def execution_time_ms
+        end_time = @end_time || Time.now
+        ((end_time.to_f - @start_time.to_f) * 1000.0).round(1)
+    end
+
+
+
+    ##
+    ## Methods for testing each individual API Operation
+    ##
+
+    # GET /sites
+    def test_get_site_list
+        endpoint = "/sites"
+        uri = URI("#{@host}#{endpoint}")
+        request = Net::HTTP::Get.new(uri)
+        request['Accept'] = 'application/json'
+        
+        test_start = Time.now
+        response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+            http.request(request)
+        end
+        test_end = Time.now
+
+        @results << {
+            :api => 'GET /sites',
+            :endpoint => endpoint,
+            :start_time => test_start,
+            :runtime => (test_end.to_f - test_start.to_f) * 1000.0,
+            :status => response.code,
+            :content_type => response['content-type']
+        }
+    end
+
+    # GET /sites/{slug}
+    def test_get_site_details
+        slugs = ["cody-library", "thousand-oaks-library", "westfall-library", "claude-black-community-center", "ella-austin-community-center", "st-philips-college", "bazan-library", "forest-hills-library"]
+        slug = slugs.sample
+        endpoint = "/sites/#{slug}"
+        uri = URI("#{@host}#{endpoint}")
+        request = Net::HTTP::Get.new(uri)
+        request['Accept'] = 'application/json'
+        
+        test_start = Time.now
+        response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+            http.request(request)
+        end
+        test_end = Time.now
+
+        @results << {
+            :api => 'GET /sites/{slug}',
+            :endpoint => endpoint,
+            :start_time => test_start,
+            :runtime => (test_end.to_f - test_start.to_f) * 1000.0,
+            :status => response.code,
+            :content_type => response['content-type']
+        }
+    end
+end
+
+if __FILE__ == $0
+    tester = LoadTester.new(ARGV[-1])
+    puts ">> Starting load test"
+    report = tester.test_apis
+    puts ">> Completed test requests in #{tester.execution_time_ms} ms"
+    puts JSON.pretty_generate(report)
+end
