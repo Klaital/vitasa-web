@@ -1,4 +1,4 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
   version: 1.0.0
   title: VITA Sites App Web APIs
@@ -6,10 +6,10 @@ info:
   contact:
     name: Chris Cox
     email: chriscox@abandonedfactory.net
-    url: "https://vitasa.abandonedfactory.net"
+    url: 'https://vitasa.abandonedfactory.net'
   license:
     name: Apache
-    url: "https://www.apache.org/licenses/LICENSE-2.0"
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
 host: vitasa.abandonedfactory.net
 basePath: /
 schemes:
@@ -19,14 +19,13 @@ consumes:
   - application/json
 produces:
   - application/json
-
 paths:
   /sites:
     get:
       description: Fetch a list of all Tax Prep Assistance sites
       operationId: GetSiteList
       responses:
-        "200":
+        '200':
           description: Successfully fetched site list
           schema:
             type: array
@@ -36,14 +35,14 @@ paths:
       description: Create a new Site. Must be logged in as Admin.
       operationId: CreateSite
       responses:
-        "200":
+        '200':
           description: Successfully created a new Site
           schema:
             $ref: '#/definitions/site'
-        "401":
+        '401':
           description: Not logged in as Admin
-  /sites/{slug}:
-    parameters: 
+  '/sites/{slug}':
+    parameters:
       - name: slug
         in: path
         description: ID of Site to fetch
@@ -53,30 +52,31 @@ paths:
       description: Fetch a single Site's details
       operationId: GetSiteDetails
       responses:
-        "200":
+        '200':
           description: Successfully fetched site details
           schema:
             $ref: '#/definitions/site'
     put:
-      description: Update a Site's details. Must be logged in as Admin or the specific site's Coordinator
+      description: >-
+        Update a Site's details. Must be logged in as Admin or the specific
+        site's Coordinator
       operationId: UpdateSiteDetails
       responses:
-        "200":
+        '200':
           description: Successfully updated site status
           schema:
             $ref: '#/definitions/site'
-        "401":
+        '401':
           description: Not logged in as Admin or correct Coordinator
           schema:
             $ref: '#/definitions/unauthorized'
-              
     delete:
       description: Delete a Site record. Must be logged in as Admin
       operationId: DeleteSite
       responses:
-        "200":
+        '200':
           description: Successfully deleted site.
-        "401":
+        '401':
           description: Not logged in as Admin.
           schema:
             $ref: '#/definitions/unauthorized'
@@ -85,25 +85,29 @@ paths:
       description: Fetch a list of Users. Must be logged in as Admin.
       operationId: ListUsers
       responses:
-        "200":
+        '200':
           description: Successfully fetched User list
           schema:
             type: array
             items:
               $ref: '#/definitions/userDetails'
-        "401":
+        '401':
           description: Not logged in as Admin.
     post:
-      description: Create a new user. The new user will get the NewUser Role until approved by an admin.
+      description: >-
+        Create a new user. The new user will get the NewUser Role until approved
+        by an admin.
       operationId: CreateUser
       responses:
-        "200":
+        '200':
           description: Successfully created a new user.
           schema:
             $ref: '#/definitions/newUser'
-        "400":
-          description: Bad Request. Did not send all required fields, or the password did not match the confirmation field.
-  /users/{id}:
+        '400':
+          description: >-
+            Bad Request. Did not send all required fields, or the password did
+            not match the confirmation field.
+  '/users/{id}':
     parameters:
       - name: id
         in: path
@@ -111,32 +115,39 @@ paths:
         required: true
         type: integer
     get:
-      description: Fetch user details. Must be logged in as either Admin, or the User with the requested ID.
+      description: >-
+        Fetch user details. Must be logged in as either Admin, or the User with
+        the requested ID.
       operationId: GetUserDetails
       responses:
-        "200":
+        '200':
           description: Successfully fetched user details.
           schema:
             $ref: '#/definitions/userDetails'
-        "401":
+        '401':
           description: Not logged in as an authrorized user.
     put:
-      description: Update user status. If logged in as Admin, this can be used to alter the user's role grants. If logged in as the same user, this can be used to change the account password.
+      description: >-
+        Update user status. If logged in as Admin, this can be used to alter the
+        user's role grants. If logged in as the same user, this can be used to
+        change the account password.
       operationId: UpdateUser
       responses:
-        "200":
+        '200':
           description: Successfully updated user settings.
           schema:
             $ref: '#/definitions/userDetails'
-        "401":
-          description: Not logged in, or logged-in user is not authorized to change the specified fields.
+        '401':
+          description: >-
+            Not logged in, or logged-in user is not authorized to change the
+            specified fields.
     delete:
       description: Destroy the specified user record. Must be logged in as Admin.
       operationId: DeleteUser
       responses:
-        "200":
+        '200':
           description: Successfully deleted user.
-        "401":
+        '401':
           description: Not authorized to delete this user.
   /login:
     post:
@@ -150,13 +161,13 @@ paths:
           schema:
             $ref: '#/definitions/loginUser'
       responses:
-        "200":
+        '200':
           description: User Logged In
           schema:
             properties:
               message:
                 type: string
-        "401":
+        '401':
           description: Bad credentials
           schema:
             properties:
@@ -175,10 +186,10 @@ definitions:
     properties:
       name:
         type: string
-        example: "The Alamo"
+        example: The Alamo
       slug:
         type: string
-        example: "the-alamo"
+        example: the-alamo
       street:
         type: string
         example: 300 Alamo Plaza
@@ -190,31 +201,31 @@ definitions:
         example: TX
       zip:
         type: string
-        example: "78205"
+        example: '78205'
       latitude:
         type: string
-        example: "29.425731"
+        example: '29.425731'
         description: The latitude half of the site's GPS coordinates
       longitude:
         type: string
-        example: "-98.486292"
+        example: '-98.486292'
         description: The longitude half of the site's GPS coordinates
       google_place_id:
         type: string
         example: ChIJX4k2TVVfXIYRIsTnhA-P-Rc
         description: The site's Place ID for use with Google's Maps APIs.
       sitecoordinator:
-        description: The User ID for the Site Coordinator. Use with GET /users/{id}
+        description: 'The User ID for the Site Coordinator. Use with GET /users/{id}'
         type: integer
         example: 1
       sitestatus:
         type: string
-        example: "Open"
-        enum: [Open Closed Accepting NearLimit NotAccepting]
+        example: Open
+        enum:
+          - Open Closed Accepting NearLimit NotAccepting
       hours:
         type: string
-        example: Open Friday through Sunday, 9am to 6pm
-        
+        example: 'Open Friday through Sunday, 9am to 6pm'
   userDetails:
     required:
       - email
