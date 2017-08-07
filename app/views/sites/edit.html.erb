@@ -2,5 +2,5 @@
 
 <%= render 'form', site: @site %>
 
-<%= link_to 'Show', @site %> |
+<%= link_to 'Show', site_path(@site.slug) %> |
 <%= link_to 'Back', sites_path %>

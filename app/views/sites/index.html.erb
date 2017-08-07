@@ -20,7 +20,7 @@
     <% @sites.each do |site| %>
       <% sc = (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) %>
       <tr>
-        <td><%= link_to site.name, site %></td>
+        <td><%= link_to site.name, site_url(site.slug) %></td>
         <td><%= site.slug %></td>
         <td><%= site.street %>, <%= site.city %>, <%= site.state %> <%= site.zip %></td>
         <td><%= site.latitude %>, <%= site.longitude %></td>
@@ -28,8 +28,8 @@
         <td><%= (sc.nil?) ? 'None Assigned' : sc.email %></td>
         <td><%= site.sitestatus %></td>
         <% if is_admin? %>
-        <td><%= link_to 'Edit', edit_site_path(site) %></td>
-        <td><%= link_to 'Destroy', site, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', edit_site_path(site.slug) %></td>
+        <td><%= link_to 'Destroy', site_path(site.slug), method: :delete, data: { confirm: 'Are you sure?' } %></td>
         <% end %>
       </tr>
     <% end %>
