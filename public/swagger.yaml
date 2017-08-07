@@ -241,6 +241,16 @@ definitions:
         description: Site Slugs
         items:
           type: string
+      roles:
+        type: array
+        description: User Role Grants
+        items:
+          type: string
+          enum:
+            - NewUser
+            - SiteCoordinator
+            - SiteCoordinatorInactive
+            - Admin
   newUser:
     required:
       - email
