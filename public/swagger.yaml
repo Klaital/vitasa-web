@@ -222,7 +222,11 @@ definitions:
         type: string
         example: Open
         enum:
-          - Open Closed Accepting NearLimit NotAccepting
+          - Open
+          - Closed
+          - Accepting
+          - NearLimit
+          - NotAccepting
       hours:
         type: string
         example: 'Open Friday through Sunday, 9am to 6pm'
