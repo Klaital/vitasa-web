@@ -29,6 +29,10 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new
+    respond_to do |format|
+      format.html { render :new }
+      format.json { render json: { errors: 'This is a web function. No JSON to be provided.'}, status: 406}
+    end
   end
   def create
     @user = User.new(user_params)
@@ -82,10 +86,17 @@ class UsersController < ApplicationController
   end
 
   def show
-    unless logged_in? && (current_user == @user || is_admin?)
-      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
-      response.set_header('Content-Type', 'application/json')
-      return
+    respond_to do |format|
+      if logged_in? && (current_user == @user || is_admin?)
+        format.html { render :show}
+        format.json { render :json => {
+          :email => @user.email,
+          :sites => Site.where(:sitecoordinator => @user.id).collect {|site| site.slug}
+        }}
+      else
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => { :errors => 'Not authorized' }, :status => :unauthorized }
+      end
     end
   end
 
