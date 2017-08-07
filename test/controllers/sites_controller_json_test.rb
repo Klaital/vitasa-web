@@ -83,7 +83,16 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     site = JSON.load(response.body)
     assert_equal('the-alamo', site['slug'])
   end
-  
+  test "should show site Place ID" do
+    get site_url(@site),
+      :headers => {
+        'Accept' => 'application/json'
+      }
+    assert_response :success
+
+    site = JSON.load(response.body)
+    assert_equal('hIJX4k2TVVfXIYRIsTnhA-P-Rc', site['google_place_id'])
+  end
 
   test "should show site even without a coordinator" do
     @site.sitecoordinator = nil
