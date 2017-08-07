@@ -10,6 +10,21 @@ class UsersController < ApplicationController
     end
 
     @users = User.all
+
+    respond_to do |format|
+      if is_admin?
+        format.html { render :index }
+        format.json { render json: @users.collect {|user|
+          {
+            email: user.email,
+            permissions: user.roles.collect {|r| r.name }
+          }
+        }}
+      else
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render json: { :errors => 'Not authorized' }, :status => :unauthorized }
+      end
+    end
   end
 
   def new
