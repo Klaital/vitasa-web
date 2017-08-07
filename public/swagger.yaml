@@ -1,0 +1,202 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: VITA Sites App Web APIs
+  description: Volunteer Income Tax Assistance Web Services for managing sites.
+  contact:
+    name: Chris Cox
+    email: chriscox@abandonedfactory.net
+    url: "https://vitasa.abandonedfactory.net"
+  license:
+    name: Apache
+    url: "https://www.apache.org/licenses/LICENSE-2.0"
+host: vitasa.abandonedfactory.net
+basePath: /
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /sites:
+    get:
+      description: Fetch a list of all Tax Prep Assistance sites
+      operationId: GetSiteList
+      responses:
+        "200":
+          description: Successfully fetched site list
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/site'
+    post:
+      description: Create a new Site. Must be logged in as Admin.
+      operationId: CreateSite
+      responses:
+        "200":
+          description: Successfully created a new Site
+          schema:
+            $ref: '#/definitions/site'
+        "401":
+          description: Not logged in as Admin
+  /sites/{slug}:
+    parameters: 
+      - name: slug
+        in: path
+        description: ID of Site to fetch
+        required: true
+        type: string
+    get:
+      description: Fetch a single Site's details
+      operationId: GetSiteDetails
+      responses:
+        "200":
+          description: Successfully fetched site details
+          schema:
+            $ref: '#/definitions/site'
+    put:
+      description: Update a Site's details. Must be logged in as Admin or the specific site's Coordinator
+      operationId: UpdateSiteDetails
+      responses:
+        "200":
+          description: Successfully updated site status
+          schema:
+            $ref: '#/definitions/site'
+        "401":
+          description: Not logged in as Admin or correct Coordinator
+          schema:
+            $ref: '#/definitions/unauthorized'
+              
+    delete:
+      description: Delete a Site record. Must be logged in as Admin
+      operationId: DeleteSite
+      responses:
+        "200":
+          description: Successfully deleted site.
+        "401":
+          description: Not logged in as Admin.
+          schema:
+            $ref: '#/definitions/unauthorized'
+  /users:
+    get:
+      description: Fetch a list of Users. Must be logged in as Admin.
+      operationId: ListUsers
+      responses:
+        "200":
+          description: Successfully fetched User list
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/userDetails'
+  /login:
+    post:
+      description: Logs a user in. Pass in the user's email and password via JSON.
+      operationId: loginUser
+      parameters:
+        - name: user
+          in: body
+          description: User to log in
+          required: true
+          schema:
+            $ref: '#/definitions/loginUser'
+      responses:
+        "200":
+          description: User Logged In
+          schema:
+            properties:
+              message:
+                type: string
+        "401":
+          description: Bad credentials
+          schema:
+            properties:
+              errors:
+                type: string
+definitions:
+  unauthorized:
+    properties:
+      errors:
+        type: string
+        example: Unauthorized
+  site:
+    required:
+      - slug
+      - name
+    properties:
+      name:
+        type: string
+        example: "The Alamo"
+      slug:
+        type: string
+        example: "the-alamo"
+      street:
+        type: string
+        example: 300 Alamo Plaza
+      city:
+        type: string
+        example: San Antonio
+      state:
+        type: string
+        example: TX
+      zip:
+        type: string
+        example: "78205"
+      latitude:
+        type: string
+        example: "29.425731"
+        description: The latitude half of the site's GPS coordinates
+      longitude:
+        type: string
+        example: "-98.486292"
+        description: The longitude half of the site's GPS coordinates
+      google_place_id:
+        type: string
+        example: ChIJX4k2TVVfXIYRIsTnhA-P-Rc
+        description: The site's Place ID for use with Google's Maps APIs.
+      sitecoordinator:
+        description: The User ID for the Site Coordinator. Use with GET /users/{id}
+        type: integer
+        example: 1
+      sitestatus:
+        type: string
+        example: "Open"
+        enum: [Open Closed Accepting NearLimit NotAccepting]
+      hours:
+        type: string
+        example: Open Friday through Sunday, 9am to 6pm
+        
+  userDetails:
+    required:
+      - email
+    properties:
+      email:
+        type: string
+      sites:
+        type: array
+        description: Site Slugs
+        items:
+          type: string
+  newUser:
+    required:
+      - email
+      - password
+      - password_confirmation
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      password_confirmation:
+        type: string
+  loginUser:
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+      password:
+        type: string
