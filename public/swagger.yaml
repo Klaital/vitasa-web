@@ -173,17 +173,23 @@ paths:
             properties:
               errors:
                 type: string
+
 definitions:
   unauthorized:
+    description: Returned when an API is called without a Cookie identifying a User with appropriate permissions for the requested operation.
     properties:
       errors:
         type: string
         example: Unauthorized
+
   site:
     required:
       - slug
       - name
     properties:
+      id:
+        type: integer
+        example: 1
       name:
         type: string
         example: The Alamo
@@ -230,20 +236,28 @@ definitions:
       hours:
         type: string
         example: 'Open Friday through Sunday, 9am to 6pm'
+
   userDetails:
     required:
+      - id
       - email
     properties:
+      id:
+        type: integer
+        example: 1
       email:
         type: string
+        example: user-one@example.org
       sites:
         type: array
         description: Site Slugs
         items:
           type: string
+          example: the-alamo
       roles:
         type: array
         description: User Role Grants
+        example: [SiteCoordinator, Admin]
         items:
           type: string
           enum:
@@ -251,6 +265,7 @@ definitions:
             - SiteCoordinator
             - SiteCoordinatorInactive
             - Admin
+
   newUser:
     required:
       - email
@@ -263,6 +278,7 @@ definitions:
         type: string
       password_confirmation:
         type: string
+
   loginUser:
     required:
       - email
