@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170801183811) do
+ActiveRecord::Schema.define(version: 20170808211002) do
+
+  create_table "calendars", force: :cascade do |t|
+    t.date     "date"
+    t.time     "open"
+    t.time     "close"
+    t.boolean  "is_closed"
+    t.text     "notes"
+    t.integer  "site_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_calendars_on_site_id"
+  end
 
   create_table "role_grants", force: :cascade do |t|
     t.integer  "role_id"
@@ -62,6 +74,21 @@ ActiveRecord::Schema.define(version: 20170801183811) do
     t.datetime "updated_at",      null: false
     t.string   "google_place_id"
     t.string   "slug"
+    t.string   "hours"
+    t.time     "monday_open"
+    t.time     "monday_close"
+    t.time     "tuesday_open"
+    t.time     "tuesday_close"
+    t.time     "wednesday_open"
+    t.time     "wednesday_close"
+    t.time     "thursday_open"
+    t.time     "thursday_close"
+    t.time     "friday_open"
+    t.time     "friday_close"
+    t.time     "saturday_open"
+    t.time     "saturday_close"
+    t.time     "sunday_open"
+    t.time     "sunday_close"
     t.index ["slug"], name: "index_sites_on_slug"
   end
 

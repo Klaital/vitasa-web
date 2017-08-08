@@ -80,6 +80,29 @@ paths:
           description: Not logged in as Admin.
           schema:
             $ref: '#/definitions/unauthorized'
+  '/sites/{slug}/calendars':
+    parameters:
+      - name: slug
+        in: path
+        description: ID of Site to fetch
+        required: true
+        type: string
+    get:
+      description: Fetch an array of calendar overrides for this site.
+      operationId: GetSiteCalendars
+      responses:
+        '200':
+          description: Successfully fetched site calendar overrides.
+          schema:
+            $ref: '#/definitions/calendar'
+    post:
+      description: Add a calendar override to this site.
+      operationId: AddSiteCalendar
+      responses:
+        '200':
+          description: Successfully added calendar override to the site.
+          schema:
+            $ref: '#/definitions/calendar'
   /users:
     get:
       description: Fetch a list of Users. Must be logged in as Admin.
@@ -132,6 +155,13 @@ paths:
         user's role grants. If logged in as the same user, this can be used to
         change the account password.
       operationId: UpdateUser
+      parameters:
+        - name: user
+          in: body
+          description: User to log in
+          required: true
+          schema:
+            $ref: '#/definitions/updateUser'
       responses:
         '200':
           description: Successfully updated user settings.
@@ -173,15 +203,15 @@ paths:
             properties:
               errors:
                 type: string
-
 definitions:
   unauthorized:
-    description: Returned when an API is called without a Cookie identifying a User with appropriate permissions for the requested operation.
+    description: >-
+      Returned when an API is called without a Cookie identifying a User with
+      appropriate permissions for the requested operation.
     properties:
       errors:
         type: string
         example: Unauthorized
-
   site:
     required:
       - slug
@@ -228,14 +258,87 @@ definitions:
         type: string
         example: Open
         enum:
+          - Open
+          - Closed
           - Accepting
           - NearLimit
           - NotAccepting
-          - Closed
-      hours:
+      calendars:
+        type: array
+        items:
+          $ref: '#/definitions/calendar'
+  calendar:
+    description: >-
+      A single calendar entry for a single site, overriding their open hours for
+      the day. When 'is_closed=true', this indicats that the site will be
+      closed, despite usually being open that day according to the site default
+      hours.
+    required:
+      - id
+      - open
+      - site_slug
+      - is_closed
+    properties:
+      id:
+        type: integer
+        example: 1
+        description: Unique identifier for this particular Calendar entry.
+      date:
         type: string
-        example: 'Open Friday through Sunday, 9am to 6pm'
-
+        format: date
+        example: '2017-08-10'
+        description: The date for the override.
+      open:
+        type: string
+        format: time
+        example: '09:30:00'
+        description: >-
+          What time the site opens for the day. Only the date portion is
+          relevant when is_closed=true.
+      close:
+        type: string
+        format: time
+        example: '17:30:00'
+        description: What time the site opens for the day. Ignored when is_closed=true.
+      is_closed:
+        type: boolean
+        example: false
+        description: >-
+          Indicates whether the site's calendar override for the day is to be
+          closed, where the site's default hours would have indicated open for
+          the day.
+  newCalendar:
+    description: >-
+      A single calendar entry for a single site, overriding their open hours for
+      the day. Set 'is_closed=true' to indicate that the site will be closed,
+      despite usually being open that day according to the site default hours.
+    required:
+      - open
+      - site_slug
+    properties:
+      site_slug:
+        type: string
+        example: the-alamo
+        description: The Site this calendar overrides the hours for.
+      open:
+        type: string
+        format: dateTime
+        example: '2017-08-08T09:30:00-0500'
+        description: >-
+          What time the site opens for the day. Only the date portion is
+          relevant when is_closed=true.
+      close:
+        type: string
+        format: dateTime
+        example: '2017-08-08T17:30:00-0500'
+        description: What time the site opens for the day. Ignored when is_closed=true.
+      is_closed:
+        type: boolean
+        example: false
+        description: >-
+          Indicates whether the site's calendar override for the day is to be
+          closed, where the site's default hours would have indicated open for
+          the day.
   userDetails:
     required:
       - id
@@ -247,6 +350,7 @@ definitions:
       email:
         type: string
         example: user-one@example.org
+        format: email
       sites:
         type: array
         description: Site Slugs
@@ -256,7 +360,9 @@ definitions:
       roles:
         type: array
         description: User Role Grants
-        example: [SiteCoordinator, Admin]
+        example:
+          - SiteCoordinator
+          - Admin
         items:
           type: string
           enum:
@@ -264,7 +370,6 @@ definitions:
             - SiteCoordinator
             - SiteCoordinatorInactive
             - Admin
-
   newUser:
     required:
       - email
@@ -273,11 +378,15 @@ definitions:
     properties:
       email:
         type: string
+        format: email
       password:
         type: string
+        format: password
+        example: myawesomepassword
       password_confirmation:
         type: string
-
+        format: password
+        example: myawesomepassword
   loginUser:
     required:
       - email
@@ -285,5 +394,35 @@ definitions:
     properties:
       email:
         type: string
+        format: email
       password:
         type: string
+        format: password
+        example: myawesomepassword
+
+  updateUser:
+    description: Models the request to update a user's settings. Can include roles only if the requesting user is logged in as Admin.
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+      password:
+        type: string
+        example: "myawesomepassword"
+        format: password
+      password_confirmation:
+        type: string
+        example: "myawesomepassword"
+        format: password
+      roles:
+        type: array
+        example: [ SiteCoordinatorInactive, Admin ]
+        items:
+          type: string
+          enum:
+            - NewUser
+            - SiteCoordinator
+            - SiteCoordinatorInactive
+            - Admin

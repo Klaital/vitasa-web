@@ -1,0 +1,17 @@
+<h1>Calendar Overrides for <%= @site.name %></h1>
+<table>
+    <tr>
+        <th>Day</th>
+        <th>Open</th>
+        <th>Close</th>
+        <th>Is Closed?</th>
+    </tr>
+    <% @calendars.each do |calendar_override| %>
+    <tr>
+        <td><%= calendar_override.date %></td>
+        <td><%= calendar_override.is_closed ? '-closed-' : calendar_override.open %></td>
+        <td><%= calendar_override.is_closed ? '-closed-' : calendar_override.close %></td>
+        <td><%= calendar_override.is_closed %>
+    </tr>
+    <% end %>
+</table>

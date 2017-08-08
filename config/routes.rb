@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :sites
+  resources :sites do
+    resources :calendars
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   root 'sites#index'
@@ -18,4 +20,5 @@ Rails.application.routes.draw do
   delete '/logout', to: 'sessions#destroy'
 
   get '/mon', to: 'site_hits#index'
+
 end

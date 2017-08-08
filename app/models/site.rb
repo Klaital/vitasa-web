@@ -1,4 +1,6 @@
 class Site < ApplicationRecord
+    has_many :calendars
+
     VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
     validates :sitestatus, inclusion: { 
             in: VALID_SITE_STATUSES,
@@ -16,4 +18,19 @@ class Site < ApplicationRecord
             message: 'Must be a valid URL segment, using lowercase latin characters and single dashes. Leave blank to have a slug auto-generated from your sitename.'
         }
     }
+
+    serialize :monday_open, Tod::TimeOfDay
+    serialize :monday_close, Tod::TimeOfDay
+    serialize :tuesday_open, Tod::TimeOfDay
+    serialize :tuesday_close, Tod::TimeOfDay
+    serialize :wednesday_open, Tod::TimeOfDay
+    serialize :wednesday_close, Tod::TimeOfDay
+    serialize :thursday_open, Tod::TimeOfDay
+    serialize :thursday_close, Tod::TimeOfDay
+    serialize :friday_open, Tod::TimeOfDay
+    serialize :friday_close, Tod::TimeOfDay
+    serialize :saturday_open, Tod::TimeOfDay
+    serialize :saturday_close, Tod::TimeOfDay
+    serialize :sunday_open, Tod::TimeOfDay
+    serialize :sunday_close, Tod::TimeOfDay
 end
