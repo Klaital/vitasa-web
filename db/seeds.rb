@@ -31,7 +31,7 @@ if Rails.env == 'development'
             longitude: '-98.4036457',
             google_place_id: 'ChIJh8mGDl6LXIYRj-mzXGDC-So',
             sitecoordinator: nil,
-            sitestatus: 'Open',
+            sitestatus: 'Accepting',
         }
     ])
 end
