@@ -1,5 +1,6 @@
 class SitesController < ApplicationController
   before_action :set_site, only: [:show, :edit, :update, :destroy]
+  before_action :set_eligible_sitecoordinators, only: [ :edit, :new ]
   skip_before_action :verify_authenticity_token
 
   # GET /sites
@@ -15,9 +16,6 @@ class SitesController < ApplicationController
 
   # GET /sites/new
   def new
-    @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? u : nil}.compact
-    @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
-
     @site = Site.new
     respond_to do |format|
       if is_admin?
@@ -32,8 +30,6 @@ class SitesController < ApplicationController
 
   # GET /sites/1/edit
   def edit
-    @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
-    @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
 
     respond_to do |format|
       if logged_in? && (is_admin? || @site.sitecoordinator == current_user.id)
@@ -135,6 +131,11 @@ class SitesController < ApplicationController
       else
         User.find(@site.sitecoordinator)
       end
+    end
+
+    def set_eligible_sitecoordinators
+      @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
+      @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

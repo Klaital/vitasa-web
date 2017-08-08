@@ -56,23 +56,23 @@
     <%= f.text_field :longitude %>
   </div>
 
+  <%= debug @eligible_sitecoordinators %>
   <div class="field">
     <%= f.label :sitecoordinator, 'Site Coordinator' %>
     <%= f.select :sitecoordinator,
                 options_for_select(
                     @eligible_sitecoordinators,
-                    @site.sitecoordinator
+                    site.sitecoordinator
                 )
     %>
   </div>
-
 
   <div class="field">
     <%= f.label :sitestatus, 'Current Status' %>
     <%= f.select :sitestatus,
                 options_for_select(
                   Site::VALID_SITE_STATUSES,
-                  @site.sitestatus
+                  site.sitestatus
                 )
     %>
   </div>
