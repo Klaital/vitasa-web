@@ -4,7 +4,7 @@ require 'logger'
 
 logger = Logger.new('manual.log', 'daily')
 
-host = "localhost:5000"
+host = "localhost:3000"
 
 session_cookie = ""
 uri = URI("http://#{host}/")
@@ -102,7 +102,23 @@ if response.code !~ /20./ || created_site_data.nil?
     exit(0)
 end
 
-puts "> Delete That Site"
+
+puts "> Create a Calendar Override"
+uri = URI("http://#{host}/sites/1/calendars/")
+request = Net::HTTP::Post.new uri
+request['Cookie'] = session_cookie
+request['Accept'] = 'application/json'
+request['Content-Type'] = 'application/json'
+request.body = {"date": "2017-08-10", "open": "09:30:00", "close": "14:15:00", "is_closed":false, "notes": ""}.to_json
+response = http.request(request)
+puts ">> Got #{response.code} #{response.message}"
+puts ">> Cookies: #{response['Set-Cookie']}"
+puts ">> Content-Type: #{response['Content-Type']}"
+if response.body
+    puts ">> Body: #{response.body}"
+end
+
+puts "> Delete The Site"
 uri = URI("http://#{host}/sites/#{created_site_data['id']}")
 request = Net::HTTP::Delete.new uri
 request['Cookie'] = session_cookie
@@ -117,4 +133,3 @@ puts ">> Content-Type: #{response['Content-Type']}"
 if response.body
     puts ">> Body: #{response.body}" 
 end
-

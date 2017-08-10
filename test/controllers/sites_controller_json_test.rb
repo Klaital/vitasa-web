@@ -451,6 +451,11 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
+
+    # The POST should return a body including the Site record
+    site = JSON.load(response.body)
+    assert_not_nil(site)
+    assert_equal('admin-create-test-slug', site['slug'])
   end
 
   test "should create site without a slug when logged in to a Admin via JSON" do
