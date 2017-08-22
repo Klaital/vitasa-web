@@ -311,6 +311,10 @@ definitions:
           Indicates whether the site's calendar override for the day is to be
           closed, where the site's default hours would have indicated open for
           the day.
+      backup_coordinator_today:
+        type: boolean
+        example: false
+        description: Indicates whether the backup Site Coordinator is expected to be in charge on this day.
   newCalendar:
     description: >-
       A single calendar entry for a single site, overriding their open hours for
@@ -343,6 +347,10 @@ definitions:
           Indicates whether the site's calendar override for the day is to be
           closed, where the site's default hours would have indicated open for
           the day.
+      backup_coordinator_today:
+        type: boolean
+        example: false
+        description: Indicates whether the backup Site Coordinator is expected to be in charge on this day.
   userDetails:
     required:
       - id
