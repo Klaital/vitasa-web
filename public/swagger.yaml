@@ -254,6 +254,10 @@ definitions:
         description: 'The User ID for the Site Coordinator. Use with GET /users/{id}'
         type: integer
         example: 1
+      backup_coordinator:
+        description: 'The User ID for the Site\'s backup Site Coordinator.'
+        type: integer
+        example: 2
       sitestatus:
         type: string
         example: Open
