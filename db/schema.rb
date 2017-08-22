@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170808211002) do
+ActiveRecord::Schema.define(version: 20170822210135) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -19,8 +19,9 @@ ActiveRecord::Schema.define(version: 20170808211002) do
     t.boolean  "is_closed"
     t.text     "notes"
     t.integer  "site_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.boolean  "backup_coordinator_today"
     t.index ["site_id"], name: "index_calendars_on_site_id"
   end
 
@@ -70,8 +71,8 @@ ActiveRecord::Schema.define(version: 20170808211002) do
     t.string   "longitude"
     t.integer  "sitecoordinator"
     t.string   "sitestatus"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.string   "google_place_id"
     t.string   "slug"
     t.string   "hours"
@@ -89,7 +90,17 @@ ActiveRecord::Schema.define(version: 20170808211002) do
     t.time     "saturday_close"
     t.time     "sunday_open"
     t.time     "sunday_close"
+    t.integer  "backup_coordinator_id"
     t.index ["slug"], name: "index_sites_on_slug"
+  end
+
+  create_table "suggestions", force: :cascade do |t|
+    t.string   "subject"
+    t.text     "details"
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "status"
   end
 
   create_table "users", force: :cascade do |t|
@@ -97,6 +108,7 @@ ActiveRecord::Schema.define(version: 20170808211002) do
     t.string   "password_digest"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "name"
   end
 
 end

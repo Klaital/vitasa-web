@@ -67,6 +67,16 @@
   </div>
 
   <div class="field">
+  <%= f.label :backup_coordinator_id, 'Backup Site Coordinator' %>
+  <%= f.select :backup_coordinator_id,
+              options_for_select(
+                  @eligible_sitecoordinators,
+                  site.backup_coordinator_id
+              )
+  %>
+  </div>
+
+  <div class="field">
     <%= f.label :sitestatus, 'Current Status' %>
     <%= f.select :sitestatus,
                 options_for_select(

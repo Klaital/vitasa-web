@@ -76,7 +76,7 @@ class SitesController < ApplicationController
     respond_to do |format|
       if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
         if @site.update(site_params)
-          format.html { redirect_to @site, notice: 'Site was successfully updated.' }
+          format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else
           format.html do
@@ -131,10 +131,16 @@ class SitesController < ApplicationController
       else
         User.find(@site.sitecoordinator)
       end
+
+      @backup_coordinator = if @site.backup_coordinator_id.nil?
+        nil
+      else
+        User.find(@site.backup_coordinator_id)
+      end
     end
 
     def set_eligible_sitecoordinators
-      @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
+      @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.name, u.id] : nil}.compact
       @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
     end
 
@@ -142,8 +148,8 @@ class SitesController < ApplicationController
     def site_params
       params.require(:site).permit(:name, :slug,
         :google_place_id, :street, :city, :state, :zip, :latitude, :longitude, 
-        :sitecoordinator, :sitestatus,
-        :monday_open, :monday_close, :tuesday_open, :tuesday_close, 
+        :sitecoordinator, :backup_coordinator_id, :sitestatus,
+        :monday_open, :monday_close, :tuesday_open, :tuesday_close,
         :wednesday_open, :wednesday_close, :thursday_open, :thursday_close,
         :friday_open, :friday_close, :saturday_open, :saturday_close,
         :sunday_open, :sunday_close

@@ -17,7 +17,8 @@ json.extract! site, :id, :name, :slug,
     :sunday_open,
     :sunday_close
 
+json.backup_coordinator site.backup_coordinator_id
+
 json.url site_url(site.slug, format: :json)
 
 json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :calendar
-# json.calendar_overrides site.calendars, :id, :date, :open, :close, :is_closed

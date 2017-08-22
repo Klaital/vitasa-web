@@ -27,6 +27,10 @@
   <strong>Site Coordinator:</strong>
   <%= (@sitecoordinator.nil?) ? 'None Assigned' : @sitecoordinator.email %>
 </p>
+<p>
+  <strong>Backup Site Coordinator:</strong>
+  <%= (@backup_coordinator.nil?) ? 'None Assigned' : @backup_coordinator.email %>
+</p>
 
 <p>
   <strong>Current Site Status:</strong>
