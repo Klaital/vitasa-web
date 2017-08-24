@@ -13,7 +13,7 @@ development:
   <<: *default
   database: db/development.sqlite3
 
-development:
+staging:
   <<: *default
   database: db/staging.sqlite3
 
