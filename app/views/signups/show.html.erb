@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Site:</strong>
+  <%= @signup.site_id %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @signup.date %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @signup.user_id %>
+</p>
+
+<%= link_to 'Edit', edit_signup_path(@signup) %> |
+<%= link_to 'Back', signups_path %>

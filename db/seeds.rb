@@ -34,4 +34,11 @@ if Rails.env == 'development'
             sitestatus: 'Accepting',
         }
     ])
+
+    chris = User.create({
+            name: 'Chris Cox',
+            email: 'kenkaku@gmail.com',
+            password_digest: User.digest('password')
+        })
+    chris.roles = [ Role.find_by(name: 'Admin'), Role.find_by(name: 'SiteCoordinator') ]
 end
