@@ -179,6 +179,211 @@ paths:
           description: Successfully deleted user.
         '401':
           description: Not authorized to delete this user.
+          
+  '/users/{user_id}/signups':
+    parameters:
+      - name: user_id
+        in: path
+        description: ID of the User
+        required: true
+        type: integer
+    get: 
+      description: Fetch the user's future commitments to volunteer.
+      operationId: GetUserSignups
+      responses:
+        '200':
+          description: Successful query.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/signup'
+        '400':
+          description: Bad request.
+        '404':
+          description: Invalid resource - probably an invalid User ID.
+    post:
+      description: Sign up to Volunteer at a particular site on a particular day.
+      operationId: CreateUserSignup
+      parameters:
+        - name: signup
+          in: body
+          description: Date and Location that the user is volunteering to help.
+          schema:
+            $ref: '#/definitions/signup'
+      responses:
+        '200':
+          description: Successfully submitted SignUp.
+          schema:
+            $ref: '#/definitions/signup'
+        '400':
+          description: Bad request. Check that the date is in the future, and that the site slug is valid.
+        '404': 
+          description: Invalid resource - probably an invalid User ID.
+  '/users/{user_id}/signups/{signup_id}':
+    parameters:
+      - name: user_id
+        in: path
+        description: ID of the User
+        required: true
+        type: integer
+      - name: signup_id
+        in: path
+        description: ID of the particular SignUp to be updated
+        required: true
+        type: integer
+    get:
+      description: Fetch details for this SignUp record.
+      operationId: GetUserSignupDetails
+      responses:
+        '200':
+          description: Successfully fetched details.
+          schema:
+            $ref: '#/definitions/signup'
+        '404':
+          description: Invalid resource. Either the user_id or signup_id are invalid.
+    put:
+      description: Update the details of this SignUp.
+      operationId: UpdateUserSignup
+      responses:
+        '200':
+          description: Successfully updated this SignUp.
+          schema:
+            $ref: '#/definitions/signup'
+        '404':
+          description: Invalid resource. Either the user_id or signup_id are invalid.
+    delete:
+      description: Delete this SignUp
+      operationId: DeleteUserSignup
+      responses:
+        '200':
+          description: Successfully deleted this SignUp.
+        '404':
+          description: Invalid resource. Either the user_id or signup_id are invalid.
+  /notifications:
+    get:
+      description: Fetch a list of all active notifications.
+      operationId: GetNotifications
+      responses:
+        '200':
+          description: Successfully fetched all active notifications
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/notification'
+    post:
+      description: Create a notification
+      operationId: CreateNotification
+      parameters:
+        - name: notification
+          in: body
+          description: The notification details
+          schema:
+            $ref: '#/definitions/notification'
+      responses:
+        '200':
+          description: Successfully created a notification
+          schema:
+            $ref: '#/definitions/notification'
+        '400':
+          description: Bad request. Missing text or date not in the future.
+  '/notifications/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: ID of the Notification to update
+        required: true
+        type: integer
+    get:
+      description: Fetch the Notification details
+      operationId: GetNotificationDetails
+      responses:
+        '200':
+          description: Successfully updated the notification
+          schema:
+            $ref: '#/definitions/notification'
+        '404':
+          description: Invalid resource - the ID was not a valid Notification ID
+    put:
+      description: Update the Notification data.
+      operationId: UpdateNotificationDetails
+      responses:
+        '200':
+          description: Successfully updated the notification
+          schema:
+            $ref: '#/definitions/notification'
+        '404':
+          description: Invalid resource - the ID was not a valid Notification ID
+    delete:
+      description: Delete the Notification
+      operationId: DeleteNotification
+      responses:
+        '200':
+          description: Successfully deleted the notification
+        '404':
+          description: Invalid resource - the ID was not a valid Notification ID
+  /suggestions:
+    get:
+      description: Fetch a list of all suggestions.
+      operationId: GetSuggestions
+      responses:
+        '200':
+          description: Successfully fetched all suggestions
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/suggestion'
+    post:
+      description: Create a Suggestion
+      operationId: CreateSuggestion
+      parameters:
+        - name: suggestion
+          in: body
+          description: The suggestion details
+          schema:
+            $ref: '#/definitions/suggestion'
+      responses:
+        '200':
+          description: Successfully created a suggestion
+          schema:
+            $ref: '#/definitions/suggestion'
+        '400':
+          description: Bad request. Missing text or status field.
+  '/suggestions/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: ID of the Suggestion to update
+        required: true
+        type: integer
+    get:
+      description: Fetch the Suggestion details
+      operationId: GetSuggestionDetails
+      responses:
+        '200':
+          description: Successfully updated the suggestion
+          schema:
+            $ref: '#/definitions/suggestion'
+        '404':
+          description: Invalid resource - the ID was not a valid Suggestion ID
+    put:
+      description: Update the Suggestion data.
+      operationId: UpdateSuggestionDetails
+      responses:
+        '200':
+          description: Successfully updated the suggestion
+          schema:
+            $ref: '#/definitions/suggestion'
+        '404':
+          description: Invalid resource - the ID was not a valid Suggestion ID
+    delete:
+      description: Delete the Suggestion
+      operationId: DeleteSuggestion
+      responses:
+        '200':
+          description: Successfully deleted the suggestion
+        '404':
+          description: Invalid resource - the ID was not a valid Suggestion ID
+    
   /login:
     post:
       description: Logs a user in. Pass in the user's email and password via JSON.
@@ -203,7 +408,52 @@ paths:
             properties:
               errors:
                 type: string
+                
 definitions:
+  signup:
+    description: A Volunteer creates a Signup record to signal his intent to work a particular site on a particular date.
+    required:
+      - date
+      - site
+    properties:
+      id:
+        type: integer
+        description: Auto-generated unique identifier for this record. Generated and returned when the POST operation is executed.
+        example: 43
+      site:
+        type: string
+        description: The Site Slug where the User intends to work
+        example: the-alamo
+      date:
+        type: string
+        format: date
+        description: The day on which the user is volunteering to work
+        example: 2018-02-20
+        
+  suggestion:
+    description: A suggestion for improvement, either to the VITA program or to the software tools.
+    properties:
+      id:
+        type: integer
+        example: 42
+      text:
+        type: string
+        example: It would be nice if the website was less ugly.
+      user:
+        type: integer
+        description: The ID for the User who created the suggestion.
+        example: 6
+  notification:
+    description: A push notification sent to one or more Users
+    required:
+      - text
+    properties:
+      id:
+        type: integer
+        example: 1
+      text:
+        type: string
+        example: Alert! The Alamo site will be unavailable next Thursday!
   unauthorized:
     description: >-
       Returned when an API is called without a Cookie identifying a User with
@@ -255,7 +505,7 @@ definitions:
         type: integer
         example: 1
       backup_coordinator:
-        description: 'The User ID for the Site\'s backup Site Coordinator.'
+        description: 'The User ID for the Site backup Site Coordinator.'
         type: integer
         example: 2
       sitestatus:
@@ -280,7 +530,6 @@ definitions:
     required:
       - id
       - open
-      - site_slug
       - is_closed
     properties:
       id:
