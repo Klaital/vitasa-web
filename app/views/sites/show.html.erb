@@ -84,7 +84,7 @@
 </p>
 
 <p>
-  <strong>Calendar Overrides</strong>
+  <strong>Calendar</strong>
   <table>
     <tr>
       <th>Day</th>
@@ -101,6 +101,22 @@
     </tr>
     <% end %>
   </table>
+</p>
+
+<p>
+<strong>Volunteer Signups</strong>
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Name</th>
+  </tr>
+  <% @site.signups.order(:date => :asc).each do |signup| %>
+    <tr>
+      <td><%= signup.date %></td>
+      <td><%= link_to signup.user.name, user_path(signup.user) %></td>
+    </tr>
+  <% end %>
+</table>
 </p>
 
 <%= link_to 'Edit', edit_site_path(@site) %> |

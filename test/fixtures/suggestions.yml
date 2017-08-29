@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  subject: MyString
-  details: MyText
-  user_id: 1
+  subject: A suggestion
+  details: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+  user: volunteer_one
 
 two:
-  subject: MyString
-  details: MyText
-  user_id: 1
+  subject: Feedback
+  details: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+  user: one

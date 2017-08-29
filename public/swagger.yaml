@@ -512,7 +512,6 @@ definitions:
         type: string
         example: Open
         enum:
-          - Open
           - Closed
           - Accepting
           - NearLimit
@@ -521,6 +520,17 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/calendar'
+      work_history:
+        type: array
+        description: The work already performed at this site.
+        items:
+          $ref: '#/definitions/signup'
+      work_intents:
+        type: array
+        description: The volunteers scheduled to work at this site
+        items:
+          $ref: '#/definitions/signup'
+      
   calendar:
     description: >-
       A single calendar entry for a single site, overriding their open hours for
@@ -631,6 +641,19 @@ definitions:
             - SiteCoordinator
             - SiteCoordinatorInactive
             - Admin
+            - Volunteer
+            - Reviewer
+      work_history:
+        type: array
+        description: The work already performed by this user.
+        items:
+          $ref: '#/definitions/signup'
+      work_intents:
+        type: array
+        description: This volunteer's scheduled work.
+        items:
+          $ref: '#/definitions/signup'
+      
   newUser:
     required:
       - email

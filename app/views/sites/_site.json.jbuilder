@@ -23,3 +23,11 @@ json.backup_coordinator site.backup_coordinator_id
 json.url site_url(site.slug, format: :json)
 
 json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :calendar
+
+json.work_history Signup.where('site_id == :site_id AND date < :date', {:site_id => site.id, :date => Date.today}), 
+                    partial: 'signups/signup', 
+                    as: :signup
+
+json.work_intents Signup.where('site_id == :site_id AND date >= :date', {:site_id => site.id, :date => Date.today}), 
+                    partial: 'signups/signup', 
+                    as: :signup

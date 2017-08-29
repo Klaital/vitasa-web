@@ -155,7 +155,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
   test "should update site when logged in as a Admin" do
     post login_path, params: {session: {email: @admin.email, password: 'user-two-password'}}
     patch site_url(@site), params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
-    assert_redirected_to(site_url(@site))
+    assert_redirected_to(site_url(@site.slug))
   end
 
   test "should destroy site when logged in as a Admin" do
@@ -188,7 +188,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
   test "should get edit for an owned site when logged in as a SiteCoordinator" do
     post login_path, params: {session: {email: @sc1.email, password: 'user-three-password'}}
-    get edit_site_url(@site)
+    get edit_site_url(@site.slug)
     assert_response :success
   end
 
@@ -201,8 +201,8 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
   test "should update site when logged in as a SiteCoordinator" do
     post login_path, params: {session: {email: @sc1.email, password: 'user-three-password'}}
-    patch site_url(@site), params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
-    assert_redirected_to(site_url(@site))
+    patch site_url(@site.slug), params: { site: { city: @site.city, latitude: @site.latitude, longitude: @site.longitude, name: @site.name, sitecoordinator: @site.sitecoordinator, sitestatus: @site.sitestatus, state: @site.state, street: @site.street, zip: @site.zip } }
+    assert_redirected_to(site_url(@site.slug))
   end
 
   test "should not update site when logged in as the wrong SiteCoordinator" do
@@ -214,7 +214,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
   test "should not destroy site when logged in as a SiteCoordinator" do
     post login_path, params: {session: {email: @sc1.email, password: 'user-three-password'}}
     assert_no_difference('Site.count') do
-      delete site_url(@site)
+      delete site_url(@site.slug)
     end
 
     assert_response :unauthorized

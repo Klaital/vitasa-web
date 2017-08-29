@@ -14,12 +14,7 @@ class UsersController < ApplicationController
     respond_to do |format|
       if is_admin?
         format.html { render :index }
-        format.json { render json: @users.collect {|user|
-          {
-            email: user.email,
-            permissions: user.roles.collect {|r| r.name }
-          }
-        }}
+        format.json { render :index }
       else
         format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
         format.json { render json: { :errors => 'Not authorized' }, :status => :unauthorized }
@@ -88,11 +83,8 @@ class UsersController < ApplicationController
   def show
     respond_to do |format|
       if logged_in? && (current_user == @user || is_admin?)
-        format.html { render :show}
-        format.json { render :json => {
-          :email => @user.email,
-          :sites => Site.where(:sitecoordinator => @user.id).collect {|site| site.slug}
-        }}
+        format.html { render :show }
+        format.json { render :show }
       else
         format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
         format.json { render :json => { :errors => 'Not authorized' }, :status => :unauthorized }
@@ -120,6 +112,10 @@ class UsersController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = User.find(params[:id])
+    unless @user.nil?
+      @work_history = Signup.where('user_id == :user_id AND date < :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
+      @work_intents = Signup.where('user_id == :user_id AND date >= :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
+    end
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

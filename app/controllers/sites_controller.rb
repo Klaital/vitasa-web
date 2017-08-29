@@ -126,6 +126,10 @@ class SitesController < ApplicationController
         return
       end
 
+      @work_history = Signup.where('site_id == :site_id AND date < :date', {:site_id => @site.id, :date => Date.today}).order(:date => :asc)
+      @work_intents = Signup.where('site_id == :site_id AND date >= :date', {:site_id => @site.id, :date => Date.today}).order(:date => :asc)
+      
+
       @sitecoordinator = if @site.sitecoordinator.nil?
         nil
       else

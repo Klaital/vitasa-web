@@ -9,3 +9,37 @@
     </section>
   </aside>
 </div>
+
+<div class="signups">
+  <h2>Site Signups</h2>
+  <table>
+    <tr>
+      <th>Site</th>
+      <th>Date</th>
+    </tr>
+    <% @work_intents.each do |signup| %>
+      <tr>
+        <td><%= link_to signup.site.name, site_path(signup.site.slug) %></td>
+        <td><%= signup.date %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <h2>Work History</h2>
+  <table>
+      <tr>
+        <th>Site</th>
+        <th>Date</th>
+        <th>Hours Worked</th>
+        <th>Approved</th>
+      </tr>
+      <% @work_history.each do |work_record| %>
+        <tr>
+          <td><%= link_to work_record.site.name, site_path(work_record.site.slug) %></td>
+          <td><%= work_record.date %></td>
+          <td><%= work_record.hours %></td>
+          <td><%= work_record.approved %></td>
+        </tr>
+      <% end %>
+  </table>
+</div>

@@ -24,6 +24,15 @@ class SuggestionsController < ApplicationController
   # POST /suggestions
   # POST /suggestions.json
   def create
+    unless logged_in?
+      respond_to do |format|
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      end
+      return
+    end
+
+    # Any logged-in user should be able to create a suggestion. It will be automatically attributed to them.
     @suggestion = Suggestion.new(suggestion_params)
     @suggestion.user = current_user
     @suggestion.status = 'Open'
@@ -42,13 +51,25 @@ class SuggestionsController < ApplicationController
   # PATCH/PUT /suggestions/1
   # PATCH/PUT /suggestions/1.json
   def update
+    unless logged_in?
+      respond_to do |format|
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      end
+      return
+    end
     respond_to do |format|
-      if @suggestion.update(suggestion_params)
-        format.html { redirect_to @suggestion, notice: 'Suggestion was successfully updated.' }
-        format.json { render :show, status: :ok, location: @suggestion }
+      if current_user == @suggestion.user || is_admin? || current_user.has_role?('Reviewer')
+        if @suggestion.update(suggestion_params)
+          format.html { redirect_to @suggestion, notice: 'Suggestion was successfully updated.' }
+          format.json { render :show, status: :ok, location: @suggestion }
+        else
+          format.html { render :edit }
+          format.json { render json: @suggestion.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render :edit }
-        format.json { render json: @suggestion.errors, status: :unprocessable_entity }
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
       end
     end
   end
@@ -58,7 +79,7 @@ class SuggestionsController < ApplicationController
   def destroy
     @suggestion.destroy
     respond_to do |format|
-      format.html { redirect_to suggestions_url, notice: 'Suggestion was successfully destroyed.' }
+      format.html { redirect_to new_suggestion_url, notice: 'Suggestion was successfully deleted.' }
       format.json { head :no_content }
     end
   end
@@ -71,6 +92,16 @@ class SuggestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def suggestion_params
-      params.require(:suggestion).permit(:subject, :details, :user_id, :status)
+      allowed_fields = if current_user == @suggestion.user
+        [ :subject, :details ]
+      elsif is_admin?
+        [ :subject, :details, :status ]
+      elsif current_user.has_role?('Reviewer')
+        [ :status ]
+      else
+        []
+      end
+        
+      params.require(:suggestion).permit(allowed_fields)
     end
 end

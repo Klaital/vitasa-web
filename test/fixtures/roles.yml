@@ -12,3 +12,6 @@ site-coordinator-inactive:
 admin:
   name: Admin
 
+volunteer:
+  name: Volunteer
+

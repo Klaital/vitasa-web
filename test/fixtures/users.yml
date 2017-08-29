@@ -19,3 +19,13 @@ three:
 four:
   email: user-four@example.org
   password_digest: <%= User.digest('user-four-password') %>
+
+# Volunteer One has no signups
+volunteer_one:
+  email: volunteer-one@example.org
+  password_digest: <%= User.digest('volunteer-one-password') %>
+
+# Volunteer Two has some signups
+volunteer_two:
+  email: volunteer-two@example.org
+  password_digest: <%= User.digest('volunteer-two-password') %>

@@ -1,5 +1,6 @@
 class Site < ApplicationRecord
     has_many :calendars
+    has_many :signups
 
     VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
     validates :sitestatus, inclusion: { 
