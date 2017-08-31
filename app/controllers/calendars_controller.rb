@@ -96,7 +96,8 @@ class CalendarsController < ApplicationController
 
     def calendar_params
       params.require(:calendar).permit(:date, 
-            :open, :close, :is_closed, :notes
+            :open, :close, :is_closed, :notes,
+            :efilers_needed
           )
     end
 end

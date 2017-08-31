@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170831172356) do
+ActiveRecord::Schema.define(version: 20170831182315) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 20170831172356) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.boolean  "backup_coordinator_today"
+    t.integer  "efilers_needed"
     t.index ["site_id"], name: "index_calendars_on_site_id"
   end
 
@@ -101,6 +102,13 @@ ActiveRecord::Schema.define(version: 20170831172356) do
     t.time     "sunday_open"
     t.time     "sunday_close"
     t.integer  "backup_coordinator_id"
+    t.integer  "monday_efilers"
+    t.integer  "tuesday_efilers"
+    t.integer  "wednesday_efilers"
+    t.integer  "thursday_efilers"
+    t.integer  "friday_efilers"
+    t.integer  "saturday_efilers"
+    t.integer  "sunday_efilers"
     t.index ["slug"], name: "index_sites_on_slug"
   end
 

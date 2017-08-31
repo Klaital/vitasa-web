@@ -1,7 +1,9 @@
 json.extract! site, :id, :name, :slug,
     :street, :city, :state, :zip, :latitude, :longitude, :google_place_id,
     :sitecoordinator, 
-    :sitestatus
+    :sitestatus,
+    :monday_efilers, :tuesday_efilers, :wednesday_efilers, 
+    :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers
 
 json.monday_open site.monday_open.to_s
 json.monday_close site.monday_close.to_s
@@ -31,3 +33,4 @@ json.work_history Signup.where('site_id == :site_id AND date < :date', {:site_id
 json.work_intents Signup.where('site_id == :site_id AND date >= :date', {:site_id => site.id, :date => Date.today}), 
                     partial: 'signups/signup', 
                     as: :signup
+
