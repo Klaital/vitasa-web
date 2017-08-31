@@ -6,6 +6,7 @@ class UserTest < ActiveSupport::TestCase
     user.email = 'test1@example.org'
     user.password = 'wanchan'
     user.password_confirmation = 'wanchan'
+    user.certification = 'SiteCoordinator'
     
     assert user.valid?
     assert user.save

@@ -66,7 +66,7 @@ class UsersController < ApplicationController
     end
 
     # Only update the Role Grants if any are set at all
-    new_roles = params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact
+    new_roles = params.has_key?(:role_ids) ? (params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact) : []
     @user.roles = new_roles unless new_roles.empty?
 
     respond_to do |format|
@@ -120,6 +120,7 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    logger.info("Raw User Params: #{params}")
+    params.require(:user).permit(:name, :email, :password, :password_confirmation, :certification, :phone)
   end
 end

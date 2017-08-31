@@ -11,6 +11,17 @@
       <%= f.label :email %>
       <%= f.email_field :email, class: 'form-control' %>
 
+      <%= f.label :phone %>
+      <%= f.telephone_field :phone, class: 'form-control' %>
+
+      <%= f.label :certification %>
+      <%= f.select :certification,
+            options_for_select(
+              User::VALID_CERTIFICATION_LEVELS,
+              @user.certification
+        )
+      %>
+
     <% if current_user == @user %>
         <h3> Password Reset </h3>
       <%= f.label :password %>
@@ -19,6 +30,7 @@
       <%= f.password_field :password_confirmation, class: 'form-control' %>
     <% end %>
     
+      <% if is_admin? %>
         <h3> Update Role Grants </h3>
         <p>(hold down the Ctrl key while clicking to select or deselect roles)</p>
         <%= select_tag "role_ids[]", 
@@ -33,7 +45,7 @@
                     size: Role::VALID_ROLE_NAMES.length
                 }
         %>
-        
+      <% end %>
       <%= f.submit "Update account", class: "btn btn-primary" %>
     <% end %>
   </div>

@@ -111,13 +111,41 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  # test "should not be able to update a user when not logged in" do
-  #   user = users(:one)
-  #   get edit_user_url(user.id)
-  #   assert_response :unauthorized
+  test "should not be able to update a user when not logged in" do
+    user = users(:one)
+    get edit_user_url(user.id)
+    assert_response :unauthorized
 
-  #   patch user_url(user), params: { user: { email: 'user-one-new@example.org' } }
-  #   assert_response :unauthorized
-  # end
+    patch user_url(user), params: { user: { email: 'user-one-new@example.org' } }
+    assert_response :unauthorized
+  end
 
+  test "should be able to update a user profile when logged in" do
+    user = users(:one)
+    post login_url, 
+    params: {
+      email: user.email,
+      password: 'user-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+
+    # Query Under Test
+    patch user_url(user), 
+      params: {
+        certification: 'SiteCoordinator', phone: '4255550000'
+      }.to_json,  
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+      }
+    assert_response :success
+  end
 end

@@ -13,6 +13,14 @@ class User < ApplicationRecord
     end
   end
 
+  before_validation do
+    # Normalize the submitted phone number
+    unless self.phone.nil?
+      tmp = self.phone.gsub(/[^\d]/, '')
+      self.phone = "#{tmp[0..2]}-#{tmp[3..5]}-#{tmp[6..-1]}"
+    end
+  end
+
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email,
             presence: true,
@@ -25,6 +33,21 @@ class User < ApplicationRecord
             presence: true,
             length: { minimum: 6 },
             on: :create
+
+  VALID_CERTIFICATION_LEVELS = %w{ Basic Advanced SiteCoordinator }
+  validates :certification, inclusion: { 
+    in: VALID_CERTIFICATION_LEVELS,
+    message: "%{value} is not a valid certification level" 
+  }
+
+  VALID_PHONE_REGEX = /\A\d{3}-\d{3}-\d{4}\z/
+  validates :phone,
+            format: {
+              with: VALID_PHONE_REGEX,
+              message: 'The phone number must have 10 digits.'
+            },
+            allow_blank: true
+
 
   # Returns the hash digest of the given string.
   def User.digest(s)
