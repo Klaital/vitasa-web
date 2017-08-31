@@ -6,7 +6,7 @@
       <ul>
         <li><%= link_to 'About', about_path %></li>
         <% if logged_in? %>
-          <li><%= link_to 'Feedback', new_suggestion_path %></li>
+          <li><%= link_to I18n.t('feedback'), new_suggestion_path %></li>
         <% else %>
           <li><%= link_to 'Contact Us', contact_path %></li>
         <% end %>
