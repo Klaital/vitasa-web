@@ -58,13 +58,14 @@ class SuggestionsController < ApplicationController
       end
       return
     end
+
     respond_to do |format|
       if current_user == @suggestion.user || is_admin? || current_user.has_role?('Reviewer')
         if @suggestion.update(suggestion_params)
           format.html { redirect_to @suggestion, notice: 'Suggestion was successfully updated.' }
           format.json { render :show, status: :ok, location: @suggestion }
         else
-          format.html { render :edit }
+          format.html { render :edit, :status => :unprocessable_entity }
           format.json { render json: @suggestion.errors, status: :unprocessable_entity }
         end
       else
@@ -77,6 +78,15 @@ class SuggestionsController < ApplicationController
   # DELETE /suggestions/1
   # DELETE /suggestions/1.json
   def destroy
+    # Admins and the creating user are permitted to destroy a suggestion. No one else
+    unless logged_in? && (is_admin? || @suggestion.user == current_user)
+      respond_to do |format|
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      end
+      return
+    end
+
     @suggestion.destroy
     respond_to do |format|
       format.html { redirect_to new_suggestion_url, notice: 'Suggestion was successfully deleted.' }
@@ -92,10 +102,10 @@ class SuggestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def suggestion_params
-      allowed_fields = if current_user == @suggestion.user
-        [ :subject, :details ]
-      elsif is_admin?
+      allowed_fields = if is_admin?
         [ :subject, :details, :status ]
+      elsif !@suggestion.nil? && current_user == @suggestion.user
+        [ :subject, :details ]
       elsif current_user.has_role?('Reviewer')
         [ :status ]
       else
