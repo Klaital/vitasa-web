@@ -44,4 +44,22 @@
         </tr>
       <% end %>
   </table>
+
+  <h2>Suggestions Submitted</h2>
+  <table>
+    <tr>
+      <th>Subject</th>
+      <th>Text</th>
+      <th>From Public?</th>
+      <th>Status</th>
+    </tr>
+    <% @suggestions.each do |suggestion| %>
+      <tr>
+        <td><%= link_to suggestion.subject, suggestion_path(suggestion) %></td>
+        <td><%= suggestion.details %></td>
+        <td><%= suggestion.from_public %></td>
+        <td><%= suggestion.status %></td>
+      </tr>
+    <% end %>
+  </table>
 </div>

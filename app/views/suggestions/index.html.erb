@@ -8,6 +8,7 @@
       <th>ID</th>
       <th>Subject</th>
       <th>Opened By</th>
+      <th>From Client?</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -18,6 +19,7 @@
         <td><%= suggestion.id %></td>
         <td><%= suggestion.subject %></td>
         <td><%= suggestion.user.name %></td>
+        <td><%= suggestion.from_public %></td>
         <td><%= link_to 'Show', suggestion %></td>
         <td><%= link_to 'Edit', edit_suggestion_path(suggestion) %></td>
         <td><%= link_to 'Destroy', suggestion, method: :delete, data: { confirm: 'Are you sure?' } %></td>

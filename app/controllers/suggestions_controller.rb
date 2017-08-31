@@ -4,7 +4,12 @@ class SuggestionsController < ApplicationController
   # GET /suggestions
   # GET /suggestions.json
   def index
-    @suggestions = Suggestion.all
+    if params.has_key?(:user_id)
+      @suggestions = Suggestion.where(user_id: params[:user_id])
+    else
+      @suggestions = Suggestion.all
+    end
+    
   end
 
   # GET /suggestions/1
@@ -103,9 +108,9 @@ class SuggestionsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def suggestion_params
       allowed_fields = if is_admin?
-        [ :subject, :details, :status ]
+        [ :subject, :details, :status, :from_public ]
       elsif !@suggestion.nil? && current_user == @suggestion.user
-        [ :subject, :details ]
+        [ :subject, :details, :from_public ]
       elsif current_user.has_role?('Reviewer')
         [ :status ]
       else

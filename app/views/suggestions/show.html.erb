@@ -20,5 +20,10 @@
   <%= @suggestion.status %>
 </p>
 
+<p>
+  <strong>Public Feedback:</strong>
+  <%= @suggestion.from_public %>
+</p>
+
 <%= link_to 'Edit', edit_suggestion_path(@suggestion) %> |
 <%= link_to 'Back', suggestions_path %>
