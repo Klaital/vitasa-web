@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   # User Handling
   resources :users
-  get '/signup', to: 'users#new'
+  get '/signup', to: 'users#new', as: :register
   post '/signup',  to: 'users#create'
   
   get '/login',    to: 'sessions#new'
