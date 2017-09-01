@@ -14,6 +14,9 @@ class User < ApplicationRecord
   end
 
   before_validation do
+    # By default, users get no certification level
+    self.certification ||= 'None'
+
     # Normalize the submitted phone number
     unless self.phone.nil?
       tmp = self.phone.gsub(/[^\d]/, '')
@@ -34,7 +37,7 @@ class User < ApplicationRecord
             length: { minimum: 6 },
             on: :create
 
-  VALID_CERTIFICATION_LEVELS = %w{ Basic Advanced SiteCoordinator }
+  VALID_CERTIFICATION_LEVELS = %w{ None Basic Advanced SiteCoordinator }
   validates :certification, inclusion: { 
     in: VALID_CERTIFICATION_LEVELS,
     message: "%{value} is not a valid certification level" 

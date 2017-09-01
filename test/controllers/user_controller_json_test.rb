@@ -139,7 +139,7 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     # Query Under Test
     patch user_url(user), 
       params: {
-        certification: 'SiteCoordinator', phone: '4255550000'
+        certification: 'SiteCoordinator', phone: '4255550000',
       }.to_json,  
       headers: {
         'Accept' => 'application/json',
@@ -148,4 +148,53 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
       }
     assert_response :success
   end
+
+  test "should be able to change my password as a user who is logged in" do
+    user = users(:one)
+    post login_url, 
+    params: {
+      email: user.email,
+      password: 'user-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+
+    # Query Under Test
+    patch user_url(user), 
+      params: {
+        password: 'new-password-123',
+        password_confirmation: 'new-password-123'
+      }.to_json,  
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+      }
+    assert_response :success
+  end
+
+
+  test "should be able to register a new user" do
+    user = users(:one)
+    post register_url,
+      params: {
+        email: 'register-new-json-user@example.com',
+        password: 'user-one-password',
+        password_confirmation: 'user-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json',
+    }
+
+    assert_response :success
+  end
+
+
 end

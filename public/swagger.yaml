@@ -117,6 +117,12 @@ paths:
         '401':
           description: Not logged in as Admin.
     post:
+      parameters: 
+        - name: user
+          in: body
+          description: The required user signup data
+          schema:
+            $ref: '#/definitions/newUser'
       description: >-
         Create a new user. The new user will get the NewUser Role until approved
         by an admin.
@@ -125,7 +131,7 @@ paths:
         '200':
           description: Successfully created a new user.
           schema:
-            $ref: '#/definitions/newUser'
+            $ref: '#/definitions/userDetails'
         '400':
           description: >-
             Bad Request. Did not send all required fields, or the password did
@@ -429,7 +435,35 @@ definitions:
         format: date
         description: The day on which the user is volunteering to work
         example: 2018-02-20
-        
+  work_history:
+    description: A Signup that is in the past. It should have Hours worked, and can be Approved by the Site Coordinator.
+    required:
+      - date
+      - site
+      - hours
+      - approved
+    properties:
+      id:
+        type: integer
+        description: Auto-generated unique identifier for this record. Generated and returned when the POST operation is executed.
+        example: 43
+      site:
+        type: string
+        description: The Site Slug where the User intends to work
+        example: the-alamo
+      date:
+        type: string
+        format: date
+        description: The day on which the user is volunteering to work
+        example: 2017-02-20
+      hours:
+        type: float
+        description: The number of hours worked at this site on the specified day.
+        example: 4.5
+      approved:
+        type: boolean
+        description: Indicates whether the Site Coordinator has agreed that the hours recorded are correct.
+        example: true
   suggestion:
     description: A suggestion for improvement, either to the VITA program or to the software tools.
     properties:
@@ -524,7 +558,7 @@ definitions:
         type: array
         description: The work already performed at this site.
         items:
-          $ref: '#/definitions/signup'
+          $ref: '#/definitions/work_history'
       work_intents:
         type: array
         description: The volunteers scheduled to work at this site
@@ -647,13 +681,23 @@ definitions:
         type: array
         description: The work already performed by this user.
         items:
-          $ref: '#/definitions/signup'
+          $ref: '#/definitions/work_history'
       work_intents:
         type: array
         description: This volunteer's scheduled work.
         items:
           $ref: '#/definitions/signup'
-      
+      certification:
+        type: string
+        enum:
+          - None
+          - Basic
+          - Advanced
+          - SiteCoordinator
+      phone:
+        type: string
+        description: User's contact phone number
+        example: 425-555-5555
   newUser:
     required:
       - email
@@ -663,6 +707,7 @@ definitions:
       email:
         type: string
         format: email
+        example: user@example.org
       password:
         type: string
         format: password

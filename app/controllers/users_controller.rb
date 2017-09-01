@@ -30,15 +30,22 @@ class UsersController < ApplicationController
     end
   end
   def create
-    @user = User.new(user_params)
+    merged_user_params = user_params.merge({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
+
+    @user = User.new(merged_user_params)
     if @user.save
       # Create the starting role as well
       @user.roles = [ Role.find_by(name: 'NewUser') ]
       log_in @user
-      flash[:success] = "Welcome, new user!"
-      redirect_to @user
+      respond_to do |format|
+        format.html { flash[:success] = "Welcome, new user!"; redirect_to @user }
+        format.json { render @user, status: 201 }
+      end
     else
-      render 'new'
+      respond_to do |format|
+        format.html {render 'new'}
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -60,17 +67,19 @@ class UsersController < ApplicationController
       return
     end
     
-    if user_params[:password] == ''
-      user_params.delete(:password)
-      user_params.delete(:password_confirmation)
+    prepared_user_params = user_params.dup
+    if prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
+      prepared_user_params.delete(:password)
+      prepared_user_params.delete(:password_confirmation)
     end
+
 
     # Only update the Role Grants if any are set at all
     new_roles = params.has_key?(:role_ids) ? (params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact) : []
     @user.roles = new_roles unless new_roles.empty?
 
     respond_to do |format|
-      if @user.update(user_params)
+      if @user.update(prepared_user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
       else
@@ -122,6 +131,7 @@ class UsersController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
     logger.info("Raw User Params: #{params}")
+    params[:user].merge!({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
     params.require(:user).permit(:name, :email, :password, :password_confirmation, :certification, :phone)
   end
 end
