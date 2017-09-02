@@ -23,11 +23,9 @@ class SessionsController < ApplicationController
     user = User.find_by(email: email)
     if user && user.authenticate(password)
       log_in user
-      if json_request
-        render :json => { :message  => 'Login successful'}, :status => 200
-        response.set_header('Content-Type', 'application/json')
-      else
-        redirect_to user
+      respond_to do |format|
+        format.json { render :show, status: :ok, location: user }
+        format.html { redirect_to user }
       end
     else
       if json_request

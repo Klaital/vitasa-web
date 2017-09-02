@@ -122,8 +122,8 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
     unless @user.nil?
-      @work_history = Signup.where('user_id == :user_id AND date < :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
-      @work_intents = Signup.where('user_id == :user_id AND date >= :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
+      @work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
+      @work_intents = Signup.where('user_id = :user_id AND date >= :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
       @suggestions  = Suggestion.where(user_id: @user.id)
     end
   end
