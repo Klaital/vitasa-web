@@ -128,6 +128,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def self.user_metadata(user_id)
+    work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
+    work_intents = Signup.where('user_id = :user_id AND date >= :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
+    suggestions  = Suggestion.where(user_id: user_id)
+    [ work_history, work_intents, suggestions ]
+  end
+
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
     logger.info("Raw User Params: #{params}")
