@@ -1,6 +1,7 @@
 class SuggestionsController < ApplicationController
   before_action :set_suggestion, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :verify_authenticity_token
+  
   # GET /suggestions
   # GET /suggestions.json
   def index

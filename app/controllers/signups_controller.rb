@@ -1,6 +1,7 @@
 class SignupsController < ApplicationController
   before_action :set_signup, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :verify_authenticity_token
+  
   # GET /signups
   # GET /signups.json
   def index
