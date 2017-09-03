@@ -466,13 +466,29 @@ definitions:
         example: true
   suggestion:
     description: A suggestion for improvement, either to the VITA program or to the software tools.
+    require:
+      - subject
+      - details
     properties:
       id:
         type: integer
         example: 42
-      text:
+      subject:
+        type: string
+        example: Ugly website
+      details:
         type: string
         example: It would be nice if the website was less ugly.
+      status:
+        type: string
+        enum: 
+          - Open 
+          - Closed 
+          - WontFix 
+          - InProgress
+      from_public:
+        type: boolean
+        description: Flag indicates that the user on record merely submitted this suggestion, but that it came from the public (e.g., a client)
       user:
         type: integer
         description: The ID for the User who created the suggestion.
