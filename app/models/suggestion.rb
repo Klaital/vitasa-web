@@ -6,6 +6,7 @@ class Suggestion < ApplicationRecord
     # Set default values
     def init
         self.status ||= 'Open'
+        self.from_public = false if self.from_public.nil?
     end
     
     VALID_STATUSES = %w{ Open Closed WontFix InProgress }
