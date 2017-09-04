@@ -425,17 +425,80 @@ paths:
         '200':
           description: User Logged In
           schema:
-            properties:
-              message:
-                type: string
+            $ref: '#/definitions/userDetails'
         '401':
           description: Bad credentials
           schema:
             properties:
               errors:
                 type: string
-                
+  /schedule:
+    get:
+      description: An aggregate view of all sites over the specified time range, describing their hours, location, efilers required and currently signed up, and whether the logged-in user has already signed up for it.
+      operationId: GetAggregateSchedule
+      responses:
+        '200':
+          description: Fetched Schedule for all sites.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/schedule'
+
 definitions:
+  schedule:
+    description: An aggregate view of one site on one day, describing their hours, location, efilers required and currently signed up, and whether the logged-in user has already signed up for it.
+    required:
+      - date
+      - sites
+    properties:
+      date:
+        type: string
+        format: date
+        example: '2018-02-01'
+      sites:
+        type: array
+        items:
+          $ref: '#/definitions/siteDaySchedule'
+  siteDaySchedule:
+    description: A consolidated view of a single site, on a single date. It shows the actual hours and efiler requirements.
+    required:
+      - slug
+      - efilers_needed
+      - efilers_signed_up
+      - is_closed
+      - open
+      - close
+    properties:
+      slug: 
+        type: string
+        description: The Site Slug
+        example: cody-library
+      efilers_needed:
+        type: integer
+        description: The number of volunteer eFilers that the Site Coordinator has requested for the day.
+        example: 5
+      efilers_signed_up:
+        type: integer
+        description: The number of Volunteers who have submitted a Signup for this site on this day.
+        example: 4
+      is_closed:
+        type: boolean
+        description: Indicates whether the site is closed for this day.
+        example: false
+      open:
+        type: string
+        format: date
+        description: The actual open time for the site on this date.
+        example: '09:30:00'
+      close:
+        type: string
+        format: date
+        description: The actual closing time for the site on this date.
+        example: '17:15:00'
+      this_user_signup:
+        type: boolean
+        description: Indicates whether the logged-in user has submitted a Signup for this date+site.
+        example: true
   signup:
     description: A Volunteer creates a Signup record to signal his intent to work a particular site on a particular date.
     required:

@@ -21,6 +21,6 @@ Rails.application.routes.draw do
   post '/login',   to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
 
-  get '/mon', to: 'site_hits#index'
-
+  # These methods are for aggregating data into a single view, intended for driving a single UI screen on the app
+  get '/schedule', to: 'aggregates#schedule'
 end
