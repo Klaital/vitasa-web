@@ -70,12 +70,9 @@ class SignupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def signup_params
-      if params.include?(:site)
-        params[:site_id] = Site.find_by(slug: params[:site])
-      end
-      if params.include(:user)
-        params[:user_id] = params[:user]
-      end
-      params.require(:signup).permit(:site_id, :date, :user_id)
+      p = params.require(:signup).permit(:site, :user, :site_id, :date, :user_id)
+      p[:site_id] = Site.find_by(slug: params[:site]).id unless params[:site].nil?
+      p[:user_id] = params[:user] unless params[:user].nil?
+      p
     end
 end

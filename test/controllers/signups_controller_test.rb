@@ -49,6 +49,38 @@ class SignupsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to signup_url(Signup.last)
   end
 
+  test "should create signup from JSON" do
+    # Login
+    post login_url, 
+    params: {
+      email: @new_user.email,
+      password: 'user-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+
+    # Query Under Test
+    assert_difference('Signup.count', 1) do
+      post signups_url, params: {
+        date: Date.today + 1,
+        site: @site.slug,
+        user: @volunteer.id
+      }.to_json,
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+      }
+    end
+
+    assert_response :success
+  end
+
   test "should show signup" do
     get signup_url(@signup)
     assert_response :success
