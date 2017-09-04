@@ -26,7 +26,7 @@ class SignupsController < ApplicationController
   # POST /signups.json
   def create
     @signup = Signup.new(signup_params)
-
+    
     respond_to do |format|
       if @signup.save
         format.html { redirect_to @signup, notice: 'Signup was successfully created.' }
@@ -70,6 +70,12 @@ class SignupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def signup_params
+      if params.include?(:site)
+        params[:site_id] = Site.find_by(slug: params[:site])
+      end
+      if params.include(:user)
+        params[:user_id] = params[:user]
+      end
       params.require(:signup).permit(:site_id, :date, :user_id)
     end
 end
