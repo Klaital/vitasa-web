@@ -65,6 +65,43 @@ class SuggestionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to suggestion_url(Suggestion.last)
   end
 
+  test "should create suggestion via JSON when logged in as any user" do
+    post login_url, 
+    params: {
+      email: @admin.email,
+      password: 'user-two-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+  
+    assert_difference('Suggestion.count') do
+      post suggestions_url, params: {  
+        details: "should create suggestion via JSON when logged in as any user: details", 
+        subject: "should create suggestion via JSON when logged in as any user: subject", 
+      }.to_json,
+      headers: {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'Cookie' => cookie,
+      }
+    end
+    assert_response(201)
+
+    # Validate that all records were saved
+    suggestion = Suggestion.last
+    assert_equal("should create suggestion via JSON when logged in as any user: details", suggestion.details)
+    assert_equal("should create suggestion via JSON when logged in as any user: subject", suggestion.subject)
+    assert_equal(false, suggestion.from_public)
+    assert_equal('Open', suggestion.status)
+  end
+
+
   test "should show suggestion" do
     get suggestion_url(@suggestion)
     assert_response :success
