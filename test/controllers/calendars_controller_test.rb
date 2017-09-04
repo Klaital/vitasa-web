@@ -207,7 +207,7 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil(cookie, 'No cookie harvested')
 
     assert_difference('Calendar.count', -1) do
-      delete site_calendar_url(@site, @cal1),
+      delete site_calendar_url(@site.slug, @cal1),
         :headers => {
           'Accept' => 'application/json',
           'Content-Type' => 'application/json',
