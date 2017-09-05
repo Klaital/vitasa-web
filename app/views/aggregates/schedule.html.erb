@@ -1,0 +1,28 @@
+<h1>Aggregate Schedule</h1>
+
+<table>
+  <tr>
+    <th>Date</th>
+    <th>Site</th>
+    <th>Open?</th>
+    <th>Hours</th>
+    <th>eFilers</th>
+  <% if logged_in? %>
+    <th>Signed Up?</th>
+  <% end %>
+  </tr>
+  <% @sites.each do |sites_schedule| %>
+    <% sites_schedule[:sites].each do |site_schedule| %>
+    <tr>
+      <td><%= sites_schedule[:date] %></td>
+      <td><%= site_schedule[:slug] %></td>
+      <td><%= site_schedule[:is_closed] ? 'Closed' : '✓' %></td>
+      <td><%= site_schedule[:open] %> - <%= site_schedule[:closed] %></td>
+      <td><%= site_schedule[:efilers_signed_up] %> / <%= site_schedule[:efilers_needed].to_s.empty? ? '-' : site_schedule[:efilers_needed] %></td>
+    <% if logged_in? %>
+      <td><%= site_schedule[:this_user_signup] %>
+    <% end %>
+    </tr>
+    <% end %>
+  <% end %>
+</table>

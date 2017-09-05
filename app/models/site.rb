@@ -34,4 +34,9 @@ class Site < ApplicationRecord
     serialize :saturday_close, Tod::TimeOfDay
     serialize :sunday_open, Tod::TimeOfDay
     serialize :sunday_close, Tod::TimeOfDay
+
+    def has_signup?(user, date)
+        signup = self.signups.find_by(date: date, user_id: user.id)
+        return !signup.nil?
+    end
 end
