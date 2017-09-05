@@ -96,6 +96,44 @@ class SignupsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to signup_url(@signup)
   end
 
+  test "should update signup from JSON" do
+    # Login
+    post login_url, 
+    params: {
+      email: @new_user.email,
+      password: 'user-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+
+    # Query Under Test
+    patch signup_url(@signup), params: {
+      date: Date.today + 1,
+      site: @site.slug,
+      user: @volunteer.id,
+      hours: 8.5,
+      approved: true
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+
+    # Validate that the fields were successfully updated
+    signup_check = Signup.find(@signup.id)
+    assert_equal(8.5, signup_check.hours)
+    assert_equal(true, signup_check.approved)
+
+  end
+
+
   test "should destroy signup" do
     assert_difference('Signup.count', -1) do
       delete signup_url(@signup)
