@@ -3,16 +3,10 @@ class UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    unless is_admin?
-      render :json => { :errors => 'Not an admin logged in'}, :status => :unauthorized
-      response.set_header('Content-Type', 'application/json')
-      return
-    end
-
     @users = User.all
 
     respond_to do |format|
-      if is_admin?
+      if logged_in?
         format.html { render :index }
         format.json { render :index }
       else
@@ -91,7 +85,7 @@ class UsersController < ApplicationController
 
   def show
     respond_to do |format|
-      if logged_in? && (current_user == @user || is_admin?)
+      if logged_in?
         format.html { render :show }
         format.json { render :show }
       else

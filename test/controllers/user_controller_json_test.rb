@@ -18,25 +18,11 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "should not be able to see a list of users via JSON when logged in as a non-admin" do 
-    non_admin = users(:one)
-    non_admin_role = Role.find_by(name: 'NewUser')
-    non_admin.roles = [ non_admin_role ]
-    assert_not(non_admin.is_admin?)
-    
-    post login_path, params: {session: {email: non_admin.email, password: 'user-one-password'}}
-    get users_url,
-      headers: {
-        'Accept' => 'application/json'
-      }
-    assert_response :unauthorized
-  end
-
-  test "should be able to see a user list via JSON when logged in as admin" do 
+  test "should be able to see a user list via JSON when logged in" do 
     admin = users(:two)
-    admin_role = Role.find_by(name: 'Admin')
+    admin_role = Role.find_by(name: 'Volunteer')
     admin.roles = [ admin_role ]
-    assert(admin.is_admin?)
+
     post login_path, params: {session: {email: admin.email, password: 'user-two-password'}}
     get users_url,
       headers: {
@@ -65,22 +51,7 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "should not be able to see a user details page via JSON when logged in as a non-admin and not the same user" do 
-    user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
-    user.roles = [ user_role ]
-    assert_not(user.is_admin?)
-    
-    post login_path, params: {session: {email: user.email, password: 'user-one-password'}}
-    get user_url(users(:two).id),
-      headers: {
-        'Accept' => 'application/json'
-      }
-    assert_response :unauthorized
-  end
-
-
-  test "should be able to see a user details page via JSON when logged in as a non-admin and are the same user" do 
+  test "should be able to see a user details page via JSON when logged in" do 
     user = users(:one)
     user_role = Role.find_by(name: 'NewUser')
     user.roles = [ user_role ]

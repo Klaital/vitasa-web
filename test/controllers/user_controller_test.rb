@@ -11,18 +11,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "should not be able to see a list of users when logged in as a non-admin" do 
-    non_admin = users(:one)
-    non_admin_role = Role.find_by(name: 'NewUser')
-    non_admin.roles = [ non_admin_role ]
-    assert_not(non_admin.is_admin?)
-    
-    post login_path, params: {session: {email: non_admin.email, password: 'user-one-password'}}
-    get users_url
-    assert_response :unauthorized
-  end
-
-  test "should be able to see a user list when logged in as admin" do 
+  test "should be able to see a user list when logged in" do 
     admin = users(:two)
     admin_role = Role.find_by(name: 'Admin')
     admin.roles = [ admin_role ]
@@ -37,34 +26,10 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "should not be able to see a user details page when logged in as a non-admin and not the same user" do 
+  test "should be able to see a user detail page when logged in" do 
     user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
+    user_role = Role.find_by(name: 'Volunteer')
     user.roles = [ user_role ]
-    assert_not(user.is_admin?)
-    
-    post login_path, params: {session: {email: user.email, password: 'user-one-password'}}
-    get user_url(users(:two).id)
-    assert_response :unauthorized
-  end
-
-
-  test "should be able to see a user details page when logged in as a non-admin and are the same user" do 
-    user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
-    user.roles = [ user_role ]
-    assert_not(user.is_admin?)
-    
-    post login_path, params: {session: {email: user.email, password: 'user-one-password'}}
-    get user_url(user.id)
-    assert_response :success
-  end
-
-  test "should be able to see a user detail page when logged in as admin" do 
-    user = users(:one)
-    user_role = Role.find_by(name: 'Admin')
-    user.roles = [ user_role ]
-    assert(user.is_admin?)
     
     post login_path, params: {session: {email: user.email, password: 'user-one-password'}}
     get user_url(users(:two))
