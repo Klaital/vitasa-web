@@ -14,8 +14,8 @@ class AggregatesController < ApplicationController
       dates_in_period.each do |date|
         
         # What is the usual schedule for today?
-        open = site.send("#{Date::DAYNAMES[date.wday].downcase}_open").to_s
-        close = open.nil? ? nil : site.send("#{Date::DAYNAMES[date.wday].downcase}_close").to_s
+        open = site.send("#{Date::DAYNAMES[date.wday].downcase}_open")
+        close = open.nil? ? nil : site.send("#{Date::DAYNAMES[date.wday].downcase}_close")
         efilers_needed = open.nil? ? 0 : site.send("#{Date::DAYNAMES[date.wday].downcase}_efilers")
         is_closed = open.nil?
 
@@ -33,8 +33,8 @@ class AggregatesController < ApplicationController
           :efilers_needed => efilers_needed,
           :efilers_signed_up => Signup.where(date: date, site_id: site.id).count,
           :is_closed => false,
-          :open => open,
-          :close => close,
+          :open => open.nil? ? nil : open.strftime("%H:%M"),
+          :close => close.nil? ? nil : close.strftime("%H:%M"),
         }
         if logged_in?
           site_schedule[:this_user_signup] = site.has_signup?(current_user, date)
