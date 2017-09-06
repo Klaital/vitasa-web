@@ -30,6 +30,7 @@ class SuggestionsController < ApplicationController
   # POST /suggestions
   # POST /suggestions.json
   def create
+    logger.info request.env
     unless logged_in?
       respond_to do |format|
         format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
