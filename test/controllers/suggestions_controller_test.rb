@@ -28,6 +28,9 @@ class SuggestionsControllerTest < ActionDispatch::IntegrationTest
     @cathedral.sitecoordinator = @sc2.id
     @cathedral.save
 
+    @reviewer = users(:reviewer_one)
+    @reviewer.roles = [ Role.find_by(name: 'Reviewer')]
+
     @suggestion = suggestions(:one)
   end
 
@@ -99,6 +102,76 @@ class SuggestionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal("should create suggestion via JSON when logged in as any user: subject", suggestion.subject)
     assert_equal(false, suggestion.from_public)
     assert_equal('Open', suggestion.status)
+  end
+
+  test "should create suggestion via JSON when logged in as volunteer" do
+    post login_url, 
+    params: {
+      email: @volunteer.email,
+      password: 'volunteer-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+  
+    assert_difference('Suggestion.count') do
+      post suggestions_url, params: {  
+        details: "should create suggestion via JSON when logged in as volunteer: details", 
+        subject: "should create suggestion via JSON when logged in as volunteer: subject", 
+      }.to_json,
+      headers: {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'Cookie' => cookie,
+      }
+    end
+    assert_response(201)
+
+    # Validate that all records were saved
+    suggestion = Suggestion.last
+    assert_equal("should create suggestion via JSON when logged in as volunteer: details", suggestion.details, 'Failed to set details with new suggestion creation')
+    assert_equal("should create suggestion via JSON when logged in as volunteer: subject", suggestion.subject, 'Failed to set subject with new suggestion creation')
+    assert_equal(false, suggestion.from_public)
+    assert_equal('Open', suggestion.status)
+  end
+
+  test "should only be able to update the status field when logged in as a reviewer" do
+    post login_url, 
+    params: {
+      email: @reviewer.email,
+      password: 'reviewer-one-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+  
+    patch suggestion_url(@suggestion), params: {  
+        details: "new details", 
+        subject: "new subject", 
+        status: 'Closed'
+      }.to_json,
+      headers: {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'Cookie' => cookie,
+      }
+    assert_response(:success)
+
+    # Validate that all records were saved
+    suggestion = Suggestion.find(@suggestion.id)
+    assert_equal("Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.", suggestion.details, 'Should have failed to set details with reviewer update')
+    assert_equal("A suggestion", suggestion.subject, 'Should have failed to set subject with reviewer update')
+    assert_equal('Closed', suggestion.status, 'Failed to update status as a reviewer.')
   end
 
 

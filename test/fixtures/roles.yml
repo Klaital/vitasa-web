@@ -15,3 +15,5 @@ admin:
 volunteer:
   name: Volunteer
 
+reviewer:
+  name: Reviewer

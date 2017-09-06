@@ -29,3 +29,8 @@ volunteer_one:
 volunteer_two:
   email: volunteer-two@example.org
   password_digest: <%= User.digest('volunteer-two-password') %>
+
+# Volunteer Two has some signups
+reviewer_one:
+  email: reviewer-one@example.org
+  password_digest: <%= User.digest('reviewer-one-password') %>

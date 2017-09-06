@@ -113,16 +113,20 @@ class SuggestionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def suggestion_params
-      allowed_fields = if is_admin?
-        [ :subject, :details, :status, :from_public ]
-      elsif !@suggestion.nil? && current_user == @suggestion.user
+      # If it's a new record, then allow only subject, details and from_public. Owner and status will be left to default.
+      # If it's an edit, and the user is the owner, allow those same three fields.
+      # If it's an edit, and the user is an admin, allow all fields.
+      # IF it's an edit, and the user is a Reviewer, allow only the status field
+      allowed_fields = if @suggestion.nil? || @suggestion.new_record? || current_user == @suggestion.user
         [ :subject, :details, :from_public ]
+      elsif is_admin?
+        [ :subject, :details, :status, :from_public ]
       elsif current_user.has_role?('Reviewer')
         [ :status ]
       else
         []
       end
-        
+      
       params.require(:suggestion).permit(allowed_fields)
     end
 end

@@ -11,3 +11,7 @@ two:
 three:
   user_id: <%= User.find_by(email: 'user-two@example.org') %>
   role_id: <%= Role.find_by(name: 'Admin') %>
+
+four:
+  user_id: <%= User.find_by(email: 'reviewer-one@example.org') %>
+  role_id: <%= Role.find_by(name: 'Volunteer') %>
