@@ -40,15 +40,19 @@ class SuggestionsController < ApplicationController
     end
 
     # Any logged-in user should be able to create a suggestion. It will be automatically attributed to them.
+    logger.info "Suggestion Params: #{suggestion_params}"
+    logger.info "Current User: #{current_user.id}"
     @suggestion = Suggestion.new(suggestion_params)
     @suggestion.user = current_user
     @suggestion.status = 'Open'
 
     respond_to do |format|
       if @suggestion.save
+        logger.info("Save successful: #{@suggestion}")
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
         format.json { render :show, status: :created, location: @suggestion }
       else
+        logger.info("Save failed: #{@suggestion}")
         format.html { render :new }
         format.json { render json: @suggestion.errors, status: :unprocessable_entity }
       end
