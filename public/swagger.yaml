@@ -444,7 +444,78 @@ paths:
             items:
               $ref: '#/definitions/schedule'
 
+  /resources:
+    get:
+      description: Fetch all configured resources
+      operationId: ListResources
+      responses:
+        '200':
+          description: Fetched all Resources
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/resource'
+        '404':
+          description: Resource not found - Invalid slug, most likely.
+    post:
+      description: Create a new Resource
+      operationId: CreateResource
+      responses:
+        '200':
+          description: Created resource
+          schema:
+            $ref: '#/definitions/resource'
+        '400':
+          description: Bad request. The slug must not already be in use.
+        '422':
+          description: Unprocessable entity. Most likely either the slug or the text field is missing.
+  '/resources/{id}':
+    get:
+      description: Fetch the specified resource
+      operationId: GetResourceDetails
+      responses:
+        '200':
+          description: Fetched Resource.
+          schema:
+            $ref: '#/definitions/resource'
+        '404': 
+          description: Resource not found - probably an invalid slug.
+    put:
+      description: Update the specified resource
+      operationId: UpdateResource
+      responses:
+        '200':
+          description: Updated Resource.
+          schema:
+            $ref: '#/definitions/resource'
+        '404': 
+          description: Resource not found - probably an invalid slug.
+    delete:
+      description: Delete the specified resource
+      operationId: DeleteResource
+      responses:
+        '200':
+          description: Deleted Resource.
+        '404': 
+          description: Resource not found - probably an invalid slug.
 definitions:
+  resource:
+    description: A CRM-managed resource.
+    required:
+      - text
+    properties:
+      slug:
+        description: The URL-friendly resource ID. Required when creating a Resource, but set in the URL path for read, update and delete operations.
+        type: string
+        example: before-you-go
+      id:
+        description: The database-friendly resource ID
+        type: integer
+        example: 4
+      test:
+        description: The actual value. This can be localized by setting the appropriate language header.
+        type: string
+        example: Make sure you have all of your stuff! And sign up through the app to make sure you are expected!
   schedule:
     description: An aggregate view of one site on one day, describing their hours, location, efilers required and currently signed up, and whether the logged-in user has already signed up for it.
     required:

@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+before_you_go:
+  slug: before-you-go
+  text: Make sure you have all of your stuff! And sign up through the app to make sure you are expected!
+
+two:
+  slug: MyString
+  text: MyText
