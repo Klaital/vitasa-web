@@ -1,6 +1,7 @@
 class ResourcesController < ApplicationController
   before_action :set_resource, only: [:show, :edit, :update, :destroy]
   before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create]
+  wrap_parameters :resource, include: [:slug, :text] + Resource.globalize_attribute_names
 
   # GET /resources
   # GET /resources.json
@@ -94,6 +95,8 @@ class ResourcesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def resource_params
-      params.require(:resource).permit(:slug, :text)
+      permitted_params = [:slug, :text] + Resource.globalize_attribute_names
+      
+      params.require(:resource).permit(*permitted_params)
     end
 end

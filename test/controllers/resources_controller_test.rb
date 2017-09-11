@@ -44,8 +44,8 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     cookie = login_admin
     assert_difference('Resource.count', 1) do
       post resources_url, 
-            params: { resource: { slug: @resource.slug, text: @resource.text } },
-            headers: { 'Cookie': cookie }
+            params: { resource: { slug: @resource.slug + '-create-html', text: @resource.text } },
+            headers: { 'Cookie': cookie, 'Accept-Language': 'en' }
     end
 
     assert_redirected_to resource_url(Resource.last)
@@ -55,15 +55,43 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     cookie = login_admin
     assert_difference('Resource.count', 1) do
       post resources_url, 
-            params: { slug: @resource.slug, text: @resource.text }.to_json,
+            params: { slug: @resource.slug + '-create-json', text: @resource.text }.to_json,
+            headers: { 
+              'Cookie': cookie,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'Accept-Language': 'en'
+            }
+      assert_response(:success)
+    end
+
+    
+    # TODO: validate response schema and content
+  end
+
+  test "should create resource with multiple languages at once via JSON" do
+    cookie = login_admin
+    assert_difference('Resource.count', 1) do
+      post resources_url, 
+            params: { slug: @resource.slug + '-create-multi', text_en: 'text english', text_es: 'text spanish' }.to_json,
             headers: { 
               'Cookie': cookie,
               'Content-Type': 'application/json',
               'Accept': 'application/json'
             }
+      assert_response(:success)
     end
 
-    assert_response(:success)
+    # Query back the different languages, one at a time
+    get resource_url(@resource.slug + '-create-multi'), headers: {
+      'Accept': 'application/json',
+      'Accept-Language': 'es'
+    }
+
+    assert_response :success
+    spanish_resource = JSON.parse(response.body)
+    assert_equal('text spanish', spanish_resource['text'])
+    
     # TODO: validate response schema and content
   end
 
@@ -119,7 +147,7 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
 
   test "should update resource via JSON" do
     cookie = login_admin
-    patch resource_url(@resource), 
+    patch resource_url(@resource.slug), 
             params: { text: 'new resource text' }.to_json,
             headers: { 
               'Cookie': cookie,
@@ -155,5 +183,34 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to resources_url
+  end
+
+  test "should get different text based on locale" do
+    I18n.locale = :en
+    @resource.text = 'english text here'
+    @resource.save
+    I18n.locale = :es
+    @resource.text = 'spanish text here'
+    @resource.save
+
+    # English
+    get resource_url(@resource.slug), 
+          headers: {
+            'Accept': 'application/json',
+            'Accept-Language': 'en'
+          }
+
+    r = JSON.parse(response.body)
+    assert_equal('english text here', r['text'])
+
+    # Spanish
+    get resource_url(@resource.slug), 
+          headers: {
+            'Accept': 'application/json',
+            'Accept-Language': 'es'
+          }
+
+    r = JSON.parse(response.body)
+    assert_equal('spanish text here', r['text'])
   end
 end

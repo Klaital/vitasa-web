@@ -464,7 +464,7 @@ paths:
         '200':
           description: Created resource
           schema:
-            $ref: '#/definitions/resource'
+            $ref: '#/definitions/newResource'
         '400':
           description: Bad request. The slug must not already be in use.
         '422':
@@ -487,7 +487,7 @@ paths:
         '200':
           description: Updated Resource.
           schema:
-            $ref: '#/definitions/resource'
+            $ref: '#/definitions/newResource'
         '404': 
           description: Resource not found - probably an invalid slug.
     delete:
@@ -499,19 +499,28 @@ paths:
         '404': 
           description: Resource not found - probably an invalid slug.
 definitions:
-  resource:
-    description: A CRM-managed resource.
+  newResource:
+    description: A resource (set of translated strings) to be managed like a CRM
     required:
-      - text
+      - text_en
     properties:
       slug:
         description: The URL-friendly resource ID. Required when creating a Resource, but set in the URL path for read, update and delete operations.
         type: string
         example: before-you-go
-      id:
-        description: The database-friendly resource ID
-        type: integer
-        example: 4
+      text_en:
+        description: There can be a separate text_* field for each of the supported languages in the same put/post request
+        type: string
+        example: Make sure you have all of your stuff! And sign up through the app to make sure you are expected!
+      text_es:
+        description: The spanish translation of text_en.
+        type: string
+        example: estar preparado
+  resource:
+    description: A CRM-managed resource.
+    required:
+      - text
+    properties:
       test:
         description: The actual value. This can be localized by setting the appropriate language header.
         type: string

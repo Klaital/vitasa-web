@@ -1,6 +1,7 @@
 class Resource < ApplicationRecord
     translates :text
-
+    globalize_accessors
+    
     validates :slug, {
         uniqueness: true,
         format: {

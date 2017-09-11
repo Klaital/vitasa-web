@@ -33,6 +33,7 @@ gem 'bcrypt', '~> 3.1.7'
 # Localization of model attributes
 gem 'globalize', git: 'https://github.com/globalize/globalize'
 gem 'activemodel-serializers-xml'
+gem 'globalize-accessors'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
