@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170831183819) do
+ActiveRecord::Schema.define(version: 20170911191609) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -24,6 +24,23 @@ ActiveRecord::Schema.define(version: 20170831183819) do
     t.boolean  "backup_coordinator_today"
     t.integer  "efilers_needed"
     t.index ["site_id"], name: "index_calendars_on_site_id"
+  end
+
+  create_table "resource_translations", force: :cascade do |t|
+    t.integer  "resource_id", null: false
+    t.string   "locale",      null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.text     "text"
+    t.index ["locale"], name: "index_resource_translations_on_locale"
+    t.index ["resource_id"], name: "index_resource_translations_on_resource_id"
+  end
+
+  create_table "resources", force: :cascade do |t|
+    t.string   "slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_resources_on_slug"
   end
 
   create_table "role_grants", force: :cascade do |t|
