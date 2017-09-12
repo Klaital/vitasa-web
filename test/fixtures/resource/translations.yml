@@ -1,9 +1,0 @@
-before_you_go_en_translation:
-  locale: en
-  text: english text here
-  globalized_model: before_you_go
-
-before_you_go_es_translation:
-  locale: es
-  text: spanish text here
-  globalized_model: before_you_go

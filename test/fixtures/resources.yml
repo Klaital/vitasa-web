@@ -2,6 +2,8 @@
 
 before_you_go:
   slug: before-you-go
-
+  text_en: english text here
+  text_es: spanish text here
+  
 two:
   slug: MyString
