@@ -103,7 +103,6 @@ ActiveRecord::Schema.define(version: 20170911191609) do
     t.datetime "updated_at",            null: false
     t.string   "google_place_id"
     t.string   "slug"
-    t.string   "hours"
     t.time     "monday_open"
     t.time     "monday_close"
     t.time     "tuesday_open"
