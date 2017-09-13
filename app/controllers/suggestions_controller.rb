@@ -35,6 +35,7 @@ class SuggestionsController < ApplicationController
     # Any logged-in user will be automatically attributed
     @suggestion = Suggestion.new(suggestion_params)
     @suggestion.user = current_user
+    @suggestion.from_public = true unless logged_in?
     @suggestion.status = 'Open'
 
     respond_to do |format|
