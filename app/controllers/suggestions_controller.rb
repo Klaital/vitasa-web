@@ -31,17 +31,8 @@ class SuggestionsController < ApplicationController
   # POST /suggestions.json
   def create
     logger.info request.env
-    unless logged_in?
-      respond_to do |format|
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
-      end
-      return
-    end
-
-    # Any logged-in user should be able to create a suggestion. It will be automatically attributed to them.
-    logger.info "Suggestion Params: #{suggestion_params}"
-    logger.info "Current User: #{current_user.id}"
+    
+    # Any logged-in user will be automatically attributed
     @suggestion = Suggestion.new(suggestion_params)
     @suggestion.user = current_user
     @suggestion.status = 'Open'
