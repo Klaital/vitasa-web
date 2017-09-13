@@ -40,11 +40,9 @@ class SuggestionsController < ApplicationController
 
     respond_to do |format|
       if @suggestion.save
-        logger.info("Save successful: #{@suggestion}")
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
         format.json { render :show, status: :created, location: @suggestion }
       else
-        logger.info("Save failed: #{@suggestion}")
         format.html { render :new }
         format.json { render json: @suggestion.errors, status: :unprocessable_entity }
       end
