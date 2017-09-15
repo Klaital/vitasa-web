@@ -10,11 +10,12 @@
   <%= @suggestion.details %>
 </p>
 
+<% unless @suggestion.user.nil? %>
 <p>
-  <strong>User:</strong>
+  <strong>Submitted By:</strong>
   <%= @suggestion.user.name %> (<%= @suggestion.user.email %>)
 </p>
-
+<% end %>
 <p>
   <strong>Status:</strong>
   <%= @suggestion.status %>

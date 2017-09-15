@@ -12,8 +12,8 @@ class ApplicationController < ActionController::Base
   def set_locale
     if defined?(params) && params[:locale]
       I18n.locale = params[:locale]
-    elsif defined?(request)
-      I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE']
+    elsif defined?(request) && !request.env['HTTP_ACCEPT_LANGUAGE'].nil?
+      I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE'][0..1]
     else
       I18n.locale = I18n.default_locale
     end

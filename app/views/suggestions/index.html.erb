@@ -18,7 +18,7 @@
       <tr>
         <td><%= suggestion.id %></td>
         <td><%= suggestion.subject %></td>
-        <td><%= suggestion.user.name %></td>
+        <td><%= suggestion.user.nil? ? 'n/a' : suggestion.user.name %></td>
         <td><%= suggestion.from_public %></td>
         <td><%= link_to 'Show', suggestion %></td>
         <td><%= link_to 'Edit', edit_suggestion_path(suggestion) %></td>
