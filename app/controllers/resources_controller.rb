@@ -3,6 +3,8 @@ class ResourcesController < ApplicationController
   before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create]
   wrap_parameters :resource, include: [:slug, :text] + Resource.globalize_attribute_names
 
+  skip_before_action :verify_authenticity_token
+  
   # GET /resources
   # GET /resources.json
   def index
