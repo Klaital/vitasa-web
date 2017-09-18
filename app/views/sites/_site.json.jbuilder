@@ -34,3 +34,5 @@ json.work_intents Signup.where('site_id = :site_id AND date >= :date', {:site_id
                     partial: 'signups/signup', 
                     as: :signup
 
+
+json.site_features site.site_features.collect {|feature| feature.feature}

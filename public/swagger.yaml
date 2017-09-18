@@ -730,6 +730,15 @@ definitions:
         description: 'The User ID for the Site backup Site Coordinator.'
         type: integer
         example: 2
+      features:
+        description: Site features.
+        type: array
+        items:
+          type: string
+          enum:
+            - Drop-off
+            - Express
+            - MFT
       sitestatus:
         type: string
         example: Open

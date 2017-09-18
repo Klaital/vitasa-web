@@ -1,6 +1,7 @@
 class Site < ApplicationRecord
     has_many :calendars
     has_many :signups
+    has_many :site_features
 
     VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
     validates :sitestatus, inclusion: { 
@@ -38,5 +39,12 @@ class Site < ApplicationRecord
     def has_signup?(user, date)
         signup = self.signups.find_by(date: date, user_id: user.id)
         return !signup.nil?
+    end
+
+    def has_feature?(feature)
+        self.site_features.each do |site_feature|
+            return true if site_feature.feature == feature
+        end
+        return false
     end
 end

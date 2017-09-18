@@ -53,6 +53,7 @@ class SitesController < ApplicationController
     respond_to do |format|
       if is_admin?
         if @site.save
+          @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
@@ -75,6 +76,8 @@ class SitesController < ApplicationController
   def update
     respond_to do |format|
       if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+        
         if @site.update(site_params)
           format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
@@ -160,6 +163,8 @@ class SitesController < ApplicationController
 
         :monday_efilers, :tuesday_efilers, :wednesday_efilers, 
         :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers,
+
+        :site_features
         )
     end
 end

@@ -94,6 +94,18 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_equal('hIJX4k2TVVfXIYRIsTnhA-P-Rc', site['google_place_id'])
   end
 
+  test "should show site Features" do
+    @site.site_features = SiteFeature.create([{feature: 'Drop-off'}, {feature: 'MFT'}])
+    get site_url(@site),
+      :headers => {
+        'Accept' => 'application/json'
+      }
+    assert_response :success
+
+    site = JSON.load(response.body)
+    assert_equal(2, site['site_features'].length)
+  end
+
   test "should show site even without a coordinator" do
     @site.sitecoordinator = nil
     @site.save
@@ -655,8 +667,122 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should set site Features as Admin" do
+    # Login
+    post login_url, 
+    params: {
+      email: @admin.email,
+      password: 'user-two-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    @site.site_features = SiteFeature.create([
+      {feature: 'Drop-off'}, {feature: 'MFT'}
+    ])
+    # Query Under Test
+    assert_no_difference('Site.count') do
+      patch site_url(@site), 
+        params: {
+          "name" => "new name",
+          "site_features" => [ 'Drop-off' ]
+        }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          'Cookie' => cookie,
+        }
+    end
+    assert_response :success
+
+    site_refetch = Site.find(@site.id)
+    assert_equal(1, site_refetch.site_features.length)
+    assert_equal('Drop-off', site_refetch.site_features[0].feature)
+  end
+
+  test "should clear site Features as Admin" do
+    # Login
+    post login_url, 
+    params: {
+      email: @admin.email,
+      password: 'user-two-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    @site.site_features = SiteFeature.create([
+      {feature: 'Drop-off'}, {feature: 'MFT'}
+    ])
+    # Query Under Test
+    assert_no_difference('Site.count') do
+      patch site_url(@site), 
+        params: {
+          "name" => "new name",
+          "site_features" => [ ]
+        }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          'Cookie' => cookie,
+        }
+    end
+    assert_response :success
+
+    site_refetch = Site.find(@site.id)
+    assert_equal(0, site_refetch.site_features.length)
+  end
+
+  test "should not clear site Features when field is not set as Admin" do
+    # Login
+    post login_url, 
+    params: {
+      email: @admin.email,
+      password: 'user-two-password'
+    }.to_json,
+    headers: {
+      'Accept' => 'application/json',
+      'Content-Type' => 'application/json'
+    }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    @site.site_features = SiteFeature.create([
+      {feature: 'Drop-off'}, {feature: 'MFT'}
+    ])
+    # Query Under Test
+    assert_no_difference('Site.count') do
+      patch site_url(@site), 
+        params: {
+          "name" => "new name"
+        }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          'Cookie' => cookie,
+        }
+    end
+    assert_response :success
+
+    site_refetch = Site.find(@site.id)
+    assert_equal(2, site_refetch.site_features.length)
+  end
+
   #
-  # JSON APIs, Logged In As Admin
+  # JSON APIs, Logged In As SC
   #
 
 

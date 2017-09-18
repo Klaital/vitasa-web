@@ -38,6 +38,18 @@
 </p>
 
 <p>
+  <strong>Site Features:</strong>
+  <% if @site.site_features.empty? %>
+  <p>-none-</p>
+  <% else %>
+    <ul>
+    <% @site.site_features.each do |feature| %>
+      <li><%= feature.feature %></li>
+    <% end %>
+    </ul>
+  <% end %>
+
+<p>
   <strong>Default Hours</strong>
   <table>
     <tr>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170911191609) do
+ActiveRecord::Schema.define(version: 20170918194325) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -68,6 +68,15 @@ ActiveRecord::Schema.define(version: 20170911191609) do
     t.boolean  "approved"
   end
 
+  create_table "site_features", force: :cascade do |t|
+    t.integer  "site_id"
+    t.string   "feature"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature"], name: "index_site_features_on_feature"
+    t.index ["site_id"], name: "index_site_features_on_site_id"
+  end
+
   create_table "site_hits", force: :cascade do |t|
     t.string   "method"
     t.string   "path"
@@ -103,6 +112,7 @@ ActiveRecord::Schema.define(version: 20170911191609) do
     t.datetime "updated_at",            null: false
     t.string   "google_place_id"
     t.string   "slug"
+    t.string   "hours"
     t.time     "monday_open"
     t.time     "monday_close"
     t.time     "tuesday_open"
