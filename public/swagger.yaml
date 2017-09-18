@@ -875,6 +875,11 @@ definitions:
         description: This volunteer's scheduled work.
         items:
           $ref: '#/definitions/signup'
+      sites_coordinated:
+        type: array
+        description: The sites that this user is either Site Coordinator or Backup Coordinator for
+        items:
+          $ref: '#/definitions/site'
       certification:
         type: string
         enum:

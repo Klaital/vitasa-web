@@ -44,14 +44,19 @@ class SuggestionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should not create suggestion when not logged in" do
-    assert_no_difference('Suggestion.count') do
+  test "should create suggestion when not logged in" do
+    assert_difference('Suggestion.count', 1) do
       post suggestions_url, params: { suggestion: { 
         details: @suggestion.details, 
         subject: @suggestion.subject, 
+        from_public: false
       }}
     end
-    assert_response :unauthorized
+    assert_redirected_to Suggestion.last
+
+    # Validate that the from_public field was forced to true
+    suggestion = Suggestion.last
+    assert_equal(true, suggestion.from_public)
   end
 
   test "should create suggestion when logged in as any user" do

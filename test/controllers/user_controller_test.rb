@@ -45,4 +45,37 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "should be able to see Site details for Coordinators' sites" do
+    user = users(:one)
+    user.roles = [ Role.find_by(name: 'Admin') ]
+    site1 = sites(:the_alamo)
+    site1.sitecoordinator = user.id
+    site1.save
+    site2 = sites(:the_cathedral)
+    site2.backup_coordinator_id = user.id
+    site2.save
+
+    post login_path, 
+          params: {
+            email: user.email, password: 'user-one-password'
+          }.to_json,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+      
+    get user_path(user),
+          headers: {
+            'Accept': 'application/json'
+          }
+    assert_response :success
+
+    user_data = JSON.parse(response.body)
+    assert_equal(2, user_data['sites_coordinated'].length)
+    assert_equal('The Alamo', user_data['sites_coordinated'][1]['name'])
+    assert_equal('the-alamo', user_data['sites_coordinated'][1]['slug'])
+  end
+
 end
