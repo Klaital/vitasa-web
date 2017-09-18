@@ -747,6 +747,14 @@ definitions:
           - Accepting
           - NearLimit
           - NotAccepting
+      sitecoordinator_name:
+        type: string
+        description: The name of the Site Coordinator
+        example: Chris Cox
+      backup_coordinator_name:
+        type: string
+        description: The name of the Backup Site Coordinator
+        example: Billy Cox
       calendars:
         type: array
         items:

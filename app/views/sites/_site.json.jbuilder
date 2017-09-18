@@ -5,6 +5,7 @@ json.extract! site, :id, :name, :slug,
     :monday_efilers, :tuesday_efilers, :wednesday_efilers, 
     :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers
 
+json.sitecoordinator_name User.find(site.sitecoordinator).name unless site.sitecoordinator.nil?
 json.monday_open site.monday_open.to_s
 json.monday_close site.monday_close.to_s
 json.tuesday_open site.tuesday_open.to_s
@@ -21,6 +22,7 @@ json.sunday_open site.sunday_open.to_s
 json.sunday_close site.sunday_close.to_s
 
 json.backup_coordinator site.backup_coordinator_id
+json.backup_coordinator_name User.find(site.backup_coordinator_id).name unless site.backup_coordinator_id.nil?
 
 json.url site_url(site.slug, format: :json)
 
