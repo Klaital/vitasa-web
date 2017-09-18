@@ -1,0 +1,27 @@
+<h1>Sites Status</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Site Coordinator</th>
+      <th>Backup Coordinator</th>
+      <th>Current Status</th>
+      <th>Volunteers</th>      
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sites.each_pair do |site, today| %>
+      <% sc = (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) %>
+      <% bc = (site.backup_coordinator_id.nil?) ? nil : User.find(site.backup_coordinator_id) %>
+      <tr>
+        <td><%= link_to site.name, site_url(site.slug) %></td>
+        <td><%= (sc.nil?) ? 'None Assigned' : sc.name %></td>
+        <td><%= (bc.nil?) ? 'None Assigned' : bc.name %></td>
+        <td><%= site.sitestatus %></td>
+        <td><%= today[:efilers_volunteered] %> / <%= today[:efilers_needed] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

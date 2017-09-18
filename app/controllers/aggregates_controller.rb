@@ -51,4 +51,35 @@ class AggregatesController < ApplicationController
       }
     end
   end
+
+  def sites_status
+    # Set the time period to look at the site and volunteer schedule for
+    # Default is to examine the next 1 week.
+    @sites = {}
+    Site.all.each do |site|
+      # What is the usual schedule for today?
+      open = site.send("#{Date::DAYNAMES[Date.today.wday].downcase}_open")
+      close = open.nil? ? nil : site.send("#{Date::DAYNAMES[Date.today.wday].downcase}_close")
+      efilers_needed = open.nil? ? 0 : site.send("#{Date::DAYNAMES[Date.today.wday].downcase}_efilers")
+      is_closed = open.nil?
+
+      # Is there an override for today?
+      override = Calendar.find_by(site_id: site.id, date: Date.today)
+      unless override.nil?
+          open = override.open
+          close = override.close
+          efilers_needed = override.efilers_needed
+          is_closed = override.is_closed
+      end
+
+      @sites[site] = {
+        :open => open,
+        :close => close,
+        :is_closed => is_closed,
+        :efilers_needed => efilers_needed,
+        :efilers_volunteered => Signup.where('site_id = ? and date = ?', site.id, Date.today).count()
+      }
+    end
+  end
+
 end
