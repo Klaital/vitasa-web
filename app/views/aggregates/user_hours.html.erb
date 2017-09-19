@@ -1,0 +1,21 @@
+<h1>User Hours</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Hours Volunteered</th>
+      <th>Hours Approved</th>      
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @user_time_report.each_pair do |user, hours_report| %>
+      <tr>
+        <td><%= link_to (user.name.nil? ? '-none given-' : user.name), user_path(user.id) %></td>
+        <td><%= hours_report[:total] %></td>
+        <td><%= hours_report[:approved] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

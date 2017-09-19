@@ -82,4 +82,20 @@ class AggregatesController < ApplicationController
     end
   end
 
+  def user_hours
+    # Set the time period to look at the site and volunteer schedule for
+    # Default is to examine the past 1 week.
+    period_start = params.has_key?('start') ? Date.parse(params['start']) : Date.today - 7
+    period_end   = params.has_key?('end') ? Date.parse(params['end']) : Date.today - 1
+    # dates_in_period = (period_start..period_end).map {|date| date}
+
+    @user_time_report = {}
+    
+    Signup.where(:date => period_start..period_end).each do |signup|
+      @user_time_report[signup.user] = {:approved => 0.0, :total => 0.0} unless @user_time_report.has_key?(signup.user)
+    
+      @user_time_report[signup.user][:total] += signup.hours.to_f
+      @user_time_report[signup.user][:approved] += signup.hours.to_f if signup.approved
+    end
+  end
 end

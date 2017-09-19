@@ -6,7 +6,8 @@ Rails.application.routes.draw do
     resources :calendars
   end
   get '/dashboards/sites', to: 'aggregates#sites_status'
-  
+  get '/dashboards/hours', to: 'aggregates#user_hours'
+
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
   root 'sites#index'
