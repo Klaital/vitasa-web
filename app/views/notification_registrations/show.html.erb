@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @notification_registration.user_id %>
+</p>
+
+<p>
+  <strong>Token:</strong>
+  <%= @notification_registration.token %>
+</p>
+
+<p>
+  <strong>Platform:</strong>
+  <%= @notification_registration.platform %>
+</p>
+
+<%= link_to 'Edit', edit_notification_registration_path(@notification_registration) %> |
+<%= link_to 'Back', notification_registrations_path %>

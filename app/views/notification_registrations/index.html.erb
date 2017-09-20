@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Notification Registrations</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Token</th>
+      <th>Platform</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @notification_registrations.each do |notification_registration| %>
+      <tr>
+        <td><%= notification_registration.user_id %></td>
+        <td><%= notification_registration.token %></td>
+        <td><%= notification_registration.platform %></td>
+        <td><%= link_to 'Show', notification_registration %></td>
+        <td><%= link_to 'Edit', edit_notification_registration_path(notification_registration) %></td>
+        <td><%= link_to 'Destroy', notification_registration, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Notification Registration', new_notification_registration_path %>

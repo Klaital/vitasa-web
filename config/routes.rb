@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :notification_registrations
   resources :resources
   resources :signups
   resources :suggestions
