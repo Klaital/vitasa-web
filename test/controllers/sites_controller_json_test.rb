@@ -95,7 +95,7 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
   end
 
   test "should show site Features" do
-    @site.site_features = SiteFeature.create([{feature: 'Drop-off'}, {feature: 'MFT'}])
+    @site.site_features = SiteFeature.create([{feature: 'DropOff'}, {feature: 'MFT'}])
     get site_url(@site),
       :headers => {
         'Accept' => 'application/json'
@@ -684,14 +684,14 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_not_nil(cookie, 'No cookie harvested')
     
     @site.site_features = SiteFeature.create([
-      {feature: 'Drop-off'}, {feature: 'MFT'}
+      {feature: 'DropOff'}, {feature: 'MFT'}
     ])
     # Query Under Test
     assert_no_difference('Site.count') do
       patch site_url(@site), 
         params: {
           "name" => "new name",
-          "site_features" => [ 'Drop-off' ]
+          "site_features" => [ 'DropOff' ]
         }.to_json,
         headers: {
           'Content-Type' => 'application/json',
@@ -703,7 +703,7 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
 
     site_refetch = Site.find(@site.id)
     assert_equal(1, site_refetch.site_features.length)
-    assert_equal('Drop-off', site_refetch.site_features[0].feature)
+    assert_equal('DropOff', site_refetch.site_features[0].feature)
   end
 
   test "should clear site Features as Admin" do
@@ -723,7 +723,7 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_not_nil(cookie, 'No cookie harvested')
     
     @site.site_features = SiteFeature.create([
-      {feature: 'Drop-off'}, {feature: 'MFT'}
+      {feature: 'DropOff'}, {feature: 'MFT'}
     ])
     # Query Under Test
     assert_no_difference('Site.count') do
@@ -761,7 +761,7 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     assert_not_nil(cookie, 'No cookie harvested')
     
     @site.site_features = SiteFeature.create([
-      {feature: 'Drop-off'}, {feature: 'MFT'}
+      {feature: 'DropOff'}, {feature: 'MFT'}
     ])
     # Query Under Test
     assert_no_difference('Site.count') do
