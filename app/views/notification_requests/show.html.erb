@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Audience:</strong>
+  <%= @notification_request.audience %>
+</p>
+
+<p>
+  <strong>Message:</strong>
+  <%= @notification_request.message %>
+</p>
+
+<p>
+  <strong>Sent:</strong>
+  <%= @notification_request.sent %>
+</p>
+
+<%= link_to 'Edit', edit_notification_request_path(@notification_request) %> |
+<%= link_to 'Back', notification_requests_path %>

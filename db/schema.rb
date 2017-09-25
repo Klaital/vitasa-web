@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170920202631) do
+ActiveRecord::Schema.define(version: 20170925182739) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -33,6 +33,15 @@ ActiveRecord::Schema.define(version: 20170920202631) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_notification_registrations_on_user_id"
+  end
+
+  create_table "notification_requests", force: :cascade do |t|
+    t.string   "audience"
+    t.text     "message"
+    t.datetime "sent"
+    t.string   "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "resource_translations", force: :cascade do |t|
@@ -121,6 +130,7 @@ ActiveRecord::Schema.define(version: 20170920202631) do
     t.datetime "updated_at",            null: false
     t.string   "google_place_id"
     t.string   "slug"
+    t.string   "hours"
     t.time     "monday_open"
     t.time     "monday_close"
     t.time     "tuesday_open"
