@@ -1,6 +1,7 @@
 class NotificationRequestsController < ApplicationController
   before_action :set_notification_request, only: [:show, :edit, :update, :destroy]
-  skip_before_action :verify_authenticity_token  
+  skip_before_action :verify_authenticity_token
+  wrap_parameters :notification_request, include: [:audience, :message]  
 
   # GET /notification_requests
   # GET /notification_requests.json
