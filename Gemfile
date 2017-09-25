@@ -76,4 +76,4 @@ gem 'logstash-event'
 gem 'tod'
 
 # For sending push notifications via SNS
-gem 'aws-sdk-rails'
+gem 'aws-sdk'
