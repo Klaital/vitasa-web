@@ -15,5 +15,6 @@
   <%= @notification_request.sent %>
 </p>
 
+<%= link_to 'Send', send_notification_request_path(@notification_request), method: 'POST' %> |
 <%= link_to 'Edit', edit_notification_request_path(@notification_request) %> |
 <%= link_to 'Back', notification_requests_path %>

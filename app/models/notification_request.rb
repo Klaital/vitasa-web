@@ -6,7 +6,7 @@ class NotificationRequest < ApplicationRecord
     }
 
 
-    def send
+    def send_broadcast
         unless self.sent.nil?
             return false
         end

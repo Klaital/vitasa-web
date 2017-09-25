@@ -1,5 +1,6 @@
 class NotificationRequestsController < ApplicationController
-  before_action :set_notification_request, only: [:show, :edit, :update, :destroy]
+  before_action :set_notification_request, only: [:send_notification, :show, :edit, :update, :destroy]
+  before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create, :send_notification]
   skip_before_action :verify_authenticity_token
   wrap_parameters :notification_request, include: [:audience, :message]  
 
@@ -39,16 +40,18 @@ class NotificationRequestsController < ApplicationController
     end
   end
 
-  def send
-    resp = @notification_request.send
+  # POST /notification_requests/1/send
+  def send_notification
+    resp = @notification_request.send_broadcast
     respond_to do |format|
       if resp
         format.html { redirect_to @notification_request, notice: 'Notification sent.' }
         format.json { render :show, status: :ok, location: @notification_request }
+      else
       end
     end
-
   end
+
   # PATCH/PUT /notification_requests/1
   # PATCH/PUT /notification_requests/1.json
   def update
@@ -75,6 +78,16 @@ class NotificationRequestsController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
+    def check_permissions
+      unless is_admin?
+        respond_to do |format|
+          format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+          format.json { render :json => {:errors => "Unauthorized"}, :status => :unauthorized }
+        end
+        return
+      end
+    end
+
     def set_notification_request
       @notification_request = NotificationRequest.find(params[:id])
     end

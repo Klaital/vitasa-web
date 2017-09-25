@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  post '/notificationn_requests/send', to: 'notification_requests#send'
   resources :notification_requests
+  post '/notification_requests/:id/send', to: 'notification_requests#send_notification', as: 'send_notification_request'
   resources :notification_registrations
   resources :resources
   resources :signups
