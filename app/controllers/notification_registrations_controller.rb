@@ -31,7 +31,7 @@ class NotificationRegistrationsController < ApplicationController
         @notification_registration.user_id = current_user.id
         if @notification_registration.save
 
-          @notification_registration.register_volunteer_sns
+          @notification_registration.register_sns
 
           format.html { redirect_to @notification_registration, notice: 'Notification registration was successfully created.' }
           format.json { render :show, status: :created, location: @notification_registration }
