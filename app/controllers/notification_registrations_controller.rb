@@ -1,6 +1,7 @@
 class NotificationRegistrationsController < ApplicationController
   before_action :set_notification_registration, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :verify_authenticity_token
+  
   # GET /notification_registrations
   # GET /notification_registrations.json
   def index
