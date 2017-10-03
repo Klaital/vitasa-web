@@ -13,9 +13,15 @@ class NotificationRequest < ApplicationRecord
 
         begin
             sns = Aws::SNS::Client.new(region: 'us-west-2')
+            message = {
+                :default => self.message,
+                :aps => { :alert => self.message },
+                :gcm => { :notification => { :text => self.message } }
+            }.to_json
             response = sns.publish({
-                topic_arn: topic_arn = "arn:aws:sns:us-west-2:813809418199:vita-notification-#{self.audience}",
-                message: self.message
+                :topic_arn => topic_arn,
+                :message => self.message,
+                :message_structure => 'json'
             })
             
             if response.message_id
