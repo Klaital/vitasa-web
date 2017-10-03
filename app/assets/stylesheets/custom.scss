@@ -161,7 +161,6 @@ aside {
 
 input, textarea, select, .uneditable-input {
   border: 1px solid #bbb;
-  width: 100%;
   margin-bottom: 15px;
   @include box_sizing;
 }
@@ -184,3 +183,13 @@ input {
     color: $state-danger-text;
   }
 }
+
+label {
+  text-align: right;
+  clear: both;
+  float: left;
+  margin-right: 15px;
+  display: inline;
+  width: 20%;
+}
+
