@@ -6,12 +6,29 @@ class NotificationRegistration < ApplicationRecord
     topics << 'volunteers' unless user.nil?
     topics << 'sc' if user.has_role?('SiteCoordinator')
     topics.each do |t|
-        topic_arn = "arn:aws:sns:us-west-2:813809418199:vita-notification-#{t}"
+        topic_arn = case t
+          when 'volunteers'
+            Rails.configuration.sns_topic_volunteers_arn
+          when 'sc'
+            Rails.configuration.sns_topic_sc_arn
+          end
+        sns_app_arn = case self.platform
+          when 'android'
+            Rails.configuration.sns_gcm_application_arn
+          when 'ios'
+            Rails.configuration.sns_apn_application_arn
+          when 'sms'
+            user.nil? ? '' : user.phone
+          else
+            ''
+          end
+
         response = sns.subscribe({
             topic_arn: topic_arn,
-            protocol: self.platform.downcase,
-            endpoint: self.token
+            protocol: 'application',
+            endpoint: sns_app_arn
         })
+        logger.info("SNS subscription: #{response}")
     end
   end
 end
