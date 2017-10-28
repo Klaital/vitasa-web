@@ -58,8 +58,10 @@ class NotificationRegistrationsController < ApplicationController
         format.json { head :no_content }
       end
     else
-      format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-      format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      respond_to do |format|
+        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
+        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      end
     end      
   end
 

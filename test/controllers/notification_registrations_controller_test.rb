@@ -15,12 +15,13 @@ class NotificationRegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create notification_registration" do
-    assert_difference('NotificationRegistration.count') do
+  test "should not create notification_registration unless logged in" do
+    assert_no_difference('NotificationRegistration.count') do
       post notification_registrations_url, params: { notification_registration: { platform: @notification_registration.platform, token: @notification_registration.token, user_id: @notification_registration.user_id } }
     end
 
-    assert_redirected_to notification_registration_url(NotificationRegistration.last)
+    assert_response :unauthorized
+#    assert_redirected_to notification_registration_url(NotificationRegistration.last)
   end
 
   test "should show notification_registration" do
@@ -28,21 +29,11 @@ class NotificationRegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get edit" do
-    get edit_notification_registration_url(@notification_registration)
-    assert_response :success
-  end
-
-  test "should update notification_registration" do
-    patch notification_registration_url(@notification_registration), params: { notification_registration: { platform: @notification_registration.platform, token: @notification_registration.token, user_id: @notification_registration.user_id } }
-    assert_redirected_to notification_registration_url(@notification_registration)
-  end
-
-  test "should destroy notification_registration" do
-    assert_difference('NotificationRegistration.count', -1) do
+  test "should not destroy notification_registration unless logged in" do
+    assert_no_difference('NotificationRegistration.count', -1) do
       delete notification_registration_url(@notification_registration)
     end
 
-    assert_redirected_to notification_registrations_url
+    assert_response :unauthorized
   end
 end

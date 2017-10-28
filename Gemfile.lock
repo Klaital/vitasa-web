@@ -302,9 +302,6 @@ GEM
     aws-sdk-polly (1.2.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
-    aws-sdk-rails (2.0.0)
-      aws-sdk-ses (~> 1)
-      railties (>= 3)
     aws-sdk-rds (1.4.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
@@ -672,7 +669,6 @@ PLATFORMS
 DEPENDENCIES
   activemodel-serializers-xml
   aws-sdk
-  aws-sdk-rails
   bcrypt (~> 3.1.7)
   bootstrap-sass (= 3.3.6)
   byebug
