@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user_id: 1
-  token: MyString
-  platform: MyString
+  user_id: <%= User.find_by(email: 'user-one@example.org').id %>
+  token: f8kD_9lSSes:APA91bGDstDHl_OWcZUH9aMF57he6bg1OwLjWS8XRhKBzzfte0ab21ej3dXU_H27D8uvLWih21fl1PMpuaoX4vBuI3qqz04Zk65K46Ev0H794RvaSlTJOOzSTaGq1r1pZjzTwmsEM3qG
+  platform: android
 
 two:
-  user_id: 1
-  token: MyString
-  platform: MyString
+  user_id: <%= User.find_by(email: 'user-two@example.org').id %>
+  token: f8kD_9lSSes:APA91bGDstDHl_OWcZUH9aMF57he6bg1OwLjWS8XRhKBzzfte0ab21ej3dXU_H27D8uvLWih21fl1PMpuaoX4vBuI3qqz04Zk65K46Ev0H794RvaSlTJOOzSTaGq1r1pZjzTwmsEM3qG
+  platform: android

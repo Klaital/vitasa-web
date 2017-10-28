@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170925182739) do
+ActiveRecord::Schema.define(version: 20171028181638) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -30,8 +30,10 @@ ActiveRecord::Schema.define(version: 20170925182739) do
     t.integer  "user_id"
     t.string   "token"
     t.string   "platform"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.string   "endpoint"
+    t.string   "subscription"
     t.index ["user_id"], name: "index_notification_registrations_on_user_id"
   end
 
