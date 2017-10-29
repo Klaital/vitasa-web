@@ -8,7 +8,9 @@
       <th>Audience</th>
       <th>Message</th>
       <th>Sent</th>
-      <th colspan="3"></th>
+      <% if logged_in? && current_user.is_admin? %>
+        <th colspan="4"></th>
+      <% end %>
     </tr>
   </thead>
 
@@ -18,9 +20,14 @@
         <td><%= notification_request.audience %></td>
         <td><%= notification_request.message %></td>
         <td><%= notification_request.sent %></td>
-        <td><%= link_to 'Show', notification_request %></td>
-        <td><%= link_to 'Edit', edit_notification_request_path(notification_request) %></td>
-        <td><%= link_to 'Destroy', notification_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if logged_in? && current_user.is_admin? %>
+          <% if notification_request.sent.nil? %>
+            <td><%= link_to 'Send', send_notification_request_path(notification_request) %></td>
+          <% end %>
+          <td><%= link_to 'Show', notification_request %></td>
+          <td><%= link_to 'Edit', edit_notification_request_path(notification_request) %></td>
+          <td><%= link_to 'Destroy', notification_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

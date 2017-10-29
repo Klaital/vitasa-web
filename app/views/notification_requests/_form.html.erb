@@ -13,17 +13,17 @@
 
   <div class="field">
     <%= f.label :audience %>
-    <%= f.text_field :audience %>
+    <%= f.select :audience,
+          options_for_select(
+            NotificationRequest::VALID_AUDIENCES,
+            notification_request.audience
+          )
+    %>
   </div>
 
   <div class="field">
     <%= f.label :message %>
     <%= f.text_area :message %>
-  </div>
-
-  <div class="field">
-    <%= f.label :sent %>
-    <%= f.datetime_select :sent %>
   </div>
 
   <div class="actions">
