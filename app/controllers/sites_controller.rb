@@ -164,7 +164,9 @@ class SitesController < ApplicationController
         :monday_efilers, :tuesday_efilers, :wednesday_efilers, 
         :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers,
 
-        :site_features
+        :site_features,
+
+        :season_start, :season_end
         )
     end
 end

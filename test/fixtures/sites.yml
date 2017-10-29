@@ -12,6 +12,8 @@ the_alamo:
   sitestatus: Accepting
   slug: the-alamo
   google_place_id: hIJX4k2TVVfXIYRIsTnhA-P-Rc
+  season_start: 2018-01-01
+  season_end: 2018-04-16
 
 the_cathedral:
   name: San Fernando Cathedral
@@ -24,3 +26,5 @@ the_cathedral:
   sitecoordinator: null
   sitestatus: Closed
   slug: san-fernando-cathedral
+  season_start: 2018-02-01
+  season_end: 2018-04-20

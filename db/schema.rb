@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171028181638) do
+ActiveRecord::Schema.define(version: 20171028184239) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -154,6 +154,8 @@ ActiveRecord::Schema.define(version: 20171028181638) do
     t.integer  "friday_efilers"
     t.integer  "saturday_efilers"
     t.integer  "sunday_efilers"
+    t.date     "season_start"
+    t.date     "season_end"
     t.index ["slug"], name: "index_sites_on_slug"
   end
 

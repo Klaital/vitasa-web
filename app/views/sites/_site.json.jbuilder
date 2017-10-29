@@ -3,7 +3,8 @@ json.extract! site, :id, :name, :slug,
     :sitecoordinator, 
     :sitestatus,
     :monday_efilers, :tuesday_efilers, :wednesday_efilers, 
-    :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers
+    :thursday_efilers, :friday_efilers, :saturday_efilers, :sunday_efilers,
+    :season_start, :season_end
 
 json.sitecoordinator_name User.find(site.sitecoordinator).name unless site.sitecoordinator.nil?
 json.monday_open site.monday_open.to_s

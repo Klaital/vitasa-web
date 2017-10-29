@@ -93,6 +93,17 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     site = JSON.load(response.body)
     assert_equal('hIJX4k2TVVfXIYRIsTnhA-P-Rc', site['google_place_id'])
   end
+  test "should show site season" do
+    get site_url(@site),
+      :headers => {
+        "Accept" => 'application/json',
+      }
+    assert_response :success
+
+    site = JSON.load(response.body)
+    assert_equal('2018-01-01' , site['season_start'])
+    assert_equal('2018-04-16' , site['season_end'])
+  end
 
   test "should show site Features" do
     @site.site_features = SiteFeature.create([{feature: 'DropOff'}, {feature: 'MFT'}])
@@ -468,6 +479,39 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     site = JSON.load(response.body)
     assert_not_nil(site)
     assert_equal('admin-create-test-slug', site['slug'])
+  end
+
+  test "should update site with seasons" do
+    # Login
+    post login_url, 
+      params: {
+        email: @admin.email,
+        password: 'user-two-password'
+      }.to_json,
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json'
+      }
+    assert_response :success
+    # Harvest the cookie
+    cookie = response.headers['Set-Cookie']
+    assert_not_nil(cookie, 'No cookie harvested')
+    
+    patch site_url(@site), 
+      params: {
+        'season_start': @site.season_start + 1,
+        'season_end': @site.season_end + 1,
+      }.to_json, headers: {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      }
+
+    assert_response :success
+    
+    # Validate that the season data was saved correctly
+    site = Site.find(@site.id)
+    assert_equal(@site.season_start + 1, site.season_start)
+    assert_equal(@site.season_end + 1, site.season_end)
   end
 
   test "should create site without a slug when logged in to a Admin via JSON" do
