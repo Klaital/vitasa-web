@@ -18,9 +18,17 @@ class NotificationRequest < ApplicationRecord
                 :aps => { :alert => self.message },
                 :gcm => { :notification => { :text => self.message } }
             }.to_json
+            topic_arn = case self.audience.to_s.downcase
+                        when 'volunteers'
+                          'arn:aws:sns:us-west-2:813809418199:vita-notification-volunteers'
+                        when 'sc'
+                          'arn:aws:sns:us-west-2:813809418199:vita-notification-sc'
+                        else
+                          nil
+                        end
             response = sns.publish({
                 :topic_arn => topic_arn,
-                :message => self.message,
+                :message => message,
                 :message_structure => 'json'
             })
             
