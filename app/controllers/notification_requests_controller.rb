@@ -48,6 +48,8 @@ class NotificationRequestsController < ApplicationController
         format.html { redirect_to @notification_request, notice: 'Notification sent.' }
         format.json { render :show, status: :ok, location: @notification_request }
       else
+        format.html { redirect_to @notification_request, notice: 'Unable to send notification' }
+        format.json {render :json => resp, status: 500 }
       end
     end
   end
