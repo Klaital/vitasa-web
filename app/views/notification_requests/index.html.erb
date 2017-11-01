@@ -22,7 +22,7 @@
         <td><%= notification_request.sent %></td>
         <% if logged_in? && current_user.is_admin? %>
           <% if notification_request.sent.nil? %>
-            <td><%= link_to 'Send', send_notification_request_path(notification_request) %></td>
+            <td><%= link_to 'Send', send_notification_request_path(notification_request), method: :post %></td>
           <% end %>
           <td><%= link_to 'Show', notification_request %></td>
           <td><%= link_to 'Edit', edit_notification_request_path(notification_request) %></td>
