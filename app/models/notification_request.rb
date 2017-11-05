@@ -16,7 +16,12 @@ class NotificationRequest < ApplicationRecord
             message = {
                 :default => self.message,
                 :aps => { :alert => self.message },
-                :gcm => { :data => { :message => self.message } }
+                :gcm => { 
+                  :notification => { 
+                    :text => self.message, 
+#                    :click_action => "A_ViewNotification" 
+                  } 
+                }
             }.to_json
             topic_arn = case self.audience.to_s.downcase
                         when 'volunteers'

@@ -1,6 +1,6 @@
 class NotificationRequestsController < ApplicationController
   before_action :set_notification_request, only: [:send_notification, :show, :edit, :update, :destroy]
-  before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create, :send_notification]
+  before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create, :send_notification, :resend]
   skip_before_action :verify_authenticity_token
   wrap_parameters :notification_request, include: [:audience, :message]  
 
@@ -42,6 +42,23 @@ class NotificationRequestsController < ApplicationController
 
   # POST /notification_requests/1/send
   def send_notification
+    resp = @notification_request.send_broadcast
+    respond_to do |format|
+      if resp
+        format.html { redirect_to @notification_request, notice: 'Notification sent.' }
+        format.json { render :show, status: :ok, location: @notification_request }
+      else
+        format.html { redirect_to @notification_request, notice: 'Unable to send notification' }
+        format.json {render :json => resp, status: 500 }
+      end
+    end
+  end
+
+  # POST /notification_requests/1//resend
+  def resend_notification
+    @notification_request.sent = false
+    @notification_request.save
+
     resp = @notification_request.send_broadcast
     respond_to do |format|
       if resp
