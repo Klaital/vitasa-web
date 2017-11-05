@@ -24,7 +24,7 @@
           <% if notification_request.sent.nil? %>
             <td><%= link_to 'Send', send_notification_request_path(notification_request), method: :post %></td>
           <% end %>
-          <td><%= link_to 'Resend', resend_notification_request, method: :post %></td>
+          <td><%= link_to 'Resend', resend_notification_request_path(notification_request), method: :post %></td>
           <td><%= link_to 'Edit', edit_notification_request_path(notification_request) %></td>
           <td><%= link_to 'Destroy', notification_request, method: :delete, data: { confirm: 'Are you sure?' } %></td>
         <% end %>
