@@ -1,5 +1,5 @@
 class NotificationRequestsController < ApplicationController
-  before_action :set_notification_request, only: [:send_notification, :show, :edit, :update, :destroy]
+  before_action :set_notification_request, only: [:resend_notification, :send_notification, :show, :edit, :update, :destroy]
   before_action :check_permissions, only: [:edit, :update, :destroy, :new, :create, :send_notification, :resend]
   skip_before_action :verify_authenticity_token
   wrap_parameters :notification_request, include: [:audience, :message]  
