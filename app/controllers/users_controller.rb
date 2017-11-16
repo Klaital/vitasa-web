@@ -27,9 +27,12 @@ class UsersController < ApplicationController
     merged_user_params = user_params.merge({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
 
     @user = User.new(merged_user_params)
+
     if @user.save
       # Create the starting role as well
       @user.roles = [ Role.find_by(name: 'NewUser') ]
+      @work_history, @work_intents, @suggestions = UsersController::user_metadata(@user.id)
+
       log_in @user
       respond_to do |format|
         format.html { flash[:success] = "Welcome, new user!"; redirect_to @user }
@@ -116,15 +119,26 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:id])
     unless @user.nil?
-      @work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
-      @work_intents = Signup.where('user_id = :user_id AND date >= :date', {:user_id => @user.id, :date => Date.today}).order(:date => :asc)
-      @suggestions  = Suggestion.where(user_id: @user.id)
+      @work_history, @work_intents, @suggestions = UsersController::user_metadata(@user.id)
     end
   end
 
   def self.user_metadata(user_id)
-    work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
-    work_intents = Signup.where('user_id = :user_id AND date >= :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
+#    work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
+    work_history = Signup.where(
+        :user_id => user_id
+      ).joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :date => (Date.today - 7)..(Date.today - 1) }
+      )
+    work_intents = Signup.where(
+        :user_id => user_id
+      ).joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :date => (Date.today)..(Date.today + 7) }
+      )
     suggestions  = Suggestion.where(user_id: user_id)
     [ work_history, work_intents, suggestions ]
   end

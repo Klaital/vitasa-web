@@ -20,6 +20,24 @@ consumes:
 produces:
   - application/json
 paths:
+  '/sites/{slug}/shifts':
+    get:
+      description: Fetch a list of all shifts for the given site
+    post:
+      description: Create a new Shift for the site
+  '/sites/{slug}/shifts/{shift_id}':
+    get:
+      description: Fetch details for a specific shift
+    put:
+      description: Update details for a specific shift
+    delete:
+      description: Destroy a specific shift record.
+  '/users/{user_id}/shifts':
+    get:
+      description: Fetch a list of shifts for a given user.
+  '/sites/{slug}/calendars/{calendar_id}/shifts':
+    get:
+      description: Fetch a list of shifts for a specific calendar record.
   /sites:
     get:
       description: Fetch a list of all Tax Prep Assistance sites
@@ -499,6 +517,44 @@ paths:
         '404': 
           description: Resource not found - probably an invalid slug.
 definitions:
+  shift:
+    description: A volunteer shift schedule.
+    required:
+      - start_time
+      - end_time
+      - site_slug
+      - efilers_needed_basic
+      - efilers_needed_advanced
+    properties:
+      start_time:
+        description: The time of day that the shift starts.
+        type: string
+        example: 14:30
+      end_time:
+        description: The time of day that the shift ends.
+        type: string
+        example: 17:45
+      site_slug:
+        description: The site that this shift applies to.
+        type: string
+        example: cody-library
+      calendar_id:
+        description: The calendar ID that this shift is configuring. Optional, but if it is not included, then day_of_week must be specified to set a default.
+        type: integer
+        example: 14
+      day_of_week: 
+        description: The day of the week this shift applies to. Optional, but if it is not included, then calendar_id must be specified to indicate which day this shift is being configured.
+        type: string
+        example: Friday
+      efilers_needed_basic:
+        description: The number of eFilers needed for this shift with Basic-level certification
+        type: integer
+        example: 5
+      efiers_needed_advanced:
+        description: The numbers of eFilers needed for this shift with Advanced-level certification
+        type: integer
+        example: 2
+
   newResource:
     description: A resource (set of translated strings) to be managed like a CRM
     required:
@@ -598,11 +654,10 @@ definitions:
         type: string
         description: The Site Slug where the User intends to work
         example: the-alamo
-      date:
-        type: string
-        format: date
-        description: The day on which the user is volunteering to work
-        example: 2018-02-20
+      shift_id:
+        type: integer
+        description: The specific shift which the user is volunteering to work. See /definitions/shift
+        example: 103
   work_history:
     description: A Signup that is in the past. It should have Hours worked, and can be Approved by the Site Coordinator.
     required:

@@ -28,14 +28,7 @@ json.backup_coordinator_name User.find(site.backup_coordinator_id).name unless s
 json.url site_url(site.slug, format: :json)
 
 json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :calendar
-
-json.work_history Signup.where('site_id = :site_id AND date < :date', {:site_id => site.id, :date => Date.today}), 
-                    partial: 'signups/signup', 
-                    as: :signup
-
-json.work_intents Signup.where('site_id = :site_id AND date >= :date', {:site_id => site.id, :date => Date.today}), 
-                    partial: 'signups/signup', 
-                    as: :signup
-
+json.work_history work_history
+json.work_intents work_intents
 
 json.site_features site.site_features.collect {|feature| feature.feature}

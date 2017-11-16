@@ -1,15 +1,8 @@
 json.extract! user, :id, :name, :email, :phone, :certification, :sites_coordinated
 
-json.work_history Signup.where('user_id = :user_id AND date < :date', {:user_id => user.id, :date => Date.today}), 
-                    partial: 'signups/signup', 
-                    as: :signup
-
-json.work_intents Signup.where('user_id = :user_id AND date >= :date', {:user_id => user.id, :date => Date.today}), 
-                    partial: 'signups/signup', 
-                    as: :signup
+json.work_history work_history
+json.work_intents work_intents
 
 json.roles user.roles.collect {|r| r.name}
 
-json.suggestions Suggestion.where(user_id: user.id),
-                    partial: 'suggestions/suggestion',
-                    as: :suggestion
+json.suggestions suggestions

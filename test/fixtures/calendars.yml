@@ -1,11 +1,22 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  open: 2017-08-08 09:42:24
-  close: 2017-08-08 09:42:24
+  date: <%= Date.tomorrow %>
   notes: MyText
+  site: the_alamo
 
 two:
-  open: 2017-08-08 09:42:24
-  close: 2017-08-08 09:42:24
+  date: <%= Date.today + 4 %>
+  site: the_cathedral
   notes: MyText
+
+the_cathedral_tomorrow:
+  date: <%= Date.tomorrow.strftime('%Y-%m-%d') %>
+  is_closed: false
+  site: the_cathedral
+
+the_cathedral_day2:
+  date: <%= (Date.today + 2).strftime('%Y-%m-%d') %>
+  is_closed: false
+  site: the_cathedral
+

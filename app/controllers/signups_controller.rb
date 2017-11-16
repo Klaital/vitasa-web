@@ -1,7 +1,8 @@
 class SignupsController < ApplicationController
   before_action :set_signup, only: [:show, :edit, :update, :destroy]
   skip_before_action :verify_authenticity_token
-  
+  wrap_parameters :signup 
+
   # GET /signups
   # GET /signups.json
   def index
@@ -25,7 +26,8 @@ class SignupsController < ApplicationController
   # POST /signups
   # POST /signups.json
   def create
-    @signup = Signup.new(signup_params)
+    @shift = Shift.find(signup_params[:shift_id])
+    @signup = @shift.signups.new(signup_params)
     
     respond_to do |format|
       if @signup.save
@@ -70,8 +72,8 @@ class SignupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def signup_params
-      p = params.require(:signup).permit(:site, :user, :site_id, :date, :user_id, :hours, :approved)
-      p[:site_id] = Site.find_by(slug: params[:site]).id unless params[:site].nil?
+      logger.debug(params)
+      p = params.require(:signup).permit(:site, :user, :user_id, :shift_id, :hours, :approved)
       p[:user_id] = params[:user] unless params[:user].nil?
       p
     end

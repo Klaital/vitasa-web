@@ -1,6 +1,6 @@
 class Signup < ApplicationRecord
     belongs_to :user
-    belongs_to :site
+    belongs_to :shift
 
     after_initialize :init
 

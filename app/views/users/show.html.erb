@@ -21,8 +21,8 @@
     </tr>
     <% @work_intents.each do |signup| %>
       <tr>
-        <td><%= link_to signup.site.name, site_path(signup.site.slug) %></td>
-        <td><%= signup.date %></td>
+        <td><%= link_to signup.shift.calendar.site.name, site_path(signup.shift.calendar.site.slug) %></td>
+        <td><%= signup.shift.calendar.date %></td>
       </tr>
     <% end %>
   </table>
@@ -37,8 +37,8 @@
       </tr>
       <% @work_history.each do |work_record| %>
         <tr>
-          <td><%= link_to work_record.site.name, site_path(work_record.site.slug) %></td>
-          <td><%= work_record.date %></td>
+          <td><%= link_to work_record.shift.calendar.site.name, site_path(work_record.shift.calendar.site.slug) %></td>
+          <td><%= work_record.shift.calendardate %></td>
           <td><%= work_record.hours %></td>
           <td><%= work_record.approved %></td>
         </tr>

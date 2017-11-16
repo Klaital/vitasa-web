@@ -144,7 +144,25 @@ class SitesController < ApplicationController
       else
         User.find(@site.backup_coordinator_id)
       end
+
+      @work_history, @work_intents = site_signup_metadata(@site.id)
     end
+
+    def site_signup_metadata(site_id)
+
+      work_history = Signup.joins(
+          :shift => :calendar
+        ).where(
+          :calendars => { :site_id => site_id, :date => (Date.today - 7)..(Date.today - 1) }
+        )
+      work_intents = Signup.joins(
+          :shift => :calendar
+        ).where(
+          :calendars => { :site_id => site_id, :date => (Date.today)..(Date.today + 7) }
+        )
+      [ work_history, work_intents ]
+    end
+
 
     def set_eligible_sitecoordinators
       @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.name, u.id] : nil}.compact

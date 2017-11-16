@@ -1,6 +1,6 @@
 class Calendar < ApplicationRecord
     belongs_to :site
-
-    serialize :open, Tod::TimeOfDay
-    serialize :close, Tod::TimeOfDay
+    has_many :shifts
+    has_many :signups, through: :shifts
+    has_many :users, through: :signups
 end

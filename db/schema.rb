@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171028184239) do
+ActiveRecord::Schema.define(version: 20171112212536) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -78,14 +78,24 @@ ActiveRecord::Schema.define(version: 20171028184239) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "shifts", force: :cascade do |t|
+    t.time     "start_time"
+    t.time     "end_time"
+    t.integer  "efilers_needed_basic"
+    t.integer  "efilers_needed_advanced"
+    t.integer  "calendar_id"
+    t.string   "day_of_week"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
   create_table "signups", force: :cascade do |t|
-    t.integer  "site_id"
-    t.date     "date"
     t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float    "hours"
     t.boolean  "approved"
+    t.integer  "shift_id"
   end
 
   create_table "site_features", force: :cascade do |t|

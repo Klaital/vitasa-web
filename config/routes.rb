@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+#  resources :shifts
   resources :notification_requests
   post '/notification_requests/:id/send', to: 'notification_requests#send_notification', as: 'send_notification_request'
   post '/notification_requests/:id/resend', to: 'notification_requests#resend_notification', as: 'resend_notification_request'
@@ -7,8 +8,11 @@ Rails.application.routes.draw do
   resources :signups
   resources :suggestions
   resources :sites do
-    resources :calendars
+    resources :calendars do
+      resources :shifts
+    end
   end
+
   get '/dashboards/sites', to: 'aggregates#sites_status'
   get '/dashboards/hours', to: 'aggregates#user_hours'
 

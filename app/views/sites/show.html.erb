@@ -104,23 +104,30 @@
 </p>
 
 <p>
-  <strong>Calendar</strong>
+  <strong>Shift Calendar</strong>
   <table>
+    <tr>
+      <th colspan="2"></th>
+      <th colspan="2">eFilers Needed</th>
+      <th colspan="2"></th>
+    </tr>
     <tr>
       <th>Day</th>
       <th>Open</th>
-      <th>eFilers Needed</th>
-      <th>Close</th>
+      <th>Basic</th>
+      <th>Advanced</th>
       <th>Backup Coordinator?</th>
     </tr>
     <% @site.calendars.each do |calendar_override| %>
+      <% calendar_override.shifts.each do |shift| %>
     <tr>
       <td><%= calendar_override.date %></td>
-      <td><%= calendar_override.is_closed ? '-closed-' : calendar_override.open %></td>
-      <td><%= calendar_override.is_closed ? '-closed-' : calendar_override.close %></td>
-      <td><%= calendar_override.efilers_needed %></td>
+      <td><%= link_to "#{shift.start_time} - #{shift.end_time}", site_calendar_shift_path(@site.slug, calendar_override, shift) %></td>
+      <td><%= shift.efilers_needed_basic %></td>
+      <td><%= shift.efilers_needed_advanced %></td>
       <td><%= calendar_override.backup_coordinator_today ? '✓' : '' %></td>
     </tr>
+      <% end %>
     <% end %>
   </table>
 </p>
@@ -130,13 +137,19 @@
 <table>
   <tr>
     <th>Date</th>
+    <th>Shift</th>
     <th>Name</th>
   </tr>
-  <% @site.signups.order(:date => :asc).each do |signup| %>
+  <% @site.calendars.each do |calendar| %>
+    <% calendar.shifts.order(:start_time => :asc).each do |shift| %>
+      <% shift.signups.each do |signup| %>
     <tr>
-      <td><%= signup.date %></td>
+      <td><%= calendar.date %></td>
+      <td><%= signup.shift.start_time %> - <% signup.shift.end_time %></td>
       <td><%= link_to signup.user.name, user_path(signup.user) %></td>
     </tr>
+      <% end %>
+    <% end %>
   <% end %>
 </table>
 </p>

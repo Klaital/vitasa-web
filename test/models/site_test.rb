@@ -27,8 +27,6 @@ class SiteTest < ActiveSupport::TestCase
     @sc2.roles = [ user_role ]
     @cathedral.sitecoordinator = @sc2.id
     @cathedral.save
-
-    @signup = signups(:one)
   end
 
   test "create new site" do
@@ -69,22 +67,5 @@ class SiteTest < ActiveSupport::TestCase
     assert(site.valid?, 'The Alamo didn\'t start out valid from the fixture')
     site.sitestatus = 'some other status'
     assert_not(site.valid?, 'Site failed to validate against the valid Site Status list')
-  end
-
-  
-  test "should correctly detect when a user has signups" do
-    @cathedral.signups.create([
-      {
-        date: Date.today + 1,
-        user_id: @volunteer.id
-      },
-      {
-        date: Date.today + 2,
-        user_id: @sc2.id
-      }
-    ])
-
-    assert(@cathedral.has_signup?(@volunteer, Date.today + 1))
-    assert_not(@cathedral.has_signup?(@volunteer, Date.today))
   end
 end
