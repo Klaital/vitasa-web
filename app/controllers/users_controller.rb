@@ -124,22 +124,10 @@ class UsersController < ApplicationController
   end
 
   def self.user_metadata(user_id)
-#    work_history = Signup.where('user_id = :user_id AND date < :date', {:user_id => user_id, :date => Date.today}).order(:date => :asc)
-    work_history = Signup.where(
-        :user_id => user_id
-      ).joins(
-        :shift => :calendar
-      ).where(
-        :calendars => { :date => (Date.today - 7)..(Date.today - 1) }
-      )
-    work_intents = Signup.where(
-        :user_id => user_id
-      ).joins(
-        :shift => :calendar
-      ).where(
-        :calendars => { :date => (Date.today)..(Date.today + 7) }
-      )
-    suggestions  = Suggestion.where(user_id: user_id)
+    user = User.find(user_id)
+    work_history = user.work_history(Date.today - 7, Date.today - 1)
+    work_intents = user.work_intents(Date.today, Date.today + 7)
+    suggestions  = user.suggestions
     [ work_history, work_intents, suggestions ]
   end
 

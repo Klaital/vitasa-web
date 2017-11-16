@@ -5,15 +5,11 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
     @site = sites(:the_alamo)
     @cal1 = @site.calendars.create({
         :date => Date.today + 1,
-        :open => Tod::TimeOfDay.new(10),
-        :close => Tod::TimeOfDay.new(18,30),
         :is_closed => false,
         :notes => ''
       })
     @cal2 = @site.calendars.create({
         :date => Date.today + 2,
-        :open => nil,
-        :close => nil,
         :is_closed => true,
         :notes => ''
       })
@@ -45,6 +41,25 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
   # JSON APIs, Not Logged In
   #
 
+  test "should initialize calendars" do 
+    # Ensure the site has no calendars
+    @site.calendars.each {|c| c.delete}
+    assert_equal(0, @site.calendars.length)
+
+    # Establish a 1-week season
+    @site.season_start = Date.tomorrow
+    @site.season_end = Date.today + 8
+    @site.save
+
+    post init_site_season_path(@site.slug), headers: {
+      'Accept' => 'application/json'
+    }
+
+    assert_response :success
+
+    site_check = Site.find(@site.id)
+    assert_equal(7, site_check.calendars.length)
+  end
   test "should list calendars when not logged in" do
     get site_calendars_url(@site), 
       :headers => {
@@ -73,8 +88,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
       params: {
         calendar: {
           date: Date.today + 1,
-          open: Tod::TimeOfDay.new(8).to_s,
-          close: Tod::TimeOfDay.new(17,15).to_s,
           is_closed: false
         }
       }
@@ -100,8 +113,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
       :params => {
         :calendar => {
           date: Date.today + 1,
-          open: Tod::TimeOfDay.new(8),
-          close: Tod::TimeOfDay.new(17,15),
           is_closed: false
         }
       },
@@ -137,8 +148,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
         params: {
           :calendar => {
             date: Date.today + 1,
-            open: Tod::TimeOfDay.new(8),
-            close: Tod::TimeOfDay.new(17,15),
             is_closed: false
           }
         }
@@ -225,8 +234,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
       params: {
         :calendar => {
           :date => @cal1.date,
-          :open => @cal1.open,
-          :close => @cal1.close,
           :is_closed => @cal1.is_closed,
           :notes => @cal1.notes,
         }
@@ -258,8 +265,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
       params: {
         :calendar => {
           :date => @cal1.date,
-          :open => @cal1.open,
-          :close => @cal1.close,
           :is_closed => @cal1.is_closed,
           :notes => 'should not update calendar when logged in to the wrong SC',
         }
@@ -291,8 +296,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
       params: {
         :calendar => {
           :date => @cal1.date,
-          :open => @cal1.open,
-          :close => @cal1.close,
           :is_closed => @cal1.is_closed,
           :notes => 'should update calendar when logged in to the SC',
         }

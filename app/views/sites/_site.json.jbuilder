@@ -28,7 +28,7 @@ json.backup_coordinator_name User.find(site.backup_coordinator_id).name unless s
 json.url site_url(site.slug, format: :json)
 
 json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :calendar
-json.work_history work_history
-json.work_intents work_intents
+json.work_history site.work_history
+json.work_intents site.work_intents
 
 json.site_features site.site_features.collect {|feature| feature.feature}

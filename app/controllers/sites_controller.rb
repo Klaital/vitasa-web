@@ -149,18 +149,7 @@ class SitesController < ApplicationController
     end
 
     def site_signup_metadata(site_id)
-
-      work_history = Signup.joins(
-          :shift => :calendar
-        ).where(
-          :calendars => { :site_id => site_id, :date => (Date.today - 7)..(Date.today - 1) }
-        )
-      work_intents = Signup.joins(
-          :shift => :calendar
-        ).where(
-          :calendars => { :site_id => site_id, :date => (Date.today)..(Date.today + 7) }
-        )
-      [ work_history, work_intents ]
+      [ Site.find(site_id).work_history, Site.find(site_id).work_intents ]
     end
 
 

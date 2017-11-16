@@ -78,5 +78,30 @@ class User < ApplicationRecord
     end
     return false
   end
+
+
+  def work_history(start_date=Date.today - 7, end_date=Date.today)
+    Signup.where(
+        :user_id => self.id
+      ).joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :date => start_date..end_date }
+      )
+  end
+
+  def work_intents(start_date=Date.today, end_date = Date.today + 7)
+    Signup.where(
+        :user_id => self.id
+      ).joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :date => start_date..end_date }
+      )
+  end
+  
+  def suggestions
+    Suggestion.where(user_id: self.id)
+  end
 end
 

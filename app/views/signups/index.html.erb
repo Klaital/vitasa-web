@@ -15,6 +15,9 @@
 
   <tbody>
     <% @signups.each do |signup| %>
+      <% logger.debug("Renderering Signup ##{signup.id}") %>
+      <% logger.debug("Uses Shift ##{signup.shift.id}") %>
+      <% logger.debug("Time window: #{signup.shift.start_time}") %>
       <tr>
         <td><%= signup.shift.calendar.site.name %></td>
         <td><%= signup.shift.calendar.date %></td>

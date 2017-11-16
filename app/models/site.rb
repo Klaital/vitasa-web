@@ -41,4 +41,20 @@ class Site < ApplicationRecord
         end
         return false
     end
+
+    def work_history(start_date = Date.today - 7, end_date = Date.today - 1)
+      Signup.joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :site_id => self.id, :date => start_date..end_date }
+      )
+      
+    end
+    def work_intents(start_date = Date.today, end_date = Date.today + 7)
+      Signup.joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :site_id => self.id, :date => start_date..end_date }
+      )
+    end
 end
