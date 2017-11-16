@@ -21,7 +21,7 @@ class NotificationRequest < ApplicationRecord
                     :text => self.message, 
 #                    :click_action => "A_ViewNotification" 
                   } 
-                }
+                }.to_json
             }.to_json
             topic_arn = case self.audience.to_s.downcase
                         when 'volunteers'
