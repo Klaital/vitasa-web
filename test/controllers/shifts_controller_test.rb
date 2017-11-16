@@ -18,6 +18,8 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create shift" do
+    assert_not_nil(@site)
+    assert_equal(@site.id, @calendar.site_id)
     assert_difference('Shift.count') do
       post site_calendar_shifts_url(@site.slug, @calendar), params: { 
         shift: { 
@@ -30,6 +32,17 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
       }
     end
    assert_redirected_to site_calendar_shift_url(@site.slug, @calendar.id, Shift.last)
+  end
+
+  test "should create shift using JSON" do
+    assert_difference('Shift.count', 1) do
+      post site_calendar_shifts_path(@site.slug, @calendar), params: {
+        }.to_json, headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json'
+        } 
+    end
+    assert_response :success
   end
 
   test "should show shift" do

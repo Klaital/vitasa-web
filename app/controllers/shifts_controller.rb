@@ -26,7 +26,15 @@ class ShiftsController < ApplicationController
   # POST /shifts
   # POST /shifts.json
   def create
-    @shift = Shift.new(shift_params)
+    @site = if params.has_key?(:site_slug)
+              Site.find_by(slug: params[:site_slug])
+            elsif params.has_key?(:site_id) && params[:site_id] =~ /\A\d+\Z/
+              Site.find(params[:site_id])
+            else
+              Site.find_by(slug: params[:site_id])
+            end
+    @calendar = @site.calendars.find(params[:calendar_id])
+    @shift = @calendar.shifts.new(shift_params)
 
     respond_to do |format|
       if @shift.save
@@ -73,6 +81,10 @@ class ShiftsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shift_params
-      params.require(:shift).permit(:start_time, :end_time, :efilers_needed_basic, :efilers_needed_advanced, :calendar_id, :day_of_week)
+      params.require(:shift).permit(
+        :start_time, :end_time, 
+        :efilers_needed_basic, :efilers_needed_advanced, 
+        :calendar_id, 
+        :day_of_week)
     end
 end
