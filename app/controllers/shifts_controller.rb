@@ -1,12 +1,13 @@
 class ShiftsController < ApplicationController
   before_action :set_shift, only: [:show, :edit, :update, :destroy]
+  before_action :set_site
   skip_before_action :verify_authenticity_token
   wrap_parameters :shift
 
   # GET /shifts
   # GET /shifts.json
   def index
-    @shifts = Shift.all
+    @shifts = @calendar.shifts
   end
 
   # GET /shifts/1
@@ -26,16 +27,7 @@ class ShiftsController < ApplicationController
   # POST /shifts
   # POST /shifts.json
   def create
-    @site = if params.has_key?(:site_slug)
-              Site.find_by(slug: params[:site_slug])
-            elsif params.has_key?(:site_id) && params[:site_id] =~ /\A\d+\Z/
-              Site.find(params[:site_id])
-            else
-              Site.find_by(slug: params[:site_id])
-            end
-    @calendar = @site.calendars.find(params[:calendar_id])
-    @shift = @calendar.shifts.new(shift_params)
-
+   @shift = @calendar.shifts.new(shift_params)
     respond_to do |format|
       if @shift.save
         format.html { redirect_to site_calendar_shift_path(@site.slug, @calendar, @shift), notice: 'Shift was successfully created.' }
@@ -74,11 +66,20 @@ class ShiftsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_shift
-      @site = Site.find_by(slug: params[:site_id])
-      @calendar = @site.calendars.find(params[:calendar_id])
+      set_site
       @shift = @calendar.shifts.find(params[:id])
     end
-
+    def set_site
+      @site = if params.has_key?(:site_slug)
+              Site.find_by(slug: params[:site_slug])
+            elsif params.has_key?(:site_id) && params[:site_id] =~ /\A\d+\Z/
+              Site.find(params[:site_id])
+            else
+              Site.find_by(slug: params[:site_id])
+            end
+      @calendar = @site.calendars.find(params[:calendar_id])
+    end
+ 
     # Never trust parameters from the scary internet, only allow the white list through.
     def shift_params
       params.require(:shift).permit(
