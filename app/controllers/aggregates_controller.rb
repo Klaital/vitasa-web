@@ -12,29 +12,25 @@ class AggregatesController < ApplicationController
 
     Site.all.each do |site|
       dates_in_period.each do |date|
-        
-        # What is the usual schedule for today?
-        open = site.send("#{Date::DAYNAMES[date.wday].downcase}_open")
-        close = open.nil? ? nil : site.send("#{Date::DAYNAMES[date.wday].downcase}_close")
-        efilers_needed = open.nil? ? 0 : site.send("#{Date::DAYNAMES[date.wday].downcase}_efilers")
-        is_closed = open.nil?
+        # Find the calendar entry for today
+        cal = Calendar.find_by(site_id: site.id, date: date)
+        next if cal.nil? # Just exclude dates without a calendar entry
 
-        # Is there an override for today?
-        override = Calendar.find_by(site_id: site.id, date: date)
-        unless override.nil?
-            open = override.open
-            close = override.close
-            efilers_needed = override.efilers_needed
-            is_closed = override.is_closed
-        end
-
+        # Compose the Schedule data
         site_schedule = {
           :slug => site.slug,
-          :efilers_needed => efilers_needed,
-          :efilers_signed_up => Signup.where(date: date, site_id: site.id).count,
-          :is_closed => false,
-          :open => open.nil? ? nil : open.strftime("%H:%M"),
-          :close => close.nil? ? nil : close.strftime("%H:%M"),
+          :shifts => cal.shifts.collect {|shift|
+            logger.debug("#{site.slug} @#{date}, Shift##{shift.id}")
+            {
+              :efilers_needed_basic => shift.efilers_needed_basic,
+              :efilers_signed_up_basic => shift.efilers_signed_up('basic'),
+              :efilers_needed_advanced => shift.efilers_needed_advanced,
+              :efilers_signed_up_advanced => shift.efilers_signed_up('advanced'),
+              :open => shift.start_time.to_s,
+              :close => shift.end_time.to_s,
+            }
+          },
+          :is_closed => cal.is_closed,
         }
         if logged_in?
           site_schedule[:this_user_signup] = site.has_signup?(current_user, date)
