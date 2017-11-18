@@ -38,7 +38,7 @@
       <% @work_history.each do |work_record| %>
         <tr>
           <td><%= link_to work_record.shift.calendar.site.name, site_path(work_record.shift.calendar.site.slug) %></td>
-          <td><%= work_record.shift.calendardate %></td>
+          <td><%= work_record.shift.calendar.date %></td>
           <td><%= work_record.hours %></td>
           <td><%= work_record.approved %></td>
         </tr>
