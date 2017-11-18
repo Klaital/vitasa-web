@@ -10,7 +10,7 @@ class Shift < ApplicationRecord
     if cert_level.nil?
       self.signups.count
     else
-      self.signups.where(certification: cert_level)
+      self.signups.where(:shift_id => 2).joins(:user).where(:users => { :certification => cert_level.to_s.downcase }).count
     end
   end
 end
