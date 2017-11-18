@@ -85,8 +85,6 @@ class User < ApplicationRecord
         :user_id => self.id
       ).joins(
         :shift => :calendar
-      ).where(
-        :calendars => { :date => start_date..end_date }
       )
   end
 
@@ -95,8 +93,6 @@ class User < ApplicationRecord
         :user_id => self.id
       ).joins(
         :shift => :calendar
-      ).where(
-        :calendars => { :date => start_date..end_date }
       )
   end
   
