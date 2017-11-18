@@ -57,4 +57,15 @@ class Site < ApplicationRecord
         :calendars => { :site_id => self.id, :date => start_date..end_date }
       )
     end
+
+    # Utility method to find out if a user has signed up to work this site
+    def has_signup?(user_id, date)
+      Signup.where(
+        :user_id => user_id
+      ).joins(
+        :shift => :calendar
+      ).where(
+        :calendars => { :date => date, :site_id => self.id }
+      ).count > 0
+    end
 end
