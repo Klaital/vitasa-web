@@ -10,6 +10,7 @@ json.signups shift.signups.collect do |signup|
     json.id signup.user.id
     json.name signup.user.name
     json.certification signup.user.certification
+    json.phone signup.user.phone
   end
 end
 
