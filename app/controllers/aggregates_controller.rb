@@ -23,9 +23,9 @@ class AggregatesController < ApplicationController
             logger.debug("#{site.slug} @#{date}, Shift##{shift.id}")
             {
               :efilers_needed_basic => shift.efilers_needed_basic,
-              :efilers_signed_up_basic => shift.efilers_signed_up('basic'),
+              :efilers_signed_up_basic => shift.efilers_signed_up('Basic'),
               :efilers_needed_advanced => shift.efilers_needed_advanced,
-              :efilers_signed_up_advanced => shift.efilers_signed_up('advanced'),
+              :efilers_signed_up_advanced => shift.efilers_signed_up('Advanced'),
               :open => shift.start_time.to_s,
               :close => shift.end_time.to_s,
             }

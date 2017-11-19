@@ -16,6 +16,7 @@ two:
 three:
   email: user-three@example.org
   password_digest: <%= User.digest('user-three-password') %>
+  certification: Basic
 
 # User Four is a SiteCoordinator for Site the_cathedral
 four:
