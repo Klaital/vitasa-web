@@ -7,6 +7,23 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
     @shift = @calendar.shifts.create({'start_time': Tod::TimeOfDay.new(8,30), 'end_time': Tod::TimeOfDay.new(12,45)})
   end
 
+  test "should get signup user info" do
+    # Create a signup
+    user1 = users(:one)
+    signup = @shift.signups.create(user_id: user1.id)
+    
+    # Query for it in JSON format
+    get site_calendar_shift_path(@site, @calendar, @shift), headers: { 'Accept' => 'application/json' }
+    assert_response :success
+
+    shift_view = JSON.load(response.body)
+    assert_not_nil(shift_view, 'Signup Details did not return JSON')
+
+    assert_equal(1, shift_view['signups'].length)
+    assert_equal('Basic', shift_view['signups'].first['user']['certification'])
+
+  end
+
   test "should get index" do
     get site_calendar_shifts_url(@site, @calendar)
     assert_response :success
