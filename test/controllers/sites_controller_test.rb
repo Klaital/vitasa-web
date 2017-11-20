@@ -64,6 +64,9 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     @site.sitecoordinator = nil
     @site.save
     assert_nil(Site.find(@site.id).sitecoordinator)
+    @site.calendars.first.shifts.each do |shift|
+      puts "#{@site.calendars.first.date}: #{shift.id}"
+    end
     get site_url(@site)
     assert_response :success
   end

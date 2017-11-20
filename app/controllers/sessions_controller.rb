@@ -25,7 +25,6 @@ class SessionsController < ApplicationController
       log_in user
       respond_to do |format|
         format.json { 
-          @work_history, @work_intents, @suggestions = UsersController.user_metadata(user.id) 
           @user = user
           render 'users/show', :status => 200
         }

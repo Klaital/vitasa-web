@@ -31,7 +31,6 @@ class UsersController < ApplicationController
     if @user.save
       # Create the starting role as well
       @user.roles = [ Role.find_by(name: 'NewUser') ]
-      @work_history, @work_intents, @suggestions = UsersController::user_metadata(@user.id)
 
       log_in @user
       respond_to do |format|
@@ -118,17 +117,6 @@ class UsersController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = User.find(params[:id])
-    unless @user.nil?
-      @work_history, @work_intents, @suggestions = UsersController::user_metadata(@user.id)
-    end
-  end
-
-  def self.user_metadata(user_id)
-    user = User.find(user_id)
-    work_history = user.work_history(Date.today - 7, Date.today - 1)
-    work_intents = user.work_intents(Date.today, Date.today + 7)
-    suggestions  = user.suggestions
-    [ work_history, work_intents, suggestions ]
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

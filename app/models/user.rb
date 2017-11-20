@@ -80,19 +80,23 @@ class User < ApplicationRecord
   end
 
 
-  def work_history(start_date=Date.today - 7, end_date=Date.today)
+  def work_history
     Signup.where(
         :user_id => self.id
       ).joins(
         :shift => :calendar
+      ).where(
+        'calendars.date < ?', Date.today
       )
   end
 
-  def work_intents(start_date=Date.today, end_date = Date.today + 7)
+  def work_intents
     Signup.where(
         :user_id => self.id
       ).joins(
         :shift => :calendar
+      ).where(
+        'calendars.date >= ?', Date.today
       )
   end
   

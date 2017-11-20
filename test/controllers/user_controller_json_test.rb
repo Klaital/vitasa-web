@@ -10,6 +10,27 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
   #   assert_response 406
   # end
 
+  test "should get correct signups" do
+    cookie = login_user('user-three')
+    assert_not_nil(cookie)
+    user = users(:one)
+    site = sites(:the_alamo)
+    calendar = site.calendars.create({:date => Date.tomorrow})
+    shift1 = calendar.shifts.create({:start_time => Tod::TimeOfDay.new(8), :end_time => Tod::TimeOfDay.new(12,30)})
+    signup1 = shift1.signups.create({:user_id => user.id})
+  
+    get user_url(user), 
+      headers: {
+        'Accept' => 'application/json',
+        'Cookie' => cookie
+      }
+    assert_response :success
+    user_view = JSON.parse(response.body)
+    assert_not_nil(user_view)
+
+    assert_equal(1, user_view['work_intents'].length)
+    assert_equal(0, user_view['work_history'].length)
+  end
   test "should not be able to see a list of users via JSON when not logged in" do 
     get users_url,
       headers: {
