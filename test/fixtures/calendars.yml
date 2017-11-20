@@ -1,22 +1,26 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  date: <%= Date.tomorrow %>
+  #  date: <%= (Date.tomorrow).strftime('%Y-%m-%d') %>
+  date: 2018-02-01
   notes: MyText
   site: the_alamo
 
 two:
-  date: <%= Date.today + 4 %>
+  #  date: <%= (Date.today + 4).strftime('%Y-%m-%d') %>
+  date: 2018-02-03
   site: the_cathedral
   notes: MyText
 
 the_cathedral_tomorrow:
-  date: <%= Date.tomorrow.strftime('%Y-%m-%d') %>
+  #  date: <%= Date.tomorrow.strftime('%Y-%m-%d') %>
+  date: 2018-02-02
   is_closed: false
   site: the_cathedral
 
 the_cathedral_day2:
-  date: <%= (Date.today + 2).strftime('%Y-%m-%d') %>
+  #  date: <%= (Date.today + 2).strftime('%Y-%m-%d') %>
+  date: 2018-02-04
   is_closed: false
   site: the_cathedral
 

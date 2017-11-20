@@ -2,5 +2,5 @@
 
 <%= render 'form', shift: @shift %>
 
-<%= link_to 'Show', @shift %> |
-<%= link_to 'Back', shifts_path %>
+<%= link_to 'Show', site_calendar_shift_path(@shift.calendar.site, @shift.calendar, @shift) %> |
+<%= link_to 'Back', site_calendar_shifts_path(@shift.calendar.site, @shift.calendar) %>

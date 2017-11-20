@@ -53,8 +53,12 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create shift using JSON" do
     assert_difference('Shift.count', 1) do
-      post site_calendar_shifts_path(@site.slug, @calendar), params: {
-        }.to_json, headers: {
+      post site_calendar_shifts_path(@site.slug, @calendar), 
+        params: {
+          'start_time': '09:30:00',
+          'end_time': '17:00:00'
+        }.to_json, 
+        headers: {
           'Accept' => 'application/json',
           'Content-Type' => 'application/json'
         } 
@@ -74,7 +78,7 @@ class ShiftsControllerTest < ActionDispatch::IntegrationTest
 
   test "should update shift" do
     patch site_calendar_shift_url(@site, @calendar, @shift), params: { shift: { calendar_id: @shift.calendar_id, day_of_week: @shift.day_of_week, efilers_needed_advanced: @shift.efilers_needed_advanced, efilers_needed_basic: @shift.efilers_needed_basic, end_time: @shift.end_time, start_time: @shift.start_time } }
-    assert_redirected_to shift_url(@shift)
+    assert_redirected_to site_calendar_shift_url(@site.slug,@calendar,@shift)
   end
 
   test "should destroy shift" do

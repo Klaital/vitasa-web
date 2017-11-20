@@ -1,4 +1,8 @@
-<%= form_for(shift) do |f| %>
+<%= form_for([
+  shift.calendar.site, 
+  shift.calendar, 
+  shift
+]) do |f| %>
   <% if shift.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(shift.errors.count, "error") %> prohibited this shift from being saved:</h2>
@@ -13,12 +17,12 @@
 
   <div class="field">
     <%= f.label :start_time %>
-    <%= f.time_select :start_time %>
+    <%= f.text_field :start_time %>
   </div>
 
   <div class="field">
     <%= f.label :end_time %>
-    <%= f.time_select :end_time %>
+    <%= f.text_field :end_time %>
   </div>
 
   <div class="field">

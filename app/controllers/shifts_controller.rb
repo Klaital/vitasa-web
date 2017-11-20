@@ -17,7 +17,8 @@ class ShiftsController < ApplicationController
 
   # GET /shifts/new
   def new
-    @shift = Shift.new
+    set_site
+    @shift = @calendar.shifts.new
   end
 
   # GET /shifts/1/edit
@@ -27,7 +28,7 @@ class ShiftsController < ApplicationController
   # POST /shifts
   # POST /shifts.json
   def create
-   @shift = @calendar.shifts.new(shift_params)
+    @shift = @calendar.shifts.new(shift_params)
     respond_to do |format|
       if @shift.save
         format.html { redirect_to site_calendar_shift_path(@site.slug, @calendar, @shift), notice: 'Shift was successfully created.' }
@@ -42,6 +43,7 @@ class ShiftsController < ApplicationController
   # PATCH/PUT /shifts/1
   # PATCH/PUT /shifts/1.json
   def update
+    set_site
     respond_to do |format|
       if @shift.update(shift_params)
         format.html { redirect_to site_calendar_shift_path(@shift.calendar.site.slug, @shift.calendar, @shift), notice: 'Shift was successfully updated.' }
@@ -58,7 +60,7 @@ class ShiftsController < ApplicationController
   def destroy
     @shift.destroy
     respond_to do |format|
-      format.html { redirect_to shifts_url, notice: 'Shift was successfully destroyed.' }
+      format.html { redirect_to site_calendar_shifts_path(@shift.calendar.site, @shift.calendar), notice: 'Shift was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
