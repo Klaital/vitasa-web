@@ -6,11 +6,12 @@ class AggregatesController < ApplicationController
     period_start = params.has_key?('start') ? Date.parse(params['start']) : Date.today
     period_end   = params.has_key?('end') ? Date.parse(params['end']) : Date.today + 6
     dates_in_period = (period_start..period_end).map {|date| date}
+    sites = params.has_key?('site') ? [Site.where(slug: params['site'])] : Site.all
 
     daily_schedule = {}
     dates_in_period.each {|d| daily_schedule[d] = []}
 
-    Site.all.each do |site|
+    sites.each do |site|
       dates_in_period.each do |date|
         # Find the calendar entry for today
         cal = Calendar.find_by(site_id: site.id, date: date)
