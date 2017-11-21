@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+gem 'seed_dump'
 
 gem 'bootstrap-sass', '3.3.6'
 gem 'rb-inotify', :require => false
