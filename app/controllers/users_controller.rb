@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy ]
   skip_before_action :verify_authenticity_token
+  wrap_parameters :user, include: [:password, :password_confirmation, :role_ids, :roles, :email, :phone, :certification, :name]
 
   def index
     @users = User.all
@@ -24,9 +25,7 @@ class UsersController < ApplicationController
     end
   end
   def create
-    merged_user_params = user_params.merge({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
-
-    @user = User.new(merged_user_params)
+    @user = User.new(user_params)
 
     if @user.save
       # Create the starting role as well
@@ -55,27 +54,46 @@ class UsersController < ApplicationController
   end
 
   # PATCH/PUT /users/1
-  # PATCH/PUT /users/1.json
+  # PATCH/PUT /users/0.json
   def update
     unless logged_in? && (current_user == @user || is_admin?)
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
-    
-    prepared_user_params = user_params.dup
+
+    # Only update the Role Grants if any are set at all
+    updated_roles = false
+    if logged_in? && current_user.is_admin?
+      logger.debug("Loading new roles...")
+      new_roles = params.has_key?(:role_ids) ? (params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact) : []
+      new_roles = params.has_key?(:roles) ? (params[:roles].collect {|role_name| Role.find_by(name: role_name)}).compact : []
+      logger.debug("New Roleset: #{new_roles}")
+      unless new_roles.empty?
+        @user.roles = new_roles
+        updated_roles = true
+      end
+
+    end
+
+    # Check whether there is anything else for this user to update
+#    if user_params.nil? || user_params.empty?
+#      render :json => { :errors => 'No valid params for your role to update'}, :status => :unprocessable_entity
+#      response.set_header('Content-Type', 'application/json')
+#      return
+#    end 
+   
+    # Only include the password fields if both are set 
+    prepared_user_params = user_params
+    logger.debug("Permitted params: #{prepared_user_params.inspect}")
     if prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
+      logger.debug("Removing password fields: #{prepared_user_params}")
       prepared_user_params.delete(:password)
       prepared_user_params.delete(:password_confirmation)
     end
 
-
-    # Only update the Role Grants if any are set at all
-    new_roles = params.has_key?(:role_ids) ? (params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact) : []
-    @user.roles = new_roles unless new_roles.empty?
-
-    respond_to do |format|
-      if @user.update(prepared_user_params)
+   respond_to do |format|
+      if (!prepared_user_params.empty? && @user.update(prepared_user_params)) || updated_roles
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
       else
@@ -121,8 +139,35 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    logger.info("Raw User Params: #{params}")
-    params[:user].merge!({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
-    params.require(:user).permit(:name, :email, :password, :password_confirmation, :certification, :phone)
+#    logger.debug("Raw User Params: #{params}")
+#    logger.debug("User logged in? #{logged_in?}")
+#    logger.debug("Users: current=#{current_user.id}, accessing=#{params[:id]}")
+#    logger.debug("Accessing self? #{logged_in? && current_user == User.find(params[:id])}")
+
+    permitted_fields = if !logged_in? || (logged_in? && current_user == User.find(params[:id]))
+                         logger.debug("Permitting self-user fields")
+                         [
+                           :name, :email, :password, :password_confirmation, :phone
+                         ]
+                       elsif logged_in? && current_user.is_admin?
+                         logger.debug("Permitting admin-only user fields")
+                         [
+                           :roles, :role_ids, :certification, :name, :password, :password_confirmation
+                         ]
+                       else
+                         logger.debug("Permitting no user fields")
+                         []
+                       end
+
+#    params[:user].merge!({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
+    #params.require(:user).permit(:name, :email, :password, :password_confirmation, :certification, :phone, :role_ids, :roles)
+    begin
+      logger.debug("Permitting these fields: #{permitted_fields}")
+      logger.debug("Filtered params: #{params.require(:user).permit(permitted_fields)}")
+      params.require(:user).permit(permitted_fields)
+    rescue ActionController::ParameterMissing => e
+      logger.warning("No valid parameters were included for the UsersController to process")
+      []
+    end 
   end
 end

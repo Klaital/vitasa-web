@@ -1,17 +1,17 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user_id: <%= User.find_by(email: 'user-one@example.org') %>
-  role_id: <%= Role.find_by(name: 'NewUser') %>
+  user: one 
+  role: new-user
 
 two:
-  user_id: <%= User.find_by(email: 'user-two@example.org') %>
-  role_id: <%= Role.find_by(name: 'SiteCoordinator') %>
+  user: two
+  role: site-coordinator
 
 three:
-  user_id: <%= User.find_by(email: 'user-two@example.org').id %>
-  role_id: <%= Role.find_by(name: 'Admin').id %>
+  user: two
+  role: admin
 
 four:
-  user_id: <%= User.find_by(email: 'reviewer-one@example.org') %>
-  role_id: <%= Role.find_by(name: 'Volunteer') %>
+  user: reviewer_one
+  role: volunteer

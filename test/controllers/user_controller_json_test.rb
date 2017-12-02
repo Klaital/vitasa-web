@@ -143,19 +143,8 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
 
   test "should be able to change my password as a user who is logged in" do
     user = users(:one)
-    post login_url, 
-    params: {
-      email: user.email,
-      password: 'user-one-password'
-    }.to_json,
-    headers: {
-      'Accept' => 'application/json',
-      'Content-Type' => 'application/json'
-    }
-    assert_response :success
-    # harvest the cookie
-    cookie = response.headers['Set-Cookie']
-    assert_not_nil(cookie, 'No cookie harvested')
+    cookie = login_user('user-one')
+    old_password = user.password_digest.dup
 
     # Query Under Test
     patch user_url(user), 
@@ -169,6 +158,10 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
         'Cookie' => cookie,
       }
     assert_response :success
+
+    # Verify the chagnes
+    user.reload
+    assert_not_equal(old_password, user.password_digest)
   end
 
 
@@ -186,6 +179,54 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     }
 
     assert_response :success
+  end
+
+  test "should be able to set roles only as an admin" do
+    user_cookie = login_user('user-one', [roles('volunteer')])
+    admin_cookie = login_user('user-two', [roles('admin')])
+    volunteer = User.find_by(email: 'user-one@example.org')
+    admin = User.find_by(email: 'user-two@example.org')
+
+    # Try setting roles as the non-admin user
+    assert_equal(1, volunteer.roles.length)
+    assert_equal('Volunteer', volunteer.roles.first.name)
+    patch user_url(volunteer), 
+      params: {
+        'roles': [ 'Admin', 'SiteCoordinator' ]
+      }.to_json, 
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => user_cookie
+      }
+
+    assert_response :unprocessable_entity
+
+    # Reload the volunteer record
+    volunteer.reload
+    assert_equal(1, volunteer.roles.length)
+    assert_equal('Volunteer', volunteer.roles.first.name)
+
+
+    # Now try setting roles as an admin user
+    patch user_url(volunteer), 
+      params: {
+        'roles': [ 
+          'Admin', 
+          'SiteCoordinator'
+        ],
+#        'certification': 'Basic'
+      }.to_json, 
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => admin_cookie
+      }
+
+#    assert_equal('', response.body)
+    assert_response :success
+    volunteer.reload
+    assert_equal(2, volunteer.roles.length)
   end
 
 

@@ -1,4 +1,5 @@
 class NotificationRegistration < ApplicationRecord
+  belongs_to :user
   before_destroy :delete_arns
 
   def delete_arns
