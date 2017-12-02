@@ -181,6 +181,20 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should be able to delete users with JSON format" do
+    cookie = login_user('user-one', [roles('admin')])
+
+    assert_difference('User.count', -1) do
+      delete user_url(users('two')),
+        headers: {
+          'Content-Type' => 'application/json',
+          'Accept' => 'application/json',
+          'Cookie' => cookie,
+        }
+    end
+    assert_response :success
+  end
+
   test "should be able to set roles only as an admin" do
     user_cookie = login_user('user-one', [roles('volunteer')])
     admin_cookie = login_user('user-two', [roles('admin')])
