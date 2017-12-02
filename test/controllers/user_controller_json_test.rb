@@ -243,5 +243,32 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
     assert_equal(2, volunteer.roles.length)
   end
 
+  test "should be able to set any user password as an admin" do
+    user_cookie = login_user('user-one', [roles('volunteer')])
+    admin_cookie = login_user('user-two', [roles('admin')])
+    volunteer = User.find_by(email: 'user-one@example.org')
+    admin = User.find_by(email: 'user-two@example.org')
+
+    old_password = volunteer.password_digest
+
+    # Set a new password using the admin's credentials
+    patch user_url(volunteer), 
+      params: {
+        'password' => 'new-password-123',
+        'password_confirmation' => 'new-password-123',
+      }.to_json, 
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => admin_cookie
+      }
+
+    assert_response :success
+
+    # Reload the volunteer record
+    volunteer.reload
+    assert_not_equal(old_password, volunteer.password_digest)
+  end
+
 
 end
