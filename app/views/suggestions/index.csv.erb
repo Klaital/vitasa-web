@@ -1,0 +1,10 @@
+<%= CSV.generate_line( [ 'id', 'subject', 'details', 'submitter', 'From Public?' ] ) %>
+<% @suggestions.each do | suggestion | %>
+<%= CSV.generate_line([
+  suggestion.id,
+  suggestion.subject,
+  suggestion.details,
+  suggestion.user.name,
+  suggestion.from_public
+]) -%>
+<% end %>

@@ -9,7 +9,7 @@
       <th>Subject</th>
       <th>Opened By</th>
       <th>From Client?</th>
-      <th colspan="3"></th>
+      <th colspan="<%= (logged_in? && current_user.has_role?('Admin')) ? '3' : '1' %>"></th>
     </tr>
   </thead>
 
@@ -21,13 +21,16 @@
         <td><%= suggestion.user.nil? ? 'n/a' : suggestion.user.name %></td>
         <td><%= suggestion.from_public %></td>
         <td><%= link_to 'Show', suggestion %></td>
-        <td><%= link_to 'Edit', edit_suggestion_path(suggestion) %></td>
-        <td><%= link_to 'Destroy', suggestion, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% if logged_in? && current_user.has_role?('Admin') %>
+          <td><%= link_to 'Edit', edit_suggestion_path(suggestion) %></td>
+          <td><%= link_to 'Destroy', suggestion, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
 <br>
+Download: <%= link_to 'CSV', suggestions_path(format: :csv) %> | <%= link_to 'XLS', suggestions_path(format: :xls) %><br />
 
 <%= link_to 'New Suggestion', new_suggestion_path %>

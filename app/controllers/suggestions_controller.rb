@@ -10,7 +10,19 @@ class SuggestionsController < ApplicationController
     else
       @suggestions = Suggestion.all
     end
-    
+   
+    respond_to do |format|
+      format.html
+      format.json
+      format.xls do
+        headers['Content-Type'] ||= 'application/xls'
+        headers['Content-Disposition'] = 'attachment; filename="suggestions.xls"'
+      end
+      format.csv do 
+        headers['Content-Type'] ||= 'text/csv'
+        headers['Content-Disposition'] = 'attachment; filename="suggestions.csv"'
+      end
+    end
   end
 
   # GET /suggestions/1
