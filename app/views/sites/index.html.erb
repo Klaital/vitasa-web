@@ -18,8 +18,22 @@
 
   <tbody>
     <% @sites.each do |site| %>
-      <% sc = (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) %>
-      <% bc = (site.backup_coordinator_id.nil?) ? nil : User.find(site.backup_coordinator_id) %>
+      <% sc = begin
+                (site.sitecoordinator.nil?) ? nil : User.find(site.sitecoordinator) 
+              rescue ActiveRecord::RecordNotFound => e
+                site.sitecoordinator = nil
+                site.save
+                nil
+              end
+      %>
+      <% bc = begin
+                (site.backup_coordinator_id.nil?) ? nil : User.find(site.backup_coordinator_id) 
+              rescue ActiveRecord::RecordNotFound => e
+                site.backup_coordinator = nil
+                site.save
+                nil
+              end
+      %>
       <tr>
         <td><%= link_to site.name, site_url(site.slug) %></td>
         <td><%= site.street %>, <%= site.city %>, <%= site.state %> <%= site.zip %></td>
