@@ -29,7 +29,7 @@
       <% bc = begin
                 (site.backup_coordinator_id.nil?) ? nil : User.find(site.backup_coordinator_id) 
               rescue ActiveRecord::RecordNotFound => e
-                site.backup_coordinator = nil
+                site.backup_coordinator_id = nil
                 site.save
                 nil
               end
