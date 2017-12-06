@@ -66,7 +66,7 @@
     </tr>
     <% @site.calendars.each do |calendar_override| %>
       <% calendar_override.shifts.each do |shift| %>
-    <tr>
+    <tr id="shift-row-#{shift.id}" class="shift-row">
       <td><%= calendar_override.date %></td>
       <td><%= link_to "#{shift.start_time} - #{shift.end_time}", site_calendar_shift_path(@site.slug, calendar_override, shift) %></td>
       <td><%= shift.efilers_needed_basic %></td>
