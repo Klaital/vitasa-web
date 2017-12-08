@@ -1,7 +1,4 @@
 class AggregatesController < ApplicationController
-  self.page_cache_directory = File.join(Rails.root, 'public', 'cached_pages')
-  caches_page :schedule
-
   # GET /schedule
   def schedule
     # Set the time period to look at the site and volunteer schedule for
