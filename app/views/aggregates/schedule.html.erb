@@ -11,16 +11,16 @@
     <th>Signed Up?</th>
   <% end %>
   </tr>
-  <% @sites.each do |sites_schedule| %>
-    <% sites_schedule[:sites].each do |site_schedule| %>
+  <% @schedule.each do |sites_schedule| %>
+    <% sites_schedule['sites'].each do |site_schedule| %>
     <tr>
-      <td><%= sites_schedule[:date] %></td>
-      <td><%= site_schedule[:slug] %></td>
-      <td><%= site_schedule[:is_closed] ? 'Closed' : '✓' %></td>
-      <td><%= site_schedule[:open] %> - <%= site_schedule[:close] %></td>
-      <td><%= site_schedule[:efilers_signed_up] %> / <%= site_schedule[:efilers_needed].to_s.empty? ? '-' : site_schedule[:efilers_needed] %></td>
+      <td><%= sites_schedule['date'] %></td>
+      <td><%= site_schedule['slug'] %></td>
+      <td><%= site_schedule['is_closed'] ? 'Closed' : '✓' %></td>
+      <td><%= site_schedule['open'] %> - <%= site_schedule['close'] %></td>
+      <td><%= site_schedule['efilers_signed_up'] %> / <%= site_schedule['efilers_needed'].to_s.empty? ? '-' : site_schedule['efilers_needed'] %></td>
     <% if logged_in? %>
-      <td><%= site_schedule[:this_user_signup] %>
+      <td><%= site_schedule['this_user_signup'] %>
     <% end %>
     </tr>
     <% end %>
