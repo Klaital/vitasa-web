@@ -27,6 +27,8 @@ GEM
       rack-test (~> 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.2)
+    actionpack-page_caching (1.1.0)
+      actionpack (>= 4.0.0, < 6)
     actionview (5.0.5)
       activesupport (= 5.0.5)
       builder (~> 3.1)
@@ -670,6 +672,7 @@ PLATFORMS
   x86-mingw32
 
 DEPENDENCIES
+  actionpack-page_caching
   activemodel-serializers-xml
   aws-sdk
   bcrypt (~> 3.1.7)

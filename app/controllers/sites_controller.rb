@@ -1,4 +1,7 @@
 class SitesController < ApplicationController
+  self.page_cache_directory = File.join(Rails.root, 'public', 'cached_pages')
+  caches_page :show, :new, :index
+
   before_action :set_site, only: [:show, :edit, :update, :destroy]
   before_action :set_eligible_sitecoordinators, only: [ :edit, :new ]
   skip_before_action :verify_authenticity_token
@@ -53,7 +56,11 @@ class SitesController < ApplicationController
     respond_to do |format|
       if is_admin?
         if @site.save
-          @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+          # Expire the cache
+          expire_page action: 'index'
+          expire_page controller: 'aggregates', action: 'schedule'
+
+         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
@@ -79,6 +86,11 @@ class SitesController < ApplicationController
         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
         
         if @site.update(site_params)
+          # Expire the cache
+          expire_page action: 'show', id: @site.id
+          expire_page action: 'index'
+          expire_page action: 'schedule', controller: 'aggregates'
+
           format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else

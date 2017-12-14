@@ -11,41 +11,92 @@ class AggregatesController < ApplicationController
     daily_schedule = {}
     dates_in_period.each {|d| daily_schedule[d] = []}
 
-    sites.each do |site|
-      dates_in_period.each do |date|
-        # Find the calendar entry for today
-        cal = Calendar.find_by(site_id: site.id, date: date)
-        next if cal.nil? # Just exclude dates without a calendar entry
+    # Eager load the relevant calendars, shifts, and signups
+    @sites = Site.all
+    @calendars = Calendar.find_by_sql([
+      "SELECT * FROM calendars WHERE date BETWEEN ? AND ?",
+      period_start, period_end
+    ])
+    @shifts = Shift.find_by_sql([
+      "SELECT * FROM shifts INNER JOIN calendars ON calendars.id = shifts.calendar_id WHERE calendars.date BETWEEN ? AND ? ",
+      period_start, period_end
+    ])
+    @signups = Signup.find_by_sql([
+      "SELECT * FROM signups INNER JOIN shifts ON shifts.id = signups.shift_id INNER JOIN calendars ON calendars.id = shifts.calendar_id WHERE calendars.date BETWEEN ? AND ?",
+      period_start, period_end
+    ])
 
-        # Compose the Schedule data
-        site_schedule = {
-          :slug => site.slug,
-          :shifts => cal.shifts.collect {|shift|
-            logger.debug("#{site.slug} @#{date}, Shift##{shift.id}")
-            {
-              :efilers_needed_basic => shift.efilers_needed_basic,
-              :efilers_signed_up_basic => shift.efilers_signed_up('Basic'),
-              :efilers_needed_advanced => shift.efilers_needed_advanced,
-              :efilers_signed_up_advanced => shift.efilers_signed_up('Advanced'),
-              :open => shift.start_time.to_s,
-              :close => shift.end_time.to_s,
-            }
-          },
-          :is_closed => cal.is_closed,
-        }
-        if logged_in?
-          site_schedule[:this_user_signup] = site.has_signup?(current_user, date)
-        end
-        daily_schedule[date] << site_schedule.dup
-      end
+
+    # Initialize the data structure
+    @sites_data = {}
+    # Each date in the range should have an entry, where each site's shifts will be listed
+    dates_in_period.each do |date| 
+      logger.debug("Initializing @sites_data[#{date}]")
+      @sites_data[date] = {
+        'date' => date.iso8601, 
+        'is_closed' => true,
+        'sites' => {}
+      }
     end
 
-    @sites = []
-    daily_schedule.each_pair do |date, schedule|
-      @sites << {
-        :date => date,
-        :sites => schedule
+    # Populate the shifts
+    @shifts.each do |shift|
+      #TODO: mark the site as not closed for the day if the calendar entry says so
+      
+      # Initialize the site entry if needed
+      unless @sites_data[shift.calendar.date]['sites'].has_key?(shift.calendar.site.slug)
+        @sites_data[shift.calendar.date]['sites'][shift.calendar.site.slug] = {
+          'slug' => shift.calendar.site.slug,
+          'shifts' => {},
+          'is_closed' => shift.calendar.is_closed
+        }
+        @sites_data[shift.calendar.date]['sites'][shift.calendar.site.slug]['this_user_signup'] = false if logged_in?
+      end
+      
+      # Add this shift record
+      @sites_data[shift.calendar.date]['sites'][shift.calendar.site.slug]['shifts'][shift.start_time.to_s] = {
+        'open' => shift.start_time.to_s,
+        'close' => shift.end_time.to_s,
+        'efilers_needed_basic' => shift.efilers_needed_basic,
+        'efilers_signed_up_basic' => 0,
+        'efilers_needed_advanced' => shift.efilers_needed_advanced,
+        'efilers_signed_up_advanced' => 0,
       }
+    end
+
+    # Populate the Volunteers Signup Counts
+    @signups.each do |signup|
+      logger.debug("Analyzing signup #{signup.id}, for the #{signup.shift.start_time} shift on #{signup.shift.calendar.date} at #{signup.shift.calendar.site.slug}")
+
+      # Determine whether the logged-in user has signed up to work this shift
+      if logged_in?
+        if signup.user_id == current_user.id
+          @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['this_user_signup'] = true
+        end
+      end
+
+      advanced_increment = signup.user.certification == 'Advanced' ? 1 : 0
+      basic_increment = signup.user.certification == 'Basic' ? 1 : 0
+
+      logger.debug("@sites_data: #{@sites_data.nil?}")
+      logger.debug("@sites_data[#{signup.shift.calendar.date}]: #{@sites_data[signup.shift.calendar.date].nil?}")
+      @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['shifts'][signup.shift.start_time.to_s]['efilers_signed_up_basic'] += basic_increment
+      @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['shifts'][signup.shift.start_time.to_s]['efilers_signed_up_advanced'] += advanced_increment
+    end
+
+    @schedule = []
+    @sites_data.each_pair do |date, date_data|
+      
+      schedule_entry = {
+        'date' => date,
+        'sites' => date_data['sites'].map {|slug, site_data| {
+          'slug' => slug,
+          'is_closed' => site_data['is_closed'].nil? ? site_data['shifts'].length == 0 : site_data['is_closed'],
+          'this_user_signup' => (site_data.has_key?('this_user_signup') ? site_data['this_user_signup'] : nil),
+          'shifts' => site_data['shifts'].values,
+        }.compact}
+      }
+      @schedule << schedule_entry
     end
   end
 

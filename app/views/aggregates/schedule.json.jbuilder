@@ -1,1 +1,1 @@
-json.array! @sites
+json.array! @schedule
