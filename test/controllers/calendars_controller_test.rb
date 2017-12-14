@@ -41,25 +41,6 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
   # JSON APIs, Not Logged In
   #
 
-  test "should initialize calendars" do 
-    # Ensure the site has no calendars
-    @site.calendars.each {|c| c.delete}
-    assert_equal(0, @site.calendars.length)
-
-    # Establish a 1-week season
-    @site.season_start = Date.tomorrow
-    @site.season_end = Date.today + 8
-    @site.save
-
-    post init_site_season_path(@site.slug), headers: {
-      'Accept' => 'application/json'
-    }
-
-    assert_response :success
-
-    site_check = Site.find(@site.id)
-    assert_equal(7, site_check.calendars.length)
-  end
   test "should list calendars when not logged in" do
     get site_calendars_url(@site), 
       :headers => {
