@@ -64,8 +64,8 @@ end
 
 group :production, :staging do
   gem 'mysql2'
-  gem 'actionpack-page_caching'
 end
+gem 'actionpack-page_caching'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
