@@ -8,7 +8,8 @@ class AggregatesController < ApplicationController
     period_end   = params.has_key?('end') ? Date.parse(params['end']) : Date.today + 6
 
     # Check for a cached version of the schedule
-    @schedule = $redis.get("sites_data_#{period_start}-#{period_end}")
+    #@schedule = $redis.get("sites_data_#{period_start}-#{period_end}")
+    @schedule = nil
     if @schedule.nil?
       logger.info("No cached schedule for #{period_start} - #{period_end}")
 
@@ -104,10 +105,10 @@ class AggregatesController < ApplicationController
         }
         @schedule << schedule_entry
       end
-      $redis.set("sites_data_#{period_start}-#{period_end}", JSON.generate(@schedule))
+#      $redis.set("sites_data_#{period_start}-#{period_end}", JSON.generate(@schedule))
     else
-      logger.info("Read schedule from cache")
-      @schedule = JSON.parse(@schedule)
+#      logger.info("Read schedule from cache")
+#      @schedule = JSON.parse(@schedule)
     end
   end
 
