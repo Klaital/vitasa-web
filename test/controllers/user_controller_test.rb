@@ -1,6 +1,29 @@
 require 'test_helper'
 
 class UserControllerTest < ActionDispatch::IntegrationTest
+  test "admins should be able to change user roles" do
+    admin = users(:one)
+    user = users(:two)
+    cookie = login_user('user-one', ['Admin'])
+    user.roles = [Role.find_by(name: 'NewUser')]
+
+    assert(1, user.roles.length)
+    assert('NewUser', user.roles.first.name)
+
+    patch user_path(user.id), params: { 
+      user: {},
+      role_ids: [
+        Role.find_by(name: 'Volunteer').id
+      ]
+    }, headers: {
+      'Cookie': cookie,
+    }
+
+    # Reload the user
+    user_reloaded = User.find(user.id)
+    assert_equal(1, user_reloaded.roles.length)
+    assert_equal('Volunteer', user_reloaded.roles.first.name)
+  end
   test "should be able to see the login form when not authenticated" do
     get login_url
     assert_response :success

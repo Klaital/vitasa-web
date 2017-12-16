@@ -66,8 +66,14 @@ class UsersController < ApplicationController
     updated_roles = false
     if logged_in? && current_user.is_admin?
       logger.debug("Loading new roles...")
-      new_roles = params.has_key?(:role_ids) ? (params[:role_ids].collect {|role_id| (role_id.blank?) ? nil : Role.find(role_id)}.compact) : []
-      new_roles = params.has_key?(:roles) ? (params[:roles].collect {|role_name| Role.find_by(name: role_name)}).compact : []
+#      role_params = params.require(:user).permit([:role_ids, :roles])
+      new_roles = if params.has_key?(:role_ids)
+                   (params[:role_ids].collect {|role_id| Role.find(role_id)}.compact)
+                 elsif params.has_key?(:roles)
+                   (params[:roles].collect {|role_name| Role.find_by(name: role_name)}).compact
+                 else 
+                   []
+                 end
       logger.debug("New Roleset: #{new_roles}")
       unless new_roles.empty?
         @user.roles = new_roles
@@ -86,7 +92,7 @@ class UsersController < ApplicationController
     # Only include the password fields if both are set 
     prepared_user_params = user_params
     logger.debug("Permitted params: #{prepared_user_params.inspect}")
-    if prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
+    if prepared_user_params.length > 0 && prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
       logger.debug("Removing password fields: #{prepared_user_params}")
       prepared_user_params.delete(:password)
       prepared_user_params.delete(:password_confirmation)
@@ -160,16 +166,18 @@ class UsersController < ApplicationController
                          logger.debug("Permitting no user fields")
                          []
                        end
+    if logged_in? && current_user.is_admin?
+      logger.debug("Adding Admin fields")
+      permitted_fields |= [ :roles, :role_ids, :certification, :password, :password_confirmation ] 
+    end
 
-#    params[:user].merge!({'password' => params['password'], 'password_confirmation' => params['password_confirmation']})
-    #params.require(:user).permit(:name, :email, :password, :password_confirmation, :certification, :phone, :role_ids, :roles)
     begin
       logger.debug("Permitting these fields: #{permitted_fields}")
       logger.debug("Filtered params: #{params.require(:user).permit(permitted_fields)}")
       params.require(:user).permit(permitted_fields)
     rescue ActionController::ParameterMissing => e
-      logger.warning("No valid parameters were included for the UsersController to process")
-      []
+      logger.warn("No valid parameters were included for the UsersController to process")
+      {}
     end 
   end
 end
