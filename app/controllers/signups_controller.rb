@@ -31,6 +31,9 @@ class SignupsController < ApplicationController
     
     respond_to do |format|
       if @signup.save
+        # Invalidate the schedule API caches
+        expire_schedule_cache
+
         format.html { redirect_to @signup, notice: 'Signup was successfully created.' }
         format.json { render :show, status: :created, location: @signup }
       else
@@ -45,6 +48,9 @@ class SignupsController < ApplicationController
   def update
     respond_to do |format|
       if @signup.update(signup_params)
+        # Invalidate the schedule API caches
+        expire_schedule_cache
+ 
         format.html { redirect_to @signup, notice: 'Signup was successfully updated.' }
         format.json { render :show, status: :ok, location: @signup }
       else
@@ -57,6 +63,9 @@ class SignupsController < ApplicationController
   # DELETE /signups/1
   # DELETE /signups/1.json
   def destroy
+    # Invalidate the schedule API caches
+    expire_schedule_cache
+
     @signup.destroy
     respond_to do |format|
       format.html { redirect_to signups_url, notice: 'Signup was successfully destroyed.' }

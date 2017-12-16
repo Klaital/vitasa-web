@@ -8,9 +8,8 @@ class AggregatesController < ApplicationController
     period_end   = params.has_key?('end') ? Date.parse(params['end']) : Date.today + 6
 
     # Check for a cached version of the schedule
-    #@schedule = $redis.get("sites_data_#{period_start}-#{period_end}")
-    @schedule = nil
-    if @schedule.nil?
+    @sites_data = $redis.get("#{schedule_cache_prefix}#{period_start}-#{period_end}")
+    if @sites_data.nil?
       logger.info("No cached schedule for #{period_start} - #{period_end}")
 
       dates_in_period = (period_start..period_end).map {|date| date}
@@ -57,7 +56,6 @@ class AggregatesController < ApplicationController
             'shifts' => {},
             'is_closed' => shift.calendar.is_closed
           }
-          @sites_data[shift.calendar.date]['sites'][shift.calendar.site.slug]['this_user_signup'] = false if logged_in?
         end
       
         # Add this shift record
@@ -75,13 +73,6 @@ class AggregatesController < ApplicationController
       @signups.each do |signup|
         logger.debug("Analyzing signup #{signup.id}, for the #{signup.shift.start_time} shift on #{signup.shift.calendar.date} at #{signup.shift.calendar.site.slug}")
 
-        # Determine whether the logged-in user has signed up to work this shift
-        if logged_in?
-          if signup.user_id == current_user.id
-            @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['this_user_signup'] = true
-          end
-        end
-
         advanced_increment = signup.user.certification == 'Advanced' ? 1 : 0
         basic_increment = signup.user.certification == 'Basic' ? 1 : 0
 
@@ -89,26 +80,40 @@ class AggregatesController < ApplicationController
         logger.debug("@sites_data[#{signup.shift.calendar.date}]: #{@sites_data[signup.shift.calendar.date].nil?}")
         @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['shifts'][signup.shift.start_time.to_s]['efilers_signed_up_basic'] += basic_increment
         @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['shifts'][signup.shift.start_time.to_s]['efilers_signed_up_advanced'] += advanced_increment
+      end
+
+      $redis.set("#{schedule_cache_prefix}#{period_start}-#{period_end}", JSON.generate(@sites_data))
+
+    else
+      logger.info("Read schedule from cache")
+      @sites_data = JSON.parse(@sites_data)
     end
 
-      @schedule = []
-      @sites_data.each_pair do |date, date_data|
-      
-        schedule_entry = {
-          'date' => date,
-          'sites' => date_data['sites'].map {|slug, site_data| {
-            'slug' => slug,
-            'is_closed' => site_data['is_closed'].nil? ? site_data['shifts'].length == 0 : site_data['is_closed'],
-            'this_user_signup' => (site_data.has_key?('this_user_signup') ? site_data['this_user_signup'] : nil),
-            'shifts' => site_data['shifts'].values,
-          }.compact}
-        }
-        @schedule << schedule_entry
+    # Now look up the user's signups in this time window, and add the this_user_signup field where appropriate
+    if logged_in?
+      signups = Signup.find_by_sql([
+        "SELECT * FROM signups INNER JOIN shifts ON shifts.id = signups.shift_id INNER JOIN calendars ON calendars.id = shifts.calendar_id WHERE calendars.date BETWEEN ? AND ? AND signups.user_id = ?",
+        period_start, period_end, current_user.id
+      ])
+      signups.each do |signup|
+        @sites_data[signup.shift.calendar.date]['sites'][signup.shift.calendar.site.slug]['this_user_signup'] = true
       end
-#      $redis.set("sites_data_#{period_start}-#{period_end}", JSON.generate(@schedule))
-    else
-#      logger.info("Read schedule from cache")
-#      @schedule = JSON.parse(@schedule)
+    end
+    
+    # Convert the aggregated data into the UI-optimized layout
+    @schedule = []
+    @sites_data.each_pair do |date, date_data|
+      
+     schedule_entry = {
+       'date' => date,
+       'sites' => date_data['sites'].map {|slug, site_data| {
+          'slug' => slug,
+          'is_closed' => site_data['is_closed'].nil? ? site_data['shifts'].length == 0 : site_data['is_closed'],
+#          'this_user_signup' => (site_data.has_key?('this_user_signup') ? site_data['this_user_signup'] : nil),
+          'shifts' => site_data['shifts'].values,
+        }.compact}
+      }
+      @schedule << schedule_entry
     end
   end
 

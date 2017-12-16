@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   require 'csv'
   protect_from_forgery with: :exception
   include SessionsHelper
+  include CachingHelper
 
   def append_info_to_payload(payload)
     super

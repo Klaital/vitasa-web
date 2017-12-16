@@ -31,6 +31,7 @@ class ShiftsController < ApplicationController
     @shift = @calendar.shifts.new(shift_params)
     respond_to do |format|
       if @shift.save
+        expire_schedule_cache
         format.html { redirect_to site_calendar_shift_path(@site.slug, @calendar, @shift), notice: 'Shift was successfully created.' }
         format.json { render :show, status: :created, location: site_calendar_shift_path(@site.slug, @calendar, @shift) }
       else
@@ -46,6 +47,7 @@ class ShiftsController < ApplicationController
     set_site
     respond_to do |format|
       if @shift.update(shift_params)
+        expire_schedule_cache
         format.html { redirect_to site_calendar_shift_path(@shift.calendar.site.slug, @shift.calendar, @shift), notice: 'Shift was successfully updated.' }
         format.json { render :show, status: :ok, location: site_calendar_shift_path(@shift.calendar.site.slug, @shift.calendar, @shift) }
       else
@@ -59,6 +61,7 @@ class ShiftsController < ApplicationController
   # DELETE /shifts/1.json
   def destroy
     @shift.destroy
+    expire_schedule_cache
     respond_to do |format|
       format.html { redirect_to site_calendar_shifts_path(@shift.calendar.site, @shift.calendar), notice: 'Shift was successfully destroyed.' }
       format.json { head :no_content }

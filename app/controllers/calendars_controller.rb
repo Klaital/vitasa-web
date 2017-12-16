@@ -21,6 +21,7 @@ class CalendarsController < ApplicationController
     respond_to do |format|
       if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
         if @calendar.save
+          expire_schedule_cache
           format.html { redirect_to @site, notice: 'Calendar override was successfully created.' }
           format.json { render :show, status: :created, location: site_calendar_url(@site, @calendar) }
         else
@@ -40,6 +41,7 @@ class CalendarsController < ApplicationController
     respond_to do |format|
       if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
         if @calendar.update(calendar_params)
+          expire_schedule_cache
           format.html { redirect_to @site, notice: 'Calendar override was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else
@@ -66,6 +68,7 @@ class CalendarsController < ApplicationController
     end
 
     @calendar.destroy
+    expire_schedule_cache
     respond_to do |format|
       format.html { redirect_to site_url(@site), notice: 'Calendar override was successfully destroyed.' }
       format.json { head :no_content }
