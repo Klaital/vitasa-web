@@ -1,4 +1,9 @@
 {
   "sites_url": "https://vitasa.abandonedfactory.net/sites.json",
-  "hostname": "vitasa.abandonedfactory.net"
+  "hostname": "vitasa.abandonedfactory.net",
+  "minimum-versions": {
+    "ios-vol-phone": "1.3",
+    "android-vol-phone": "1.4",
+    "ios-admin-tablet": "1.2"
+  }
 }
