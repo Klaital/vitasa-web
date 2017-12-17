@@ -4,7 +4,8 @@ module CachingHelper
   end
 
   def expire_schedule_cache
-    $redis.del($redis.keys(schedule_cache_prefix))
+    keys = $redis.keys("#{schedule_cache_prefix}*")
+    $redis.del(keys) unless keys.nil? || keys.empty?
   end
 end
 
