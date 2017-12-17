@@ -92,7 +92,7 @@ class UsersController < ApplicationController
     # Only include the password fields if both are set 
     prepared_user_params = user_params
     logger.debug("Permitted params: #{prepared_user_params.inspect}")
-    if prepared_user_params.length > 0 && prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
+    if !prepared_user_params.empty? && prepared_user_params[:password] == '' || prepared_user_params[:password].nil?
       logger.debug("Removing password fields: #{prepared_user_params}")
       prepared_user_params.delete(:password)
       prepared_user_params.delete(:password_confirmation)
