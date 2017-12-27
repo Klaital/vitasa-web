@@ -10,6 +10,26 @@ class UserControllerJsonTest < ActionDispatch::IntegrationTest
   #   assert_response 406
   # end
 
+  test "admins should be able to set user certification" do
+    cookie = login_user('user-one', ['Admin'])
+    user = users(:two)
+    user.certification = 'None'
+    user.save
+    assert_equal('None', user.certification)
+
+    patch user_url(user), 
+      headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie
+      }, params: {
+        'certification' => 'Basic'
+      }.to_json
+
+    assert_response :success
+    user_reloaded = User.find(user.id)
+    assert_equal('Basic', user_reloaded.certification)
+  end
   test "should get correct signups" do
     cookie = login_user('user-three')
     assert_not_nil(cookie)
