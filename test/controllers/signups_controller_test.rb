@@ -46,7 +46,51 @@ class SignupsControllerTest < ActionDispatch::IntegrationTest
       :user_id => @volunteer.id
     })
   end
-  
+
+  test "should fetch filtered lists" do
+    get signups_url, params: {
+      'site' => @cathedral.slug
+    }, headers: {
+      'Accept' => 'application/json'
+    }
+
+    @shift1.signups.create(:user_id => @volunteer.id)
+    signups_data = JSON.parse(response.body)
+    assert_equal(2, signups_data.length)
+
+    # Add some signups to the_alamo
+    @alamo_calendar1 = @site.calendars.create(:date => Date.tomorrow)
+    @alamo_shift1_1 = @alamo_calendar1.shifts.create(:start_time => Tod::TimeOfDay.new(8,30), :end_time => Tod::TimeOfDay.new(12))
+    @alamo_shift1_1.signups.create(:user_id => @volunteer.id)
+    @alamo_shift1_2 = @alamo_calendar1.shifts.create(:start_time => Tod::TimeOfDay.new(12), :end_time => Tod::TimeOfDay.new(17))
+    @alamo_shift1_2.signups.create(:user_id => @volunteer.id)
+
+    @alamo_calendar2 = @site.calendars.create(:date => Date.tomorrow + 7)
+    @alamo_shift2_1 = @alamo_calendar2.shifts.create(:start_time => Tod::TimeOfDay.new(8,30), :end_time => Tod::TimeOfDay.new(12))
+    @alamo_shift2_1.signups.create(:user_id => @volunteer.id)
+    @alamo_shift2_1.signups.create(:user_id => @admin.id)
+    @alamo_shift2_2 = @alamo_calendar2.shifts.create(:start_time => Tod::TimeOfDay.new(12), :end_time => Tod::TimeOfDay.new(17))
+    @alamo_shift2_2.signups.create(:user_id => @volunteer.id)
+
+
+    get signups_url, params: {
+      'site' => @site.slug
+    }, headers: {
+      'Accept' => 'application/json'
+    }
+    assert_equal(6, JSON.parse(response.body).length)
+
+    get signups_url, params: {
+      'site' => @site.slug,
+      'start' => Date.today.iso8601,
+      'end' => (Date.tomorrow + 1).iso8601
+    }, headers: {
+      'Accept' => 'application/json'
+    }
+    assert_equal(2, JSON.parse(response.body).length)
+  end
+ 
+
   test "should get index" do
     get signups_url
     assert_response :success

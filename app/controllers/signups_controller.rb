@@ -6,7 +6,19 @@ class SignupsController < ApplicationController
   # GET /signups
   # GET /signups.json
   def index
-    @signups = Signup.all
+    
+    site = params.has_key?('site') ? params['site'] : nil
+    period_start = params.has_key?('start') ? Date.parse(params['start']) : Date.today
+    period_end   = params.has_key?('end') ? Date.parse(params['end']) : Date.today + 365
+
+    @signups = if site.nil?
+                 Signup.all
+               else
+                 Signup.find_by_sql([
+                   "SELECT * FROM signups INNER JOIN shifts ON shifts.id = signups.shift_id INNER JOIN calendars ON calendars.id = shifts.calendar_id INNER JOIN sites ON calendars.site_id = sites.id WHERE sites.slug = ? AND calendars.date BETWEEN ? AND ?",
+                   site, period_start, period_end  
+                 ])
+               end
   end
 
   # GET /signups/1
