@@ -1,6 +1,6 @@
 {
-  "sites_url": "https://vitasa.abandonedfactory.net/sites.json",
-  "hostname": "vitasa.abandonedfactory.net",
+  "sites_url": "https://volunteer-savvy.com/sites.json",
+  "hostname": "volunteer-savvy.com",
   "minimum-versions": {
     "ios-vol-phone": "1.3",
     "android-vol-phone": "1.4",
