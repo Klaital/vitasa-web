@@ -1,8 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-new-user:
-  name: NewUser
-
 site-coordinator:
   name: SiteCoordinator
 

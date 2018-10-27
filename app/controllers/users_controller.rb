@@ -29,7 +29,8 @@ class UsersController < ApplicationController
 
     if @user.save
       # Create the starting role as well
-      @user.roles = [ Role.find_by(name: 'NewUser') ]
+      # FIXME: create the role specified in the creation request
+      @user.roles = [ Role.find_by(name: 'Volunteer') ]
 
       log_in @user
       respond_to do |format|
