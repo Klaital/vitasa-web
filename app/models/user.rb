@@ -9,7 +9,7 @@ class User < ApplicationRecord
     # By default, users should get the NewUser role, which restricts them from
     # modifying anything until an Admin approves them.
     if self.roles.empty?
-      self.roles = [ Role.find_by(name: 'NewUser') ]
+      self.roles = [ Role.find_by(name: 'Volunteer') ]
     end
   end
 

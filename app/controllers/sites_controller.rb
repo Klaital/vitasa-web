@@ -9,7 +9,13 @@ class SitesController < ApplicationController
   # GET /sites
   # GET /sites.json
   def index
-    @sites = Site.all
+    @capabilities = params[:features]
+    @sites = if @capabilities.nil? || @capabilities.empty?
+               Site.all
+             else
+               featured_sites = SiteFeature.where(:feature => @capabilities).collect {|f| f.site_id}
+               Site.where(:id => featured_sites)
+             end
   end
 
   # GET /sites/1
