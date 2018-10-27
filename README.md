@@ -9,6 +9,7 @@ Developed with:
 ## Setup instructions
     
     gem install bundler
+    sudo apt-get install build-essential patch ruby-dev zlib1g-dev liblzma-dev libmysqlclient-dev libsqlite3-dev nodejs
     bundle install
     bundle exec rails db:setup
     bundle exec rails server
