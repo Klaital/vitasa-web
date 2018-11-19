@@ -1,6 +1,0 @@
-<h1>New Shift</h1>
-<% logger.debug("Shift: #{@shift.id}, #{@shift.start_time.to_s}"); %>
-
-<%= render 'form', shift: @shift %>
-
-<%= link_to 'Back', site_calendar_shifts_path(@shift.calendar.site, @shift.calendar) %>

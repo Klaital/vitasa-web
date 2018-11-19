@@ -90,6 +90,7 @@ class SitesController < ApplicationController
     respond_to do |format|
       if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
         
         if @site.update(site_params)
           # Expire the cache

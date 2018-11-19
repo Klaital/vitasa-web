@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171112212536) do
+ActiveRecord::Schema.define(version: 20181028180519) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -96,6 +96,12 @@ ActiveRecord::Schema.define(version: 20171112212536) do
     t.float    "hours"
     t.boolean  "approved"
     t.integer  "shift_id"
+  end
+
+  create_table "site_capabilities", force: :cascade do |t|
+    t.integer "site_id"
+    t.string  "capability"
+    t.index ["site_id"], name: "index_site_capabilities_on_site_id"
   end
 
   create_table "site_features", force: :cascade do |t|
@@ -187,6 +193,16 @@ ActiveRecord::Schema.define(version: 20171112212536) do
     t.string   "name"
     t.string   "phone"
     t.string   "certification"
+  end
+
+  create_table "work_logs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "site_id"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.boolean  "approved",   default: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
 end

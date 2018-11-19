@@ -222,4 +222,14 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
   end
+
+  test "should be able to see work log on site" do
+    cookie = login_user('user-one')
+
+    site1 = sites(:the_alamo)
+    site2 = sites(:the_cathedral)
+
+    # Create some work log entries
+    post "/users"
+  end
 end

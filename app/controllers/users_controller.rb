@@ -140,11 +140,28 @@ class UsersController < ApplicationController
     end
   end
 
+  def log_work
+
+    log = WorkLog.new(work_log_params.merge())
+    if log.save
+      respond_to do |format|
+        format.html { flash[:success] = "Work logged!"; redirect_to @user }
+        format.json { render @user, status: 201 }
+      end
+    else
+      respond_to do |format|
+        format.html {render 'new'}
+        format.json { render json: log.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = User.find(params[:id])
   end
+
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
