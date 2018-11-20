@@ -14,6 +14,7 @@ json.url site_url(site.slug, format: :json)
 json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :calendar
 #json.work_history site.work_history
 #json.work_intents site.work_intents
+json.work_log site.work_history
 
 json.site_features site.site_features.collect {|feature| feature.feature}
 

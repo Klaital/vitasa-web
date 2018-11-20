@@ -1,16 +1,12 @@
 Rails.application.routes.draw do
-#  resources :shifts
   resources :notification_requests
   post '/notification_requests/:id/send', to: 'notification_requests#send_notification', as: 'send_notification_request'
   post '/notification_requests/:id/resend', to: 'notification_requests#resend_notification', as: 'resend_notification_request'
- resources :notification_registrations
+  resources :notification_registrations
   resources :resources
-  resources :signups
   resources :suggestions
   resources :sites do
-    resources :calendars do
-      resources :shifts
-    end
+    resources :calendars
   end
 
   get '/dashboards/sites', to: 'aggregates#sites_status'
@@ -25,7 +21,10 @@ Rails.application.routes.draw do
   get '/contact', to: 'pages#contact'
 
   # User Handling
-  resources :users
+  resources :users do
+    resources :work_logs
+  end
+
   get '/signup', to: 'users#new', as: :register
   post '/signup',  to: 'users#create'
   
