@@ -1,7 +1,8 @@
 class Site < ApplicationRecord
     has_many :calendars
     has_many :site_features
-    has_and_belongs_to_many :users, as: :coordinators
+    has_and_belongs_to_many :coordinators, class_name: 'User', join_table: 'users_sites'
+
 
     VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
     validates :sitestatus, inclusion: { 

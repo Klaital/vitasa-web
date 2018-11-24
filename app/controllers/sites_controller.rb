@@ -163,8 +163,6 @@ class SitesController < ApplicationController
       else
         User.find(@site.backup_coordinator_id)
       end
-
-      @work_history, @work_intents = site_signup_metadata(@site.id)
     end
 
     def site_signup_metadata(site_id)
