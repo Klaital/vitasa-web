@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :role_grants
   has_many :roles, through: :role_grants
   has_many :work_logs
+  has_and_belongs_to_many :sites, as: :sites_coordinated
   
   before_save do
     self.email = email.downcase

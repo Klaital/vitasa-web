@@ -8,7 +8,6 @@ the_alamo:
   zip:        78205
   latitude:   29.425729
   longitude:  -98.486277
-  sitecoordinator: null
   sitestatus: Accepting
   slug: the-alamo
   google_place_id: hIJX4k2TVVfXIYRIsTnhA-P-Rc
@@ -23,7 +22,6 @@ the_cathedral:
   zip: 78205
   latitude: 29.424514
   longitude: -98.493928
-  sitecoordinator: null
   sitestatus: Closed
   slug: san-fernando-cathedral
   season_start: 2018-02-01

@@ -1,6 +1,7 @@
 class Site < ApplicationRecord
     has_many :calendars
     has_many :site_features
+    has_and_belongs_to_many :users, as: :coordinators
 
     VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
     validates :sitestatus, inclusion: { 
@@ -44,23 +45,5 @@ class Site < ApplicationRecord
 
     def work_history(start_date = Date.today - 7, end_date = Date.today - 1)
       WorkLog.where(site_id: self.id, start_time: start_date..end_date)
-    end
-    def work_intents(start_date = Date.today, end_date = Date.today + 7)
-      Signup.joins(
-        :shift => :calendar
-      ).where(
-        :calendars => { :site_id => self.id, :date => start_date..end_date }
-      )
-    end
-
-    # Utility method to find out if a user has signed up to work this site
-    def has_signup?(user_id, date)
-      Signup.where(
-        :user_id => user_id
-      ).joins(
-        :shift => :calendar
-      ).where(
-        :calendars => { :date => date, :site_id => self.id }
-      ).count > 0
     end
 end

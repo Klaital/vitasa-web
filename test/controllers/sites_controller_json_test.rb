@@ -5,9 +5,6 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     @site = sites(:the_alamo)
     @cathedral = sites(:the_cathedral)
 
-    @new_user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
-    @new_user.roles = [ user_role ]
 
     @admin = users(:two)
     user_role = Role.find_by(name: 'Admin')
@@ -16,12 +13,12 @@ class SitesControllerJsonTest < ActionDispatch::IntegrationTest
     user_role = Role.find_by(name: 'SiteCoordinator')
     @sc1 = users(:three)
     @sc1.roles = [ user_role ]
-    @site.sitecoordinator = @sc1.id
+    @site.coordinators = [@sc1.id]
     @site.save
     
     @sc2 = users(:four)
     @sc2.roles = [ user_role ]
-    @cathedral.sitecoordinator = @sc2.id
+    @cathedral.coordinators = [@sc2.id]
     @cathedral.save
   end
 

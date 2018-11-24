@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181028180519) do
+ActiveRecord::Schema.define(version: 20181120043855) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -193,6 +193,13 @@ ActiveRecord::Schema.define(version: 20181028180519) do
     t.string   "name"
     t.string   "phone"
     t.string   "certification"
+  end
+
+  create_table "users_sites", id: false, force: :cascade do |t|
+    t.integer "site_id"
+    t.integer "user_id"
+    t.index ["site_id"], name: "index_users_sites_on_site_id"
+    t.index ["user_id"], name: "index_users_sites_on_user_id"
   end
 
   create_table "work_logs", force: :cascade do |t|
