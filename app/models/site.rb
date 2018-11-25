@@ -2,14 +2,7 @@ class Site < ApplicationRecord
     has_many :calendars
     has_many :site_features
     has_and_belongs_to_many :coordinators, class_name: 'User', join_table: 'users_sites'
-
-
-    VALID_SITE_STATUSES = %w{ Accepting NearLimit NotAccepting Closed }
-    validates :sitestatus, inclusion: { 
-            in: VALID_SITE_STATUSES,
-            message: "%{value} is not a valid status. Must be one of #{VALID_SITE_STATUSES.join(', ')}" 
-        }
-
+    
     before_validation :slugify_self
     def slugify_self
         self.slug = (self.slug.nil? || self.slug.to_s.strip.empty?) ? self.name.parameterize : self.slug

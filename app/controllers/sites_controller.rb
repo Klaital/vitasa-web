@@ -183,7 +183,6 @@ class SitesController < ApplicationController
     def site_params
       params.require(:site).permit(:name, :slug,
         :google_place_id, :street, :city, :state, :zip, :latitude, :longitude, 
-        :sitestatus,
         :monday_open, :monday_close, :tuesday_open, :tuesday_close,
         :wednesday_open, :wednesday_close, :thursday_open, :thursday_close,
         :friday_open, :friday_close, :saturday_open, :saturday_close,
