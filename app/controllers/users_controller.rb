@@ -39,6 +39,8 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
+        logger.error("Errors: #{@user.errors}")
+        logger.debug("Raw request: #{request.body.to_s}")
         format.html {render 'new'}
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
