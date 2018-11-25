@@ -70,8 +70,8 @@ class SitesController < ApplicationController
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
-          logger.error("Errors: #{@site.errors}")
-          logger.debug("Raw request: #{request.body.to_s}")
+          logger.error("Errors: #{@site.errors.to_hash.to_json}")
+          logger.debug("Raw request: #{request.body.read}")
 
           format.html do
             @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
