@@ -88,10 +88,11 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1.json
   def update
     respond_to do |format|
-      if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+      if is_admin? || (logged_in? && current_user.has_role?('SiteCoordinator'))
         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
-        
+        @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]}) unless params[:sitecoordinators].nil?
+
         if @site.update(site_params)
           # Expire the cache
           expire_page action: 'show', id: @site.id
@@ -179,7 +180,7 @@ class SitesController < ApplicationController
     def site_params
       params.require(:site).permit(:name, :slug,
         :google_place_id, :street, :city, :state, :zip, :latitude, :longitude, 
-        :sitecoordinator, :backup_coordinator_id, :sitestatus,
+        :sitestatus,
         :monday_open, :monday_close, :tuesday_open, :tuesday_close,
         :wednesday_open, :wednesday_close, :thursday_open, :thursday_close,
         :friday_open, :friday_close, :saturday_open, :saturday_close,
@@ -190,7 +191,8 @@ class SitesController < ApplicationController
 
         :site_features,
 
-        :season_start, :season_end
+        :season_start, :season_end,
+        :sitecoordinators
         )
     end
 end
