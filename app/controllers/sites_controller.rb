@@ -70,7 +70,7 @@ class SitesController < ApplicationController
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
-          logger.error("Errors: #{@user.errors}")
+          logger.error("Errors: #{@site.errors}")
           logger.debug("Raw request: #{request.body.to_s}")
 
           format.html do
