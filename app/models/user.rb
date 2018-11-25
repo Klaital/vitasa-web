@@ -60,11 +60,6 @@ class User < ApplicationRecord
     BCrypt::Password.create(s, cost: cost)
   end
 
-  # Sites managed
-  def sites_coordinated
-    Site.select('id, slug, name').where('sitecoordinator = ? or backup_coordinator_id = ?', self.id, self.id)
-  end
-
   # Role queries
   def is_admin?
     self.roles.each do |role|
