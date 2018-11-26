@@ -9,12 +9,22 @@ class SitesController < ApplicationController
   # GET /sites
   # GET /sites.json
   def index
-    @capabilities = params[:features]
-    @sites = if @capabilities.nil? || @capabilities.empty?
+    filters = {
+        :active => true
+    }
+    if params[:deactivated] == 'true'
+      filters.delete(:active)
+    end
+    if params.has_key?(:features) && !params[:features].empty?
+      featured_sites = SiteFeature.where(:feature => @capabilities)
+      filters[:id] = featured_sites.collect {|f| f.site_id}
+    end
+
+
+    @sites = if filters.empty?
                Site.all
              else
-               featured_sites = SiteFeature.where(:feature => @capabilities).collect {|f| f.site_id}
-               Site.where(:id => featured_sites)
+               Site.where(filters)
              end
   end
 
@@ -151,22 +161,7 @@ class SitesController < ApplicationController
         end
         return
       end
-
-      @work_history = Signup.where('site_id = :site_id AND date < :date', {:site_id => @site.id, :date => Date.today}).order(:date => :asc)
-      @work_intents = Signup.where('site_id = :site_id AND date >= :date', {:site_id => @site.id, :date => Date.today}).order(:date => :asc)
       
-
-      @sitecoordinator = if @site.sitecoordinator.nil?
-        nil
-      else
-        User.find(@site.sitecoordinator)
-      end
-
-      @backup_coordinator = if @site.backup_coordinator_id.nil?
-        nil
-      else
-        User.find(@site.backup_coordinator_id)
-      end
     end
 
     def site_signup_metadata(site_id)
@@ -194,7 +189,8 @@ class SitesController < ApplicationController
         :site_features,
 
         :season_start, :season_end,
-        :sitecoordinators
+        :sitecoordinators,
+        :active,
         )
     end
 end

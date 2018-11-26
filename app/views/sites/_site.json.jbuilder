@@ -1,7 +1,7 @@
 json.extract! site, :id, :name, :slug,
     :street, :city, :state, :zip, :latitude, :longitude, :google_place_id,
-    :sitestatus,
-    :season_start, :season_end
+    :season_start, :season_end,
+    :active
 
 json.sitecoordinators site.coordinators, partial: 'users/sc_details', as: :user
 
