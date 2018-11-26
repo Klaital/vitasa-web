@@ -25,7 +25,7 @@ class UsersController < ApplicationController
     end
   end
   def create
-    logger.debug("Raw request: #{request.body.to_s}")
+    logger.debug("Raw request: #{request.body.read}")
 
     @user = User.new(user_params)
 
@@ -173,7 +173,7 @@ class UsersController < ApplicationController
 #    logger.debug("Users: current=#{current_user.id}, accessing=#{params[:id]}")
 #    logger.debug("Accessing self? #{logged_in? && current_user == User.find(params[:id])}")
 
-    permitted_fields = if !logged_in? || (logged_in? && current_user == User.find(params[:id]))
+    permitted_fields = if !logged_in? || (logged_in? && current_user.id == params[:id])
                          logger.debug("Permitting self-user fields")
                          [
                            :name, :email, :password, :password_confirmation, :phone
