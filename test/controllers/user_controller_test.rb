@@ -81,5 +81,23 @@ class UserControllerTest < ActionDispatch::IntegrationTest
              'password' => 'create-user-password',
              'password_confirmation' => 'create-user-password',
          }.to_json
+    assert_response :success
+
+    post users_path,
+         :headers => {
+             'Accept' => 'application/json',
+             'Content-Type' => 'application/json',
+             'Cookie' => cookie,
+         }, :params => {
+            "name" => "Fred Flintstone",
+            "email" => "fred@gmail.com",
+            "phone" => "123-123-1234",
+            "certification" => "Basic",
+            "password" => "123123123",
+            "password_confirmation" => "123123123",
+            "roles" => ["Mobile","Volunteer"]
+        }.to_json
+    assert_response :success
+
   end
 end

@@ -41,7 +41,7 @@ class UsersController < ApplicationController
       end
     else
       respond_to do |format|
-        logger.error("Errors: #{@user.errors}")
+        logger.error("Errors: #{@user.errors.to_hash.to_json}")
         format.html {render 'new'}
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
@@ -189,7 +189,7 @@ class UsersController < ApplicationController
                        end
     if logged_in? && current_user.is_admin?
       logger.debug("Adding Admin fields")
-      permitted_fields |= [ :roles, :role_ids, :certification, :password, :password_confirmation ] 
+      permitted_fields |= [ :email, :roles, :role_ids, :certification, :password, :password_confirmation ]
     end
 
     begin
