@@ -33,5 +33,4 @@ Rails.application.routes.draw do
   delete '/logout', to: 'sessions#destroy'
 
   # These methods are for aggregating data into a single view, intended for driving a single UI screen on the app
-  get '/schedule', to: 'aggregates#schedule'
 end

@@ -39,7 +39,7 @@ class CalendarsController < ApplicationController
   # PUT/PATCH /sites/{site_id}/calendars/{id}.json
   def update
     respond_to do |format|
-      if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+      if is_admin? || (logged_in? && @site.coordinators.include?(current_user))
         if @calendar.update(calendar_params)
           expire_schedule_cache
           format.html { redirect_to @site, notice: 'Calendar override was successfully updated.' }

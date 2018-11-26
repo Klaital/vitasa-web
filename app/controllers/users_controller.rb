@@ -30,11 +30,9 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      # Create the starting role as well
-      # FIXME: create the role specified in the creation request
-      @user.roles = [ Role.find_by(name: 'Volunteer') ]
-
       log_in @user
+      # TODO: notify admins via email
+
       respond_to do |format|
         format.html { flash[:success] = "Welcome, new user!"; redirect_to @user }
         format.json { render @user, status: 201 }

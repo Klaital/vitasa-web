@@ -18,23 +18,21 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
     @cathedral = sites(:the_cathedral)
 
     @new_user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
-    @new_user.roles = [ user_role ]
+    @new_user.roles = [ Role.find_by(name: 'Volunteer') ]
 
     @admin = users(:two)
-    user_role = Role.find_by(name: 'Admin')
-    @admin.roles = [ user_role ]
+    @admin.roles = [ Role.find_by(name: 'Admin') ]
 
-    user_role = Role.find_by(name: 'SiteCoordinator')
     @sc1 = users(:three)
-    @sc1.roles = [ user_role ]
-    @site.sitecoordinator = @sc1.id
+    @sc1.roles = [ Role.find_by(name: 'SiteCoordinator') ]
     @site.save
-    
+    @site.coordinators = [ @sc1 ]
+
     @sc2 = users(:four)
-    @sc2.roles = [ user_role ]
-    @cathedral.sitecoordinator = @sc2.id
+    @sc2.roles = [ Role.find_by(name: 'SiteCoordinator') ]
     @cathedral.save
+    @cathedral.coordinators = [ @sc2 ]
+
   end
 
   #
@@ -224,19 +222,7 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not update calendar when logged in to the wrong SC" do
-    post login_url, 
-      params: {
-        email: @sc2.email,
-        password: 'user-four-password'
-      }.to_json,
-      headers: {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-      }
-    assert_response :success
-    # Harvest the cookie
-    cookie = response.headers['Set-Cookie']
-    assert_not_nil(cookie, 'No cookie harvested')
+    cookie = login_user('user-four', ['SiteCoordinator'])
 
     put site_calendar_url(@site, @cal1),
       :headers => {
@@ -255,18 +241,7 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update calendar when logged in to the SC" do
-    post login_url, 
-      params: {
-        email: @sc1.email,
-        password: 'user-three-password'
-      }.to_json,
-      headers: {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-      }
-    assert_response :success
-    # Harvest the cookie
-    cookie = response.headers['Set-Cookie']
+    cookie = login_user('user-three')
     assert_not_nil(cookie, 'No cookie harvested')
 
     put site_calendar_url(@site, @cal1),

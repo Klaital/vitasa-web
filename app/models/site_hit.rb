@@ -1,2 +1,0 @@
-class SiteHit < ApplicationRecord
-end

@@ -52,6 +52,7 @@ class SuggestionsController < ApplicationController
 
     respond_to do |format|
       if @suggestion.save
+        # TODO: notify admins via email
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
         format.json { render :show, status: :created, location: @suggestion }
       else
