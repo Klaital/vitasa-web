@@ -75,27 +75,6 @@ class User < ApplicationRecord
     return false
   end
 
-
-  def work_history
-    Signup.where(
-        :user_id => self.id
-      ).joins(
-        :shift => :calendar
-      ).where(
-        'calendars.date < ?', Date.today
-      )
-  end
-
-  def work_intents
-    Signup.where(
-        :user_id => self.id
-      ).joins(
-        :shift => :calendar
-      ).where(
-        'calendars.date >= ?', Date.today
-      )
-  end
-  
   def suggestions
     Suggestion.where(user_id: self.id)
   end
