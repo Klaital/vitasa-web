@@ -33,7 +33,7 @@ class WorkLogsController < ApplicationController
   end
 
   def work_log_params
-    worklog_params = params.require(:work_log).permit(:site, :start_time, :end_time, :approved)
+    worklog_params = params.require(:work_log).permit(:site, :hours, :date, :approved)
     if worklog_params.include?(:site)
       site_id = Site.find_by(slug: worklog_params[:site]).id
       worklog_params.delete(:site)
