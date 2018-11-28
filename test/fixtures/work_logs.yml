@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  start_time: <%= Tod::TimeOfDay.new(9) %>
-  end_time: <%= Tod::TimeOfDay.new(15) %>
+  date: <%= (Date.today-1).strftime('%Y-%m-%d') %>
+  hours: 6
   approved: false
 
 two:
-  start_time: <%= Tod::TimeOfDay.new(10) %>
-  end_time: <%= Tod::TimeOfDay.new(16) %>
+  date: <%= (Date.today-2).strftime('%Y-%m-%d') %>
+  hours: 4
   approved: false

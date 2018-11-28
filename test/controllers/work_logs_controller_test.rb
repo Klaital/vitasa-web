@@ -6,8 +6,8 @@ class WorkLogsControllerTest < ActionDispatch::IntegrationTest
     cookie = login_user("user-one")
     work_log = {
         site: sites(:the_cathedral).slug,
-        start_time: Time.now - (5 * 3600),
-        end_time: Time.now - (2 * 3600),
+        hours: 4,
+        date: (Date.today-1).strftime('%Y-%m-%d'),
     }
     assert_difference('WorkLog.count', 1) do
       post user_work_logs_path(user),
@@ -32,8 +32,8 @@ class WorkLogsControllerTest < ActionDispatch::IntegrationTest
 
     work_log = {
         site: sites(:the_cathedral).slug,
-        start_time: Time.now - (5 * 3600),
-        end_time: Time.now - (2 * 3600),
+        hours: 4,
+        date: (Date.today-1).strftime('%Y-%m-%d'),
     }
     post user_work_logs_path(volunteer),
          :params => work_log.to_json,

@@ -2,11 +2,14 @@ class WorkLogsController < ApplicationController
   before_action :set_user, only: [:create, :update]
   before_action :set_worklog, only: [:update]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :work_log, include: [:site, :start_time, :end_time, :approved]
+  wrap_parameters :work_log, include: [:site, :hours, :date, :approved]
 
   # POST /users/{id}/work_log
   def create
-    if @user.work_logs.create(work_log_params)
+    logger.debug "Logging work for user: #{@user.id}"
+    logger.debug "Logging work with settings: #{work_log_params}"
+    wl = WorkLog.new(work_log_params.merge('user_id'=>@user.id))
+    if wl.save
       respond_to do |format|
         format.html { flash[:success] = "Work logged!"; redirect_to @user }
         format.json { render User.find(params[:user_id]), status: 201 }
@@ -27,12 +30,13 @@ class WorkLogsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.json { render json: log.errors, status: :unprocessable_entity }
+        format.json { render json: @work_log.errors, status: :unprocessable_entity }
       end
     end
   end
 
   def work_log_params
+    logger.debug("Params: #{params}")
     worklog_params = params.require(:work_log).permit(:site, :hours, :date, :approved)
     if worklog_params.include?(:site)
       site_id = Site.find_by(slug: worklog_params[:site]).id
