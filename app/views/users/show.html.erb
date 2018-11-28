@@ -13,36 +13,22 @@
 </div>
 
 <div class="signups">
-  <h2>Site Signups</h2>
+  <h2>Site Work Log</h2>
   <table>
     <tr>
       <th>Site</th>
       <th>Date</th>
+      <th>Hours</th>
+      <th>Approved</th>
     </tr>
-    <% @user.work_intents.find_each do |signup| %>
+    <% @user.work_logs.find_each do |work_log| %>
       <tr>
-        <td><%= link_to signup.shift.calendar.site.name, site_path(signup.shift.calendar.site.slug) %></td>
-        <td><%= signup.shift.calendar.date %></td>
+        <td><%= link_to work_log.shift.calendar.site.name, site_path(signup.shift.calendar.site.slug) %></td>
+        <td><%= work_log.date %></td>
+        <td><%= work_log.hours %></td>
+        <td><%= work_log.approved %></td>
       </tr>
     <% end %>
-  </table>
-
-  <h2>Work History</h2>
-  <table>
-      <tr>
-        <th>Site</th>
-        <th>Date</th>
-        <th>Hours Worked</th>
-        <th>Approved</th>
-      </tr>
-      <% @user.work_history.find_each do |work_record| %>
-        <tr>
-          <td><%= link_to work_record.shift.calendar.site.name, site_path(work_record.shift.calendar.site.slug) %></td>
-          <td><%= work_record.shift.calendar.date %></td>
-          <td><%= work_record.hours %></td>
-          <td><%= work_record.approved %></td>
-        </tr>
-      <% end %>
   </table>
 
   <h2>Suggestions Submitted</h2>
