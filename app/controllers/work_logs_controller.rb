@@ -2,7 +2,7 @@ class WorkLogsController < ApplicationController
   before_action :set_user, only: [:create, :update]
   before_action :set_worklog, only: [:update]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :work_log, include: [:site, :hours, :date, :approved]
+  wrap_parameters :work_log, include: [:site, :hours, :date, :approved, :user_id]
 
   # POST /users/{id}/work_log
   def create
@@ -37,7 +37,7 @@ class WorkLogsController < ApplicationController
 
   def work_log_params
     logger.debug("Params: #{params}")
-    worklog_params = params.require(:work_log).permit(:site, :hours, :date, :approved)
+    worklog_params = params.require(:work_log).permit(:site, :hours, :date, :approved, :user_id)
     if worklog_params.include?(:site)
       site_id = Site.find_by(slug: worklog_params[:site]).id
       worklog_params.delete(:site)
