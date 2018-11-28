@@ -39,6 +39,6 @@ class Site < ApplicationRecord
 
     def work_history(start_date = Date.today - 7, end_date = Date.today - 1)
       dates = (start_date..end_date).collect {|d| d.strftime("%Y-%M-%d")}
-      WorkLog.where(site_id: self.id, date: dates)
+      WorkLog.where(site_id: self.id)
     end
 end
