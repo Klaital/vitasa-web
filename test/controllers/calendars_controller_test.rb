@@ -180,22 +180,13 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should delete calendar when logged in as the SC" do
-    post login_url, 
-      params: {
-        email: @sc1.email,
-        password: 'user-three-password'
-      }.to_json,
-      headers: {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json'
-      }
-    assert_response :success
-    # Harvest the cookie
-    cookie = response.headers['Set-Cookie']
-    assert_not_nil(cookie, 'No cookie harvested')
+    cookie = login_user('user-one', ['SiteCoordinator'])
+    @site.coordinators = [users(:one)]
+    assert_equal(1, @site.coordinators.count)
+    assert(@site.coordinators.include?(users(:one)))
 
     assert_difference('Calendar.count', -1) do
-      delete site_calendar_url(@site.slug, @cal1),
+      delete site_calendar_path(@site.slug, @cal1),
         :headers => {
           'Accept' => 'application/json',
           'Content-Type' => 'application/json',

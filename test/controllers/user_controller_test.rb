@@ -111,5 +111,39 @@ class UserControllerTest < ActionDispatch::IntegrationTest
             'Cookie' => cookie,
         }, :params => '{"id" : "4","name" : "Fred Flintstone","email" : "fred@g.c","phone" : "123-123-1234","certification" : "Basic","roles" : ["SiteCoordinator"]}'
     assert_response :success
+
+    user_reloaded = User.find(user.id)
+    assert_equal('123-123-1234', user_reloaded.phone)
+
+    put user_path(user),
+        :headers => {
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Cookie' => cookie,
+        }, :params => '{"id" : "4","name" : "Fred Flintstone","email" : "fred@g.c","phone" : "555-123-1234","certification" : "Basic","roles" : ["SiteCoordinator"]}'
+    assert_response :success
+
+    user_reloaded = User.find(user.id)
+    assert_equal('555-123-1234', user_reloaded.phone)
+
+    get user_path(user),
+        :headers => {
+            'Accept' => 'application/json',
+            'Cookie' => cookie,
+        }
+    user_data = JSON.parse(response.body)
+    assert_equal('555-123-1234', user_data['phone'])
+  end
+
+  test 'should be able to detect which users are coordinating a site' do
+    user1 = users(:one)
+    user2 = users(:two)
+    site1 = sites(:the_alamo)
+
+    assert(!site1.coordinators.include?(user1), "User #{user1.id} should not be on the SC list")
+
+    site1.coordinators << user1
+    assert(site1.coordinators.include?(user1), "User #{user1.id} should be on the SC list")
+    assert(!site1.coordinators.include?(user2), "User #{user2.id} should not be on the SC list")
   end
 end

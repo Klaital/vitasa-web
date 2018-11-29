@@ -17,20 +17,28 @@ class CalendarsController < ApplicationController
   # POST /sites/{site_id}/calendars
   # POST /sites/{site_id}/calendars.json
   def create
+    unless logged_in?
+      logger.error("not allowed to delete a site calendar without being logged in")
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+    unless is_admin? || @site.coordinators.include?(current_user)
+      logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+
     @calendar = @site.calendars.new(calendar_params)
     respond_to do |format|
-      if is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
-        if @calendar.save
-          expire_schedule_cache
-          format.html { redirect_to @site, notice: 'Calendar override was successfully created.' }
-          format.json { render :show, status: :created, location: site_calendar_url(@site, @calendar) }
-        else
-          format.html { render :new }
-          format.json { render json: @site.errors, status: :unprocessable_entity }
-        end
+      if @calendar.save
+        expire_schedule_cache
+        format.html { redirect_to @site, notice: 'Calendar override was successfully created.' }
+        format.json { render :show, status: :created, location: site_calendar_url(@site, @calendar) }
       else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+        format.html { render :new }
+        format.json { render json: @site.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -38,21 +46,29 @@ class CalendarsController < ApplicationController
   # PUT/PATCH /sites/{site_id}/calendars/{id}
   # PUT/PATCH /sites/{site_id}/calendars/{id}.json
   def update
+    unless logged_in?
+      logger.error("not allowed to delete a site calendar without being logged in")
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+    unless is_admin? || @site.coordinators.include?(current_user)
+      logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+
     respond_to do |format|
-      if is_admin? || (logged_in? && @site.coordinators.include?(current_user))
-        if @calendar.update(calendar_params)
-          expire_schedule_cache
-          format.html { redirect_to @site, notice: 'Calendar override was successfully updated.' }
-          format.json { render :show, status: :ok, location: @site }
-        else
-          format.html do
-            redirect_to @site
-          end
-          format.json { render json: @site.errors, status: :unprocessable_entity }
-        end
+      if @calendar.update(calendar_params)
+        expire_schedule_cache
+        format.html { redirect_to @site, notice: 'Calendar override was successfully updated.' }
+        format.json { render :show, status: :ok, location: @site }
       else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+        format.html do
+          redirect_to @site
+        end
+        format.json { render json: @site.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -61,7 +77,14 @@ class CalendarsController < ApplicationController
   # DELETE /sites/{site_id}/calendars/{id}
   # DELETE /sites/{site_id}/calendars/{id}.json
   def destroy
-    unless is_admin? || (logged_in? && current_user.id == @site.sitecoordinator && current_user.has_role?('SiteCoordinator'))
+    unless logged_in?
+      logger.error("not allowed to delete a site calendar without being logged in")
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+    unless is_admin? || @site.coordinators.include?(current_user)
+      logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
