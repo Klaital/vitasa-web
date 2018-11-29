@@ -58,7 +58,12 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/0.json
   def update
-    unless logged_in? && (current_user == @user || is_admin?)
+    unless logged_in?
+      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+    unless current_user == @user || is_admin?
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
@@ -166,28 +171,33 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-#    logger.debug("Raw User Params: #{params}")
-#    logger.debug("User logged in? #{logged_in?}")
-#    logger.debug("Users: current=#{current_user.id}, accessing=#{params[:id]}")
-#    logger.debug("Accessing self? #{logged_in? && current_user == User.find(params[:id])}")
+    logger.debug("Raw User Params: #{params}")
+    logger.debug("User logged in? #{logged_in?}")
+    logger.debug()
+    unless logged_in?
+      return []
+    end
+    logger.debug("Users: current=#{current_user.id}, accessing=#{params[:id]}")
+    logger.debug("Accessing self? #{current_user.id == params[:id].to_i}")
+    logger.debug("Admin? #{current_user.is_admin?}")
 
-    permitted_fields = if !logged_in? || (logged_in? && current_user.id == params[:id])
+    permitted_fields = if current_user.is_admin?
+                         logger.debug("Permitting admin-only user fields")
+                         [
+                             :roles, :role_ids, :certification, :name, :password, :password_confirmation
+                         ]
+                       elsif current_user.id == params[:id].to_i
                          logger.debug("Permitting self-user fields")
                          [
                            :name, :email, :password, :password_confirmation, :phone
-                         ]
-                       elsif logged_in? && current_user.is_admin?
-                         logger.debug("Permitting admin-only user fields")
-                         [
-                           :roles, :role_ids, :certification, :name, :password, :password_confirmation
                          ]
                        else
                          logger.debug("Permitting no user fields")
                          []
                        end
     if logged_in? && current_user.is_admin?
-      logger.debug("Adding Admin fields")
-      permitted_fields |= [ :email, :roles, :role_ids, :certification, :password, :password_confirmation ]
+       logger.debug("Adding Admin fields")
+       permitted_fields |= [ :email, :roles, :role_ids, :certification, :password, :password_confirmation ]
     end
 
     begin

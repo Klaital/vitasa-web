@@ -98,6 +98,18 @@ class UserControllerTest < ActionDispatch::IntegrationTest
             "roles" => ["Mobile","Volunteer"]
         }.to_json
     assert_response :success
+  end
 
+  test 'should be able to update a phone number' do
+    user = users(:one)
+    cookie = login_user('user-one', ['Volunteer'])
+
+    put user_path(user),
+        :headers => {
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Cookie' => cookie,
+        }, :params => '{"id" : "4","name" : "Fred Flintstone","email" : "fred@g.c","phone" : "123-123-1234","certification" : "Basic","roles" : ["SiteCoordinator"]}'
+    assert_response :success
   end
 end
