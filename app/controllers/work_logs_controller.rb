@@ -16,7 +16,7 @@ class WorkLogsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.html { render @user }
+        format.html { render @work_log }
         format.json { render json: log.errors, status: :unprocessable_entity }
       end
     end
@@ -26,7 +26,7 @@ class WorkLogsController < ApplicationController
   def update
     if @work_log.update(work_log_params)
       respond_to do |format|
-        format.json { render @user, status: 201 }
+        format.json { render @work_log, status: 201 }
       end
     else
       respond_to do |format|
