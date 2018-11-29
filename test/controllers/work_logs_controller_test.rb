@@ -6,7 +6,7 @@ class WorkLogsControllerTest < ActionDispatch::IntegrationTest
     cookie = login_user("user-one")
     work_log = {
         site: sites(:the_cathedral).slug,
-        hours: 4,
+        hours: 4.0,
         date: (Date.today-1).strftime('%Y-%m-%d'),
     }
     assert_difference('WorkLog.count', 1) do
@@ -72,6 +72,36 @@ class WorkLogsControllerTest < ActionDispatch::IntegrationTest
         }
     assert_response :success
     assert_equal(true, WorkLog.last.approved?)
+  end
 
+  test 'should be able to delete a log' do
+    user = users(:one)
+    cookie = login_user("user-one")
+    work_log = {
+        site: sites(:the_cathedral).slug,
+        hours: 4.0,
+        date: (Date.today-1).strftime('%Y-%m-%d'),
+    }
+    assert_difference('WorkLog.count', 1) do
+      post user_work_logs_path(user),
+           :params => work_log.to_json,
+           :headers => {
+               'Accept' => 'application/json',
+               'Content-Type' => 'application/json',
+               'Cookie' => cookie,
+           }
+      assert_response :success
+    end
+
+    wlog = WorkLog.last
+    assert_difference('WorkLog.count', -1) do
+      delete user_work_log_path(user, wlog),
+           :headers => {
+               'Accept' => 'application/json',
+               'Content-Type' => 'application/json',
+               'Cookie' => cookie,
+           }
+      assert_response :success
+    end
   end
 end

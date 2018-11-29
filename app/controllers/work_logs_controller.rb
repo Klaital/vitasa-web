@@ -1,6 +1,6 @@
 class WorkLogsController < ApplicationController
   before_action :set_user, only: [:create, :update]
-  before_action :set_worklog, only: [:update]
+  before_action :set_worklog, only: [:update, :destroy]
   skip_before_action :verify_authenticity_token
   wrap_parameters :work_log, include: [:site, :hours, :date, :approved, :user_id]
 
@@ -32,6 +32,15 @@ class WorkLogsController < ApplicationController
       respond_to do |format|
         format.json { render json: @work_log.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  # DELETE /users/{user_id}/work_log/{worklog_id}
+  def destroy
+    if @work_log.delete
+      head :ok
+    else
+      head 500
     end
   end
 
