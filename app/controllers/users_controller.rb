@@ -184,7 +184,7 @@ class UsersController < ApplicationController
     permitted_fields = if current_user.is_admin?
                          logger.debug("Permitting admin-only user fields")
                          [
-                             :roles, :role_ids, :certification, :name, :password, :password_confirmation
+                             :roles, :role_ids, :certification, :name, :password, :password_confirmation, :phone
                          ]
                        elsif current_user.id == params[:id].to_i
                          logger.debug("Permitting self-user fields")

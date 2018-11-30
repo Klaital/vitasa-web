@@ -100,9 +100,9 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'should be able to update a phone number' do
+  test 'should be able to update own phone number' do
     user = users(:one)
-    cookie = login_user('user-one', ['Volunteer'])
+    cookie = login_user('user-one', ['Admin'])
 
     put user_path(user),
         :headers => {
