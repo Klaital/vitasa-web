@@ -190,6 +190,8 @@ class SitesController < ApplicationController
 
         :season_start, :season_end,
         :sitecoordinators,
+        :contact_name, :contact_phone,
+        :notes,
         :active,
         )
     end
