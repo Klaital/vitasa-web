@@ -1,0 +1,8 @@
+.calendar_items {
+    text-align: center;
+    cursor: pointer;
+}
+
+tr td{
+    padding: 5px !important;
+}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- doing the next line until i get a real favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>VITA SA Staff Site</title>
+</head>
+<body>
+<h1 style="text-align: center;">VITA SA - Site Coordinator Sites</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <img src="VITAlogo.JPG" alt="help" class="img-thumbnail">
+        </div>
+
+        <div class="col">
+            <span id="vitasa_username">.</span>
+        </div>
+
+        <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="vitasa_actionsbutton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu" aria-labelledby="vitasa_actionsbutton" id="vitasa_mainmenu">
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary" onclick="DoViewEditSCVolHours();">View/Edit Hours Worked</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table" id="vitasa_sites_table">
+                <thead>
+                <tr>
+                    <th scope="col">Site Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- edit workitem modal -->
+<div class="modal" tabindex="-1" role="dialog" id="vitasa_modal_workitem">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vitasa_modal_title">Work Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="vitasa_modal_button_cancel">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            &nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_hoursworked">Hours:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Hours Worked" aria-label="Hours Worked" aria-describedby="vitasa_hoursworked" id="vitasa_workitem_hours">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle btn-block" type="button" id="vitasa_button_selectsite" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Site
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="vitasa_button_selectsite" id="vitasa_dropdown_site">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <div class="row">
+                    <div class="col">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle btn-block" type="button" id="vitasa_button_selectdate" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Date
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="vitasa_button_selectdate" id="vitasa_dropdown_date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="vitasa_button_cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="vitasa_button_save">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<!-- the map and vitasa init -->
+<script src="backendhelper.js"></script>
+<script src="scsites_handlers.js"></script>
+<script src="common_handlers.js"></script>
+<script src="CommonClasses.js"></script>
+
+</body>
+</html>

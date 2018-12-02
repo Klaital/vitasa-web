@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- doing the next line until i get a real favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>VITA SA Staff Site</title>
+</head>
+<body>
+<h1 style="text-align: center;">VITA SA - Volunteer Hours Worked</h1>
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col">
+            <img src="VITAlogo.JPG" alt="help" class="img-thumbnail">
+        </div>
+
+        <div class="col">
+            <span id="vitasa_username">.</span>
+        </div>
+
+        <div class="col border-primary">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="vitasa_actionsbutton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu" aria-labelledby="vitasa_actionsbutton" id="vitasa_mainmenu">
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary" onclick="DoEditWorkItem_clicked(-1);">Add Hours Worked</button>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table" id="vitasa_volhours_table">
+                <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Site</th>
+                    <th scope="col">Hours</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- edit workitem modal -->
+<div class="modal" tabindex="-1" role="dialog" id="vitasa_modal_workitem">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vitasa_modal_title">Work Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="vitasa_modal_button_cancel">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            &nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_hoursworked">Hours:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Hours Worked" aria-label="Hours Worked" aria-describedby="vitasa_hoursworked" id="vitasa_workitem_hours">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle btn-block" type="button" id="vitasa_button_selectsite" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Site
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="vitasa_button_selectsite" id="vitasa_dropdown_site">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_volhours_edit_date_s">Date:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Date" aria-label="Date" aria-describedby="vitasa_volhours_edit_date_s"
+                                   id="vitasa_volhours_edit_date_i" readonly>&nbsp;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="d-flex">
+                            <div>
+                                <button type="button" class="btn btn-outline-primary" onclick="VolHoursEdit_PreviousMonth();">Previous</button>
+                            </div>
+                            <div class="flex-grow-1 text-center">
+                                <span id="vitasa_volhours_edit_date">.</span>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary" onclick="VolHoursEdit_NextMonth();">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br/>
+
+                <div class="row">
+                    <div class="col">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Sun</th>
+                                    <th scope="col">Mon</th>
+                                    <th scope="col">Tue</th>
+                                    <th scope="col">Wed</th>
+                                    <th scope="col">Thu</th>
+                                    <th scope="col">Fri</th>
+                                    <th scope="col">Sat</th>
+                                </tr>
+                            </thead>
+                            <tbody style="cursor: pointer">
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_00" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_01" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_02" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_03" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_04" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_05" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_06" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_10" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_11" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_12" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_13" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_14" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_15" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_16" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_20" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_21" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_22" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_23" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_24" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_25" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_26" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_30" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_31" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_32" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_33" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_34" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_35" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_36" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_40" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_41" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_42" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_43" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_44" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_45" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_46" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_50" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_51" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_52" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_53" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_54" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_55" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_56" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                                <tr>
+                                    <td class="calendar_items" id="vitasa_cal_60" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_61" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_62" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_63" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_64" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_65" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                    <td class="calendar_items" id="vitasa_cal_66" onclick="volhoursworked_modal_dateclicked(this);">.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="vitasa_button_cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="vitasa_button_save">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <!-- the map and vitasa init -->
+    <script src="backendhelper.js"></script>
+    <script src="volhoursworked_handlers.js"></script>
+    <script src="common_handlers.js"></script>
+    <script src="CommonClasses.js"></script>
+
+</body>
+</html>
