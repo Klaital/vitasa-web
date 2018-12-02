@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- doing the next line until i get a real favicon -->
+    <link rel="shortcut icon" href="favicon.ico">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="vitasa.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>VITA SA Staff Site</title>
+</head>
+<body>
+<h1 style="text-align: center;">VITA SA - Admin Sites</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <img src="VITAlogo.JPG" alt="help" class="img-thumbnail">
+        </div>
+        <div class="col">
+            <span id="vitasa_username">.</span>
+        </div>
+        <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="vitasa_actionsbutton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu" aria-labelledby="vitasa_actionsbutton" id="vitasa_mainmenu">
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary p-2" onclick="DoSiteDetails_clicked(-1);">Create New Site</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table" id="vitasa_adminsites_table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- edit site details modal -->
+<div class="modal" tabindex="-1" role="dialog" id="vitasa_modal_adminsites_details">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vitasa_modal_title">Site Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="vitasa_modal_button_cancel">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_name_s">Name:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="vitasa_adminusers_username_s"
+                                   id="vitasa_adminsites_name">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_street_s">Street:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Street" aria-label="Street" aria-describedby="vitasa_adminsites_street_s"
+                                   id="vitasa_adminsites_street">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_city_s">City:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="City" aria-label="City" aria-describedby="vitasa_adminsites_city_s"
+                                   id="vitasa_adminsites_city">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_state_s">State:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="State" aria-label="State" aria-describedby="vitasa_adminsites_state_s"
+                                   id="vitasa_adminsites_state" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <table class="table" style="cursor: pointer">
+                            <tbody>
+                                <tr>
+                                    <td onclick="state_click('AL')">AL</td>
+                                    <td onclick="state_click('AK')">AK</td>
+                                    <td onclick="state_click('AR')">AR</td>
+                                    <td onclick="state_click('AZ')">AZ</td>
+                                    <td onclick="state_click('CA')">CA</td>
+                                    <td onclick="state_click('CO')">CO</td>
+                                    <td onclick="state_click('CT')">CT</td>
+                                    <td onclick="state_click('DE')">DE</td>
+                                    <td onclick="state_click('FL')">FL</td>
+                                    <td onclick="state_click('GA')">GA</td>
+                                </tr>
+                                <tr>
+                                    <td onclick="state_click('HI')">HI</td>
+                                    <td onclick="state_click('IA')">IA</td>
+                                    <td onclick="state_click('ID')">ID</td>
+                                    <td onclick="state_click('IL')">IL</td>
+                                    <td onclick="state_click('IN')">IN</td>
+                                    <td onclick="state_click('KS')">KS</td>
+                                    <td onclick="state_click('KY')">KY</td>
+                                    <td onclick="state_click('LA')">LA</td>
+                                    <td onclick="state_click('ME')">ME</td>
+                                    <td onclick="state_click('MD')">MD</td>
+                                </tr>
+                                <tr>
+                                    <td onclick="state_click('MA')">MA</td>
+                                    <td onclick="state_click('MI')">MI</td>
+                                    <td onclick="state_click('MN')">MN</td>
+                                    <td onclick="state_click('MS')">MS</td>
+                                    <td onclick="state_click('MO')">MO</td>
+                                    <td onclick="state_click('MT')">MT</td>
+                                    <td onclick="state_click('NE')">NE</td>
+                                    <td onclick="state_click('NV')">NV</td>
+                                    <td onclick="state_click('NH')">NH</td>
+                                    <td onclick="state_click('NJ')">NJ</td>
+                                </tr>
+                                <tr>
+                                    <td onclick="state_click('NM')">NM</td>
+                                    <td onclick="state_click('NY')">NY</td>
+                                    <td onclick="state_click('NC')">NC</td>
+                                    <td onclick="state_click('ND')">ND</td>
+                                    <td onclick="state_click('OH')">OH</td>
+                                    <td onclick="state_click('OK')">OK</td>
+                                    <td onclick="state_click('OR')">OR</td>
+                                    <td onclick="state_click('PA')">PA</td>
+                                    <td onclick="state_click('RI')">RI</td>
+                                    <td onclick="state_click('SC')">SC</td>
+                                </tr>
+                                <tr>
+                                    <td onclick="state_click('SD')">SD</td>
+                                    <td onclick="state_click('TN')">TN</td>
+                                    <td onclick="state_click('TX')">TX</td>
+                                    <td onclick="state_click('UT')">UT</td>
+                                    <td onclick="state_click('VA')">VA</td>
+                                    <td onclick="state_click('VT')">VT</td>
+                                    <td onclick="state_click('WA')">WA</td>
+                                    <td onclick="state_click('WV')">WV</td>
+                                    <td onclick="state_click('WI')">WI</td>
+                                    <td onclick="state_click('WY')">WY</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_zip_s">Zip:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Zip" aria-label="Zip" aria-describedby="vitasa_adminsites_zip_s"
+                                   id="vitasa_adminsites_zip">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_latitude_s">Latitude:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Latitude" aria-label="Latitude" aria-describedby="vitasa_adminsites_latitude_s"
+                                   id="vitasa_adminsites_latitude">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group mb-3">&nbsp;
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="vitasa_adminsites_longitude_s">Longitude:</span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Longitude" aria-label="Longitude" aria-describedby="vitasa_adminsites_longitude_s"
+                                   id="vitasa_adminsites_longitude">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <div class="row">
+                    <div class="col">
+                        <h4>Site Services</h4>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="vitasa_adminsites_mobile">
+                            <label class="custom-control-label" for="vitasa_adminsites_mobile">Mobile Site</label>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="vitasa_adminsites_dropoff">
+                            <label class="custom-control-label" for="vitasa_adminsites_dropoff">Drop-off</label>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="vitasa_adminsites_express">
+                            <label class="custom-control-label" for="vitasa_adminsites_express">Express</label>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="vitasa_adminsites_mft">
+                            <label class="custom-control-label" for="vitasa_adminsites_mft">My Free Taxes</label>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="vitasa_adminsites_inperson">
+                            <label class="custom-control-label" for="vitasa_adminsites_inperson">In Person</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="vitasa_button_cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="vitasa_button_save">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- edit sites coord -->
+<div class="modal" tabindex="-1" role="dialog" id="vitasa_modal_adminusers_sitecoord">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vitasa_modal_adminusers_username">Sites Coordinated</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="vitasa_modal_button_adminusers_cancel">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <div id="vitasa_adminusers_sitecoord_list">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="vitasa_button_adminusers_cancel">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="vitasa_button_adminusers_save">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+<!-- the map and vitasa init -->
+<script src="backendhelper.js"></script>
+<script src="adminsites_handlers.js"></script>
+<script src="common_handlers.js"></script>
+<script src="CommonClasses.js"></script>
+
+</body>
+</html>
