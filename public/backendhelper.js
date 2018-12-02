@@ -31,7 +31,7 @@ class C_BackendHelper {
         // staging server: staging.volunteer-savvy.com
         //return "http://staging.volunteer-savvy.com/";
         // production server: volunteer-savvy.com
-        return "http://volunteer-savvy.com/";
+        return "https://volunteer-savvy.com/";
     }
 
     /*
