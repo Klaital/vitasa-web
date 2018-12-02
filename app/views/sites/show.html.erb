@@ -24,12 +24,13 @@
 </p>
 
 <p>
-  <strong>Site Coordinator:</strong>
-  <%= (@sitecoordinator.nil?) ? 'None Assigned' : @sitecoordinator.email %>
-</p>
-<p>
-  <strong>Backup Site Coordinator:</strong>
-  <%= (@backup_coordinator.nil?) ? 'None Assigned' : @backup_coordinator.email %>
+  <strong>Site Coordinators:</strong>
+  <ul>
+    <% @site.coordinators.each do |sc| %>
+    <li><%= sc.name %> (<%= sc.email %>)</li>
+    <% end %>
+  </ul>
+
 </p>
 
 <p>
@@ -50,55 +51,25 @@
   <% end %>
 
 <p>
-  <strong>Shift Calendar</strong>
+  <strong>Site Calendar Deviations</strong>
   <table>
-    <tr>
-      <th colspan="2"></th>
-      <th colspan="2">eFilers Needed</th>
-      <th colspan="2"></th>
-    </tr>
     <tr>
       <th>Day</th>
       <th>Open</th>
-      <th>Basic</th>
-      <th>Advanced</th>
-      <th>Backup Coordinator?</th>
+      <th>Close</th>
+      <th>eFilers Needed</th>
     </tr>
     <% @site.calendars.each do |calendar_override| %>
-      <% calendar_override.shifts.each do |shift| %>
-    <tr id="shift-row-#{shift.id}" class="shift-row">
+    <tr id="shift-row-<%= calendar_override.id %>" class="shift-row">
       <td><%= calendar_override.date %></td>
-      <td><%= link_to "#{shift.start_time} - #{shift.end_time}", site_calendar_shift_path(@site.slug, calendar_override, shift) %></td>
-      <td><%= shift.efilers_needed_basic %></td>
-      <td><%= shift.efilers_needed_advanced %></td>
-      <td><%= calendar_override.backup_coordinator_today ? '✓' : '' %></td>
+      <td><%= calendar_override.open %></td>
+      <td><%= calendar_override.close %></td>
+      <td><%= calendar_override.efilers_needed %></td>
     </tr>
-      <% end %>
     <% end %>
   </table>
 </p>
 
-<p>
-<strong>Volunteer Signups</strong>
-<table>
-  <tr>
-    <th>Date</th>
-    <th>Shift</th>
-    <th>Name</th>
-  </tr>
-  <% @site.calendars.each do |calendar| %>
-    <% calendar.shifts.order(:start_time => :asc).each do |shift| %>
-      <% shift.signups.each do |signup| %>
-    <tr>
-      <td><%= calendar.date %></td>
-      <td><%= signup.shift.start_time %> - <% signup.shift.end_time %></td>
-      <td><%= link_to signup.user.name, user_path(signup.user) %></td>
-    </tr>
-      <% end %>
-    <% end %>
-  <% end %>
-</table>
-</p>
 
 <%= link_to 'Edit', edit_site_path(@site) %> |
 <%= link_to 'Back', sites_path %>

@@ -23,7 +23,7 @@
     </tr>
     <% @user.work_logs.find_each do |work_log| %>
       <tr>
-        <td><%= link_to work_log.shift.calendar.site.name, site_path(signup.shift.calendar.site.slug) %></td>
+        <td><%= link_to work_log.site.name, site_path(work_log.site.slug) %></td>
         <td><%= work_log.date %></td>
         <td><%= work_log.hours %></td>
         <td><%= work_log.approved %></td>
