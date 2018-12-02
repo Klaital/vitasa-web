@@ -29,7 +29,9 @@ class C_BackendHelper {
 
     static get CoreURL() {
         // staging server: staging.volunteer-savvy.com
-        return "http://staging.volunteer-savvy.com/";
+        //return "http://staging.volunteer-savvy.com/";
+        // production server: volunteer-savvy.com
+        return "http://volunteer-savvy.com/";
     }
 
     /*
