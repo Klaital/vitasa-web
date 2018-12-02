@@ -110,8 +110,7 @@ class SitesController < ApplicationController
           # Expire the cache
           expire_page action: 'show', id: @site.id
           expire_page action: 'index'
-          expire_page action: 'schedule', controller: 'aggregates'
-
+          
           format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else
