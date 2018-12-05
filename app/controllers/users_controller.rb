@@ -30,11 +30,10 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      log_in @user
       # TODO: notify admins via email
 
       respond_to do |format|
-        format.html { flash[:success] = "Welcome, new user!"; redirect_to @user }
+        format.html { log_in @user; flash[:success] = "Welcome, new user!"; redirect_to @user }
         format.json { render @user, status: 201 }
       end
     else
