@@ -1,4 +1,4 @@
-json.extract! user, :id, :name, :email, :phone, :certification, :sites_coordinated
+json.extract! user, :id, :name, :email, :phone, :certification, :sites_coordinated, :subscribe_mobile
 
 json.work_history user.work_logs, partial: 'work_logs/work_log', as: :work_log
 
