@@ -2,7 +2,7 @@ class Site < ApplicationRecord
     has_many :calendars
     has_many :site_features
     has_and_belongs_to_many :coordinators, class_name: 'User', join_table: 'users_sites'
-    
+    has_and_belongs_to_many :preferred, class_name: 'User', join_table: 'preferred_sites'
     before_validation :slugify_self
     def slugify_self
         self.slug = (self.slug.nil? || self.slug.to_s.strip.empty?) ? self.name.parameterize : self.slug

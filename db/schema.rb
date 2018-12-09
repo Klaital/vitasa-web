@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181129054049) do
+ActiveRecord::Schema.define(version: 20181209213415) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -42,6 +42,13 @@ ActiveRecord::Schema.define(version: 20181129054049) do
     t.text     "message"
     t.datetime "sent"
     t.string   "message_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "preferred_sites", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "site_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -153,6 +160,9 @@ ActiveRecord::Schema.define(version: 20181129054049) do
     t.date     "season_start"
     t.date     "season_end"
     t.boolean  "active",                default: true
+    t.string   "contact_name"
+    t.string   "contact_phone"
+    t.text     "notes"
     t.index ["slug"], name: "index_sites_on_slug"
   end
 
@@ -169,11 +179,12 @@ ActiveRecord::Schema.define(version: 20181129054049) do
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
     t.string   "name"
     t.string   "phone"
     t.string   "certification"
+    t.boolean  "subscribe_mobile"
   end
 
   create_table "users_sites", id: false, force: :cascade do |t|

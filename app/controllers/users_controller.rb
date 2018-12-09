@@ -70,7 +70,7 @@ class UsersController < ApplicationController
 
     # Only update the Role Grants if any are set at all
     updated_roles = false
-    if logged_in? && current_user.is_admin?
+    if current_user.is_admin?
       logger.debug("Loading new roles...")
 #      role_params = params.require(:user).permit([:role_ids, :roles])
       new_roles = if params.has_key?(:role_ids)
@@ -85,7 +85,13 @@ class UsersController < ApplicationController
         @user.roles = new_roles
         updated_roles = true
       end
+    end
 
+    if current_user.is_admin? || current_user.id == @user.id
+      # Update their preferred sites, if set
+      if params.has_key?(:preferred_sites)
+        @user.preferred_sites = Site.where(:slug => params[:preferred_sites])
+      end
     end
 
     # Check whether there is anything else for this user to update

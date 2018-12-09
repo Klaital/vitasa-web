@@ -146,4 +146,37 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert(site1.coordinators.include?(user1), "User #{user1.id} should be on the SC list")
     assert(!site1.coordinators.include?(user2), "User #{user2.id} should not be on the SC list")
   end
+
+  test 'should be able to set preferred sites' do
+    user1 = users(:one)
+    site1 = sites(:the_alamo)
+    site2 = sites(:the_cathedral)
+
+    cookie = login_user('user-one', ['Volunteer'])
+
+    put user_path(user1),
+        :headers => {
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Cookie' => cookie,
+        }, :params => {
+            'name' => user1.name,
+            'preferred_sites' => [
+                site1.slug
+            ]
+        }.to_json
+
+    assert_response :success
+
+    # re-fetch to validate that the data was set
+    get user_path(user1),
+        :headers => {
+            'Accept' => 'application/json',
+            'Cookie' => cookie,
+        }
+    assert_response :success
+    user_data = JSON.parse(response.body)
+    assert_equal(1, user_data['preferred_sites'].length)
+    assert_equal(site1.slug, user_data['preferred_sites'][0])
+  end
 end

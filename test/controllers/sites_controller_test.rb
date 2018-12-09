@@ -79,4 +79,5 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_equal(sc1.id, site_data['sitecoordinators'][0]['id'])
   end
 
+
 end
