@@ -56,7 +56,11 @@ class SuggestionsController < ApplicationController
         admins = User.with_role('Admin')
         admins.each do |user|
           logger.info "Notifying admin #{user.email} of new suggestion #{@suggestion.subject}"
-          SesMailer.new_suggestion_email(:recipient => user, :suggestion => @suggestion).deliver
+          begin
+            SesMailer.new_suggestion_email(:recipient => user, :suggestion => @suggestion).deliver
+          rescue Net::SMTPFatalError => e
+            logger.error "Failed to send email to #{user.email}"
+          end
         end
 
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
