@@ -56,7 +56,7 @@ class SuggestionsController < ApplicationController
         admins = User.with_role('Admin')
         admins.each do |user|
           logger.info "Notifying admin #{user.email} of new suggestion #{@suggestion.subject}"
-          SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+          SesMailer.new_suggestion_email(:recipient => user, :new_user => @user).deliver
         end
 
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
