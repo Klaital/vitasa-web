@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181209213415) do
+ActiveRecord::Schema.define(version: 20181210021220) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -184,7 +184,7 @@ ActiveRecord::Schema.define(version: 20181209213415) do
     t.string   "name"
     t.string   "phone"
     t.string   "certification"
-    t.boolean  "subscribe_mobile"
+    t.boolean  "subscribe_mobile", null: false
   end
 
   create_table "users_sites", id: false, force: :cascade do |t|
