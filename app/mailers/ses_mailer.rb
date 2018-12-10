@@ -8,7 +8,7 @@ class SesMailer < ApplicationMailer
   end
 
   def new_suggestion_email(options={})
-    @new_suggestion = options[:suggestion]
+    @suggestion = options[:suggestion]
     @recipient = options[:recipient]
     mail(:to => @recipient.email, :subject => 'New Suggestion')
   end
