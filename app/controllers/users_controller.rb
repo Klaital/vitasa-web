@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy ]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :user, include: [:password, :password_confirmation, :role_ids, :roles, :email, :phone, :certification, :name]
+  wrap_parameters :user, include: [:password, :password_confirmation, :role_ids, :roles, :email, :phone, :certification, :name, :subscribe_mobile]
 
   def index
     @users = User.all

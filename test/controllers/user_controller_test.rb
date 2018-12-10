@@ -179,4 +179,38 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_equal(1, user_data['preferred_sites'].length)
     assert_equal(site1.slug, user_data['preferred_sites'][0])
   end
+
+  test 'should be able to set subscribe_mobile' do
+    user1 = users(:one)
+
+    cookie = login_user('user-one', ['Volunteer'])
+
+    put user_path(user1),
+        :headers => {
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Cookie' => cookie,
+        }, :params => <<-JSON
+    {
+        "name" : "vol tester mobile 5th",
+        "email" : "voltestermobile@a.c",
+        "phone" : "123-123-1234",
+        "certification" : "None",
+        "subscribe_mobile" : true,
+        "roles" : ["Volunteer","Mobile"]
+    }
+    JSON
+
+    assert_response :success
+
+    # re-fetch to validate that the data was set
+    get user_path(user1),
+        :headers => {
+            'Accept' => 'application/json',
+            'Cookie' => cookie,
+        }
+    assert_response :success
+    user_data = JSON.parse(response.body)
+    assert_equal(true, user_data['subscribe_mobile'])
+  end
 end
