@@ -5,35 +5,42 @@ one:
   email: user-one@example.org
   password_digest: <%= User.digest('user-one-password') %>
   certification: Basic
+  subscribe_mobile: false
 
 # User Two is a SiteCoordinator and Admin
 two:
   email: user-two@example.org
   password_digest: <%= User.digest('user-two-password') %>
   certification: Advanced
+  subscribe_mobile: false
 
 # User Three is a SiteCoordinator for Site the_alamo
 three:
   email: user-three@example.org
   password_digest: <%= User.digest('user-three-password') %>
   certification: Basic
+  subscribe_mobile: false
 
 # User Four is a SiteCoordinator for Site the_cathedral
 four:
   email: user-four@example.org
   password_digest: <%= User.digest('user-four-password') %>
+  subscribe_mobile: false
 
 # Volunteer One has no signups
 volunteer_one:
   email: volunteer-one@example.org
   password_digest: <%= User.digest('volunteer-one-password') %>
+  subscribe_mobile: false
 
 # Volunteer Two has some signups
 volunteer_two:
   email: volunteer-two@example.org
   password_digest: <%= User.digest('volunteer-two-password') %>
+  subscribe_mobile: false
 
 # Volunteer Two has some signups
 reviewer_one:
   email: reviewer-one@example.org
   password_digest: <%= User.digest('reviewer-one-password') %>
+  subscribe_mobile: false

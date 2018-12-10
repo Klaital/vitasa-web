@@ -80,5 +80,18 @@ class User < ApplicationRecord
   def suggestions
     Suggestion.where(user_id: self.id)
   end
+
+  def self.with_role(role_name)
+    role = Role.find_by(name: role_name)
+    if role.nil?
+      return []
+    end
+    grants = RoleGrant.where(role_id: role.id)
+    if grants.empty?
+      return []
+    end
+
+    User.where(id: grants.collect{|g| g.user_id})
+  end
 end
 

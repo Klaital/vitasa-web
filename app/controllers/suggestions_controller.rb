@@ -52,7 +52,12 @@ class SuggestionsController < ApplicationController
 
     respond_to do |format|
       if @suggestion.save
-        # TODO: notify admins via email
+        # notify admins via email
+        admins = User.with_role('Admin')
+        admins.each do |user|
+          SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+        end
+
         format.html { redirect_to @suggestion, notice: 'Suggestion was successfully created.' }
         format.json { render :show, status: :created, location: @suggestion }
       else

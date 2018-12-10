@@ -30,8 +30,11 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      # TODO: notify admins via email
-
+      # notify admins via email
+      admins = User.with_role('Admin')
+      admins.each do |user|
+        SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+      end
       respond_to do |format|
         format.html { log_in @user; flash[:success] = "Welcome, new user!"; redirect_to @user }
         format.json { render @user, status: 201 }

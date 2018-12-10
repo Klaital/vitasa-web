@@ -80,6 +80,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
              'email' => 'create-user-test@example.com',
              'password' => 'create-user-password',
              'password_confirmation' => 'create-user-password',
+             'subscribe_mobile' => false
          }.to_json
     assert_response :success
 
