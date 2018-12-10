@@ -33,7 +33,11 @@ class UsersController < ApplicationController
       # notify admins via email
       admins = User.with_role('Admin')
       admins.each do |user|
-        SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+        begin
+          SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+        rescue Net::SMTPFatalError => e
+          logger.error "Failed to send email to #{user.email}"
+        end
       end
       respond_to do |format|
         format.html { log_in @user; flash[:success] = "Welcome, new user!"; redirect_to @user }
