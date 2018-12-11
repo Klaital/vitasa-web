@@ -43,7 +43,7 @@ class NotificationRegistration < ApplicationRecord
     topics << 'volunteers' unless user.nil?
     topics << 'sc' if user.has_role?('SiteCoordinator')
 
-    topics << user.preferred_sites.collect {|ps| ps.site.get_sns_topic}
+    topics << user.preferred_sites.collect {|ps| ps.get_sns_topic}
 
     topics.each do |t|
         topic_arn = case t
