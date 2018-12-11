@@ -89,7 +89,7 @@ class Site < ApplicationRecord
                                    :default => message,
                                    :aps => {:alert => message},
                                    :gcm => {:notification => {:text => message}}.to_json
-                               },
+                               }.to_json,
                                :message_structure => 'json',
                            })
 
