@@ -79,7 +79,7 @@ class Site < ApplicationRecord
     logger.debug "Site #{self.slug} updated. Sending out push notifications to the Mobile Team via SNS"
 
     # TODO: lookup mobile team Topic
-    topic_arn = ""
+    topic_arn = 'arn:aws:sns:us-west-2:813809418199:vs-prod-sites-mobile'
 
     sns = Aws::SNS::Client.new(region: 'us-west-2')
     message = "Mobile Site #{self.name} updated"

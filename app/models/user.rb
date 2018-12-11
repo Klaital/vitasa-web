@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :roles, through: :role_grants
   has_many :work_logs
   after_create :email_notify_admins
+  before_save :register_mobile_updates
 
   after_initialize do
     subscribe_mobile = false if subscribe_mobile.nil?
@@ -109,6 +110,34 @@ class User < ApplicationRecord
       rescue Net::SMTPFatalError => e
         logger.error "Failed to send email to #{admin.email}: #{e}"
         next
+      end
+    end
+  end
+
+  def register_mobile_updates
+    if self.subscribe_mobile_changed?
+      sns = Aws::SNS::Client.new(region: 'us-west-2')
+      if self.subscribe_mobile
+        sns_app_arn = case self.platform
+                      when 'android'
+                        Rails.configuration.sns_gcm_application_arn
+                      when 'ios'
+                        Rails.configuration.sns_apn_application_arn
+                      end
+        # Pull up the most recent endpoint for this user
+        platform_endpoint = NotificationRegistration.where(user_id: self.id).last.endpoint
+        # Now we register that endpoint set as a subscription on the relevant topics
+        subscription = sns.subscribe({
+            topic_arn: topic_arn,
+            protocol: 'application',
+            endpoint: platform_endpoint.arn
+        })
+        logger.info("SNS subscription: #{subscription}")
+        self.mobile_subscription_arn = subscription.subscription_arn
+      else
+        # Unsubscribe from updates on mobile sites
+        sns.unsubscribe(subscription_arn: self.mobile_subscription_arn)
+        self.mobile_subscription_arn = nil
       end
     end
   end
