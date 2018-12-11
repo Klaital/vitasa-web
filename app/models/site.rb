@@ -115,6 +115,8 @@ class Site < ApplicationRecord
     })
     self.sns_topic = resp.topic_arn
     self.save
+
+    self.sns_topic
   end
 
   def delete_sns_topic
