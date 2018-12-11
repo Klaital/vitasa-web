@@ -42,12 +42,17 @@ class NotificationRegistration < ApplicationRecord
     topics = []
     topics << 'volunteers' unless user.nil?
     topics << 'sc' if user.has_role?('SiteCoordinator')
+
+    topics << user.preferred_sites.collect {|ps| ps.site.get_sns_topic}
+
     topics.each do |t|
         topic_arn = case t
           when 'volunteers'
             Rails.configuration.sns_topic_volunteers_arn
           when 'sc'
             Rails.configuration.sns_topic_sc_arn
+          else
+            t
           end
         sns_app_arn = case self.platform
           when 'android'
