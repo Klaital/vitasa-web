@@ -112,9 +112,6 @@ class Site < ApplicationRecord
     sns = Aws::SNS::Client.new(region: 'us-west-2')
     resp = sns.create_topic({
       name: "vs-site-#{Rails.env}-#{self.id}",
-      attributes: {
-        "DisplayName" => "Site Updates for #{self.name}"
-      },
     })
     self.sns_topic = resp.topic_arn
     self.save
