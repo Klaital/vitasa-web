@@ -4,6 +4,10 @@ class User < ApplicationRecord
   has_many :work_logs
   after_create :email_notify_admins
 
+  after_initialize do
+    subscribe_mobile = false if subscribe_mobile.nil?
+  end
+
   # has_many :preferred_sites, :class_name => 'Site', :through => :preferred_sites
   has_and_belongs_to_many :preferred_sites, :class_name => 'Site', :join_table => 'preferred_sites'
   has_and_belongs_to_many :sites_coordinated, class_name: 'Site', join_table: 'users_sites'
