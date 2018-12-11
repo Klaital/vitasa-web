@@ -2,6 +2,8 @@ class User < ApplicationRecord
   has_many :role_grants
   has_many :roles, through: :role_grants
   has_many :work_logs
+  after_create :email_notify_admins
+
   # has_many :preferred_sites, :class_name => 'Site', :through => :preferred_sites
   has_and_belongs_to_many :preferred_sites, :class_name => 'Site', :join_table => 'preferred_sites'
   has_and_belongs_to_many :sites_coordinated, class_name: 'Site', join_table: 'users_sites'
@@ -92,6 +94,19 @@ class User < ApplicationRecord
     end
 
     User.where(id: grants.collect{|g| g.user_id})
+  end
+
+  def email_notify_admins
+    # notify admins via email
+    admins = User.with_role('Admin')
+    admins.each do |user|
+      begin
+        SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+      rescue Net::SMTPFatalError => e
+        logger.error "Failed to send email to #{user.email}"
+        next
+      end
+    end
   end
 end
 
