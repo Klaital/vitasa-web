@@ -44,7 +44,8 @@ class NotificationRegistration < ApplicationRecord
     topics << 'sc' if user.has_role?('SiteCoordinator')
 
     topics << user.preferred_sites.collect {|ps| ps.get_sns_topic}
-
+    topics.flatten!
+    
     topics.each do |t|
         topic_arn = case t
           when 'volunteers'
