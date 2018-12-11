@@ -103,11 +103,11 @@ class User < ApplicationRecord
   def email_notify_admins
     # notify admins via email
     admins = User.with_role('Admin')
-    admins.each do |user|
+    admins.each do |admin|
       begin
-        SesMailer.new_user_email(:recipient => user, :new_user => @user).deliver
+        SesMailer.new_user_email(:recipient => admin, :new_user => self).deliver
       rescue Net::SMTPFatalError => e
-        logger.error "Failed to send email to #{user.email}"
+        logger.error "Failed to send email to #{admin.email}: #{e}"
         next
       end
     end
