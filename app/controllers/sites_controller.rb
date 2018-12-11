@@ -74,9 +74,8 @@ class SitesController < ApplicationController
         if @site.save
           # Expire the cache
           expire_page action: 'index'
-          expire_page controller: 'aggregates', action: 'schedule'
 
-         @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
           format.html { redirect_to @site, notice: 'Site was successfully created.' }
           format.json { render :show, status: :created, location: @site }
         else
