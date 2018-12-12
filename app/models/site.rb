@@ -75,7 +75,9 @@ class Site < ApplicationRecord
 
   # Send updates to the mobile team if this is a mobile site
   def send_mobile_team_notification
-    return true unless self.site_features.where(:feature => 'Mobile').count > 0
+    # No-op if this site isn't Mobile
+    return true if self.site_features.where(:feature => 'Mobile').count == 0
+    
     logger.debug "Site #{self.slug} updated. Sending out push notifications to the Mobile Team via SNS"
 
     # TODO: lookup mobile team Topic
