@@ -136,8 +136,10 @@ class User < ApplicationRecord
         self.mobile_subscription_arn = subscription.subscription_arn
       else
         # Unsubscribe from updates on mobile sites
-        sns.unsubscribe(subscription_arn: self.mobile_subscription_arn)
-        self.mobile_subscription_arn = nil
+        unless self.mobile_subscription_arn.nil?
+          sns.unsubscribe(subscription_arn: self.mobile_subscription_arn)
+          self.mobile_subscription_arn = nil
+        end
       end
     end
   end
