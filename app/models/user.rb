@@ -118,7 +118,6 @@ class User < ApplicationRecord
     if self.subscribe_mobile_changed?
       sns = Aws::SNS::Client.new(region: 'us-west-2')
       if self.subscribe_mobile
-
         sns_app_arn = case NotificationRegistration.where(user_id: self.id).last.platform
                       when 'android'
                         Rails.configuration.sns_gcm_application_arn
@@ -127,9 +126,9 @@ class User < ApplicationRecord
                       end
         # Pull up the most recent endpoint for this user
         platform_endpoint = NotificationRegistration.where(user_id: self.id).last.endpoint
-        # Now we register that endpoint set as a subscription on the relevant topics
+        # Now we register that endpoint set as a subscription on the mobile-updates topic
         subscription = sns.subscribe({
-            topic_arn: topic_arn,
+            topic_arn: 'arn:aws:sns:us-west-2:813809418199:vs-prod-sites-mobile',
             protocol: 'application',
             endpoint: platform_endpoint.arn
         })
