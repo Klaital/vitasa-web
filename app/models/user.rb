@@ -118,7 +118,8 @@ class User < ApplicationRecord
     if self.subscribe_mobile_changed?
       sns = Aws::SNS::Client.new(region: 'us-west-2')
       if self.subscribe_mobile
-        sns_app_arn = case self.platform
+
+        sns_app_arn = case NotificationRegistration.where(user_id: self.id).last.platform
                       when 'android'
                         Rails.configuration.sns_gcm_application_arn
                       when 'ios'
