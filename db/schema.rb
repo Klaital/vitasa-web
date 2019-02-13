@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181211050209) do
+ActiveRecord::Schema.define(version: 20190213033611) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -83,12 +83,6 @@ ActiveRecord::Schema.define(version: 20181211050209) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "site_capabilities", force: :cascade do |t|
-    t.integer "site_id"
-    t.string  "capability"
-    t.index ["site_id"], name: "index_site_capabilities_on_site_id"
   end
 
   create_table "site_features", force: :cascade do |t|
@@ -187,6 +181,8 @@ ActiveRecord::Schema.define(version: 20181211050209) do
     t.string   "certification"
     t.boolean  "subscribe_mobile",        null: false
     t.string   "mobile_subscription_arn"
+    t.boolean  "hsa_certification"
+    t.boolean  "military_certification"
   end
 
   create_table "users_sites", id: false, force: :cascade do |t|

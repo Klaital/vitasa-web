@@ -32,6 +32,13 @@ class User < ApplicationRecord
       tmp = self.phone.gsub(/[^\d]/, '')
       self.phone = "#{tmp[0..2]}-#{tmp[3..5]}-#{tmp[6..-1]}"
     end
+
+    if self.military_certification.nil?
+      self.military_certification = false
+    end
+    if self.hsa_certification.nil?
+      self.hsa_certification = false
+    end
   end
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
