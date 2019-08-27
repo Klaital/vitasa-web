@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy ]
+  before_action :set_user, only: %i[show edit update destroy]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :user, include: [:password, :password_confirmation, :role_ids, :roles, :email, :phone, :certification, :name, :subscribe_mobile]
+  wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile]
 
   def index
     @users = User.all
@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
     if @user.save
       respond_to do |format|
-        format.html { log_in @user; flash[:success] = "Welcome, new user!"; redirect_to @user }
+        format.html { log_in @user; flash[:success] = 'Welcome, new user!'; redirect_to @user }
         format.json { render @user, status: 201 }
       end
     else
@@ -86,7 +86,7 @@ class UsersController < ApplicationController
     # Only update the Role Grants if any are set at all
     updated_roles = false
     if current_user.is_admin?
-      logger.debug("Loading new roles...")
+      logger.debug('Loading new roles...')
 #      role_params = params.require(:user).permit([:role_ids, :roles])
       new_roles = if params.has_key?(:role_ids)
                    (params[:role_ids].collect {|role_id| Role.find(role_id)}.compact)
@@ -125,7 +125,7 @@ class UsersController < ApplicationController
       prepared_user_params.delete(:password_confirmation)
     end
 
-   respond_to do |format|
+    respond_to do |format|
       if (!prepared_user_params.empty? && @user.update(prepared_user_params)) || updated_roles
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
@@ -179,10 +179,10 @@ class UsersController < ApplicationController
 
   def log_work
 
-    log = WorkLog.new(work_log_params.merge())
+    log = WorkLog.new(work_log_params.merge)
     if log.save
       respond_to do |format|
-        format.html { flash[:success] = "Work logged!"; redirect_to @user }
+        format.html { flash[:success] = 'Work logged!'; redirect_to @user }
         format.json { render @user, status: 201 }
       end
     else
@@ -213,22 +213,25 @@ class UsersController < ApplicationController
     logger.debug("Admin? #{current_user.is_admin?}")
 
     permitted_fields = if current_user.is_admin?
-                         logger.debug("Permitting admin-only user fields")
-                         [
-                             :roles, :role_ids, :certification, :name, :password, :password_confirmation, :phone, :subscribe_mobile, :military_certification, :hsa_certification
-                         ]
+                         logger.debug('Permitting admin-only user fields')
+                         %i[roles role_ids certification name password
+                            password_confirmation phone subscribe_mobile
+                            international_certification military_certification
+                            hsa_certification]
                        elsif current_user.id == params[:id].to_i
-                         logger.debug("Permitting self-user fields")
-                         [
-                           :name, :email, :password, :password_confirmation, :phone, :subscribe_mobile, :hsa_certification, :military_certification
-                         ]
+                         logger.debug('Permitting self-user fields')
+                         %i[name email password password_confirmation phone
+                            subscribe_mobile international_certification
+                            hsa_certification
+                            military_certification]
                        else
-                         logger.debug("Permitting no user fields")
+                         logger.debug('Permitting no user fields')
                          []
                        end
     if logged_in? && current_user.is_admin?
-       logger.debug("Adding Admin fields")
-       permitted_fields |= [ :email, :roles, :role_ids, :certification, :password, :password_confirmation ]
+      logger.debug('Adding Admin fields')
+      permitted_fields |= %i[email roles role_ids certification
+                             password password_confirmation]
     end
 
     begin
@@ -236,8 +239,8 @@ class UsersController < ApplicationController
       logger.debug("Filtered params: #{params.require(:user).permit(permitted_fields)}")
       params.require(:user).permit(permitted_fields)
     rescue ActionController::ParameterMissing => e
-      logger.warn("No valid parameters were included for the UsersController to process")
+      logger.warn("No valid parameters were included for the UsersController to process: #{e}")
       {}
-    end 
+    end
   end
 end

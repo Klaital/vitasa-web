@@ -6,7 +6,7 @@ class User < ApplicationRecord
   before_save :register_mobile_updates
 
   after_initialize do
-    subscribe_mobile = false if subscribe_mobile.nil?
+    self.subscribe_mobile = false if self.subscribe_mobile.nil?
   end
 
   # has_many :preferred_sites, :class_name => 'Site', :through => :preferred_sites
@@ -19,7 +19,7 @@ class User < ApplicationRecord
     # By default, users should get the NewUser role, which restricts them from
     # modifying anything until an Admin approves them.
     if self.roles.empty?
-      self.roles = [ Role.find_by(name: 'Volunteer') ]
+      self.roles = [Role.find_by(name: 'Volunteer')]
     end
   end
 
@@ -33,12 +33,10 @@ class User < ApplicationRecord
       self.phone = "#{tmp[0..2]}-#{tmp[3..5]}-#{tmp[6..-1]}"
     end
 
-    if self.military_certification.nil?
-      self.military_certification = false
-    end
-    if self.hsa_certification.nil?
-      self.hsa_certification = false
-    end
+
+    self.military_certification = false if self.military_certification.nil?
+    self.hsa_certification = false if self.hsa_certification.nil?
+    self.international_certification = false if self.international_certification.nil?
   end
 
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
@@ -54,10 +52,10 @@ class User < ApplicationRecord
             length: { minimum: 6 },
             on: :create
 
-  VALID_CERTIFICATION_LEVELS = %w{ None Greeter Basic Advanced SiteCoordinator }
-  validates :certification, inclusion: { 
+  VALID_CERTIFICATION_LEVELS = %w[None Greeter Basic Advanced SiteCoordinator].freeze
+  validates :certification, inclusion: {
     in: VALID_CERTIFICATION_LEVELS,
-    message: "%{value} is not a valid certification level" 
+    message: '%{value} is not a valid certification level'
   }
 
   VALID_PHONE_REGEX = /\A\d{3}-\d{3}-\d{4}\z/
@@ -70,9 +68,8 @@ class User < ApplicationRecord
 
 
   # Returns the hash digest of the given string.
-  def User.digest(s)
-    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
-        BCrypt::Engine.cost
+  def self.digest(s)
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     BCrypt::Password.create(s, cost: cost)
   end
 
