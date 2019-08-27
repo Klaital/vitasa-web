@@ -10,9 +10,9 @@ class User < ApplicationRecord
   end
 
   # has_many :preferred_sites, :class_name => 'Site', :through => :preferred_sites
-  has_and_belongs_to_many :preferred_sites, :class_name => 'Site', :join_table => 'preferred_sites'
+  has_and_belongs_to_many :preferred_sites, class_name: 'Site', join_table: 'preferred_sites'
   has_and_belongs_to_many :sites_coordinated, class_name: 'Site', join_table: 'users_sites'
-  
+
   before_save do
     self.email = email.downcase
 
@@ -78,17 +78,25 @@ class User < ApplicationRecord
 
   # Role queries
   def is_admin?
-    self.roles.each do |role|
+    roles.each do |role|
       return true if role.name == 'Admin'
     end
-    return false
+
+    # Role not found for user
+    false
   end
 
+  # Check whether a user has any of the specified role names.
+  # Can be either a single role name, or an array of many. If any in the set of
+  # requested roles match any of the user's role set, return true.
   def has_role?(role_name)
-    self.roles.each do |role|
-      return true if role.name == role_name
+    role_name = [role_name] unless role_name.kind_of?(Array)
+    roles.each do |role|
+      return true if role_name.include?(role.name)
     end
-    return false
+
+    # None of the requested roles found for user
+    false
   end
 
   def suggestions
@@ -97,15 +105,12 @@ class User < ApplicationRecord
 
   def self.with_role(role_name)
     role = Role.find_by(name: role_name)
-    if role.nil?
-      return []
-    end
-    grants = RoleGrant.where(role_id: role.id)
-    if grants.empty?
-      return []
-    end
 
-    User.where(id: grants.collect{|g| g.user_id})
+    return [] if role.nil?
+    grants = RoleGrant.where(role_id: role.id)
+    return [] if grants.empty?
+
+    User.where(id: grants.collect(&:user_id))
   end
 
   def email_notify_admins
@@ -113,7 +118,7 @@ class User < ApplicationRecord
     admins = User.with_role('Admin')
     admins.each do |admin|
       begin
-        SesMailer.new_user_email(:recipient => admin, :new_user => self).deliver
+        SesMailer.new_user_email(recipient: admin, new_user: self).deliver
       rescue Net::SMTPFatalError => e
         logger.error "Failed to send email to #{admin.email}: #{e}"
         next

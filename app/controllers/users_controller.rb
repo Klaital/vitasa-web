@@ -11,8 +11,8 @@ class UsersController < ApplicationController
         format.html { render :index }
         format.json { render :index }
       else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render json: { :errors => 'Not authorized' }, :status => :unauthorized }
+        format.html { render file: 'public/401', status: :unauthorized, layout: false }
+        format.json { render json: { errors: 'Not authorized' }, status: :unauthorized }
       end
     end
   end
@@ -45,8 +45,24 @@ class UsersController < ApplicationController
 
   # GET /users/edit
   def edit
-    unless logged_in? && (current_user == @user || is_admin?)
-      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+    unless logged_in?
+      render json: { errors: 'Not authorized'}, status: :unauthorized
+      response.set_header('Content-Type', 'application/json')
+      return
+    end
+
+    # Users can edit themselves.
+    # Admins can only be edited/deleted by superadmins.
+    # Regular users can be edited by their own admins or superadmins.
+    authorized = if current_user == @user
+                   true
+                 elsif @user.has_role?('Admin', 'SuperAdmin')
+                   current_user.has_role?('SuperAdmin')
+                 else
+                   current_user.has_role?('Admin', 'SuperAdmin')
+                 end
+    unless authorized
+      render json: { errors: 'Not authorized'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
@@ -56,15 +72,16 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/0.json
   def update
     unless logged_in?
-      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      render json: { errors: 'Not authorized'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
     unless current_user == @user || is_admin?
-      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+      render json: { errors: 'Not authorized'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
+
 
     # Only update the Role Grants if any are set at all
     updated_roles = false
@@ -88,7 +105,7 @@ class UsersController < ApplicationController
     if current_user.is_admin? || current_user.id == @user.id
       # Update their preferred sites, if set
       if params.has_key?(:preferred_sites)
-        @user.preferred_sites = Site.where(:slug => params[:preferred_sites])
+        @user.preferred_sites = Site.where(slug: params[:preferred_sites])
       end
     end
 
@@ -125,15 +142,26 @@ class UsersController < ApplicationController
         format.html { render :show }
         format.json { render :show }
       else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => { :errors => 'Not authorized' }, :status => :unauthorized }
+        format.html { render file: 'public/401', status: :unauthorized, layout: false }
+        format.json { render json: { errors: 'Not authorized' }, status: :unauthorized }
       end
     end
   end
 
   def destroy
-    unless is_admin?
-      render :json => { :errors => 'Not authorized'}, :status => :unauthorized
+
+    # Users can edit themselves.
+    # Admins can only be edited/deleted by superadmins.
+    # Regular users can be edited by their own admins or superadmins.
+    authorized = if current_user == @user
+                   true
+                 elsif @user.has_role?('Admin', 'SuperAdmin')
+                   current_user.has_role?('SuperAdmin')
+                 else
+                   current_user.has_role?('Admin', 'SuperAdmin')
+                 end
+    unless authorized
+      render json: { errors: 'Not authorized'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
