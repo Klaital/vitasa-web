@@ -32,5 +32,7 @@ Rails.application.routes.draw do
   post '/login',   to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
 
+  get '/organizations', to: 'organizations#index'
+
   # These methods are for aggregating data into a single view, intended for driving a single UI screen on the app
 end

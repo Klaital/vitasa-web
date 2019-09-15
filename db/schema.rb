@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190213033611) do
+ActiveRecord::Schema.define(version: 20190915221508) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -44,6 +44,11 @@ ActiveRecord::Schema.define(version: 20190213033611) do
     t.string   "message_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "slug", null: false
+    t.string "name", null: false
   end
 
   create_table "preferred_sites", force: :cascade do |t|
@@ -158,6 +163,7 @@ ActiveRecord::Schema.define(version: 20190213033611) do
     t.string   "contact_phone"
     t.text     "notes"
     t.string   "sns_topic"
+    t.integer  "organization_id"
     t.index ["slug"], name: "index_sites_on_slug"
   end
 
@@ -174,15 +180,17 @@ ActiveRecord::Schema.define(version: 20190213033611) do
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.string   "name"
     t.string   "phone"
     t.string   "certification"
-    t.boolean  "subscribe_mobile",        null: false
+    t.boolean  "subscribe_mobile",                            null: false
     t.string   "mobile_subscription_arn"
     t.boolean  "hsa_certification"
     t.boolean  "military_certification"
+    t.boolean  "international_certification", default: false, null: false
+    t.integer  "organization_id"
   end
 
   create_table "users_sites", id: false, force: :cascade do |t|

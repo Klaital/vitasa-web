@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :work_logs
   after_create :email_notify_admins
   before_save :register_mobile_updates
+  belongs_to :organization
 
   after_initialize do
     self.subscribe_mobile = false if self.subscribe_mobile.nil?

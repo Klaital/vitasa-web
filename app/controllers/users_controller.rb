@@ -28,6 +28,9 @@ class UsersController < ApplicationController
     logger.debug("Raw request: #{request.body.read}")
 
     @user = User.new(user_params)
+    if logged_in?
+
+    end
 
     if @user.save
       respond_to do |format|
