@@ -4,7 +4,16 @@ class UsersController < ApplicationController
   wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile]
 
   def index
-    @users = User.all
+    filters = {}
+    if params.has_key?(:organization_id)
+      filters[:organization_id] = params[:organization_id]
+    end
+
+    @users = if filters.empty?
+               User.all
+             else
+               User.where(filters)
+             end
 
     respond_to do |format|
       if logged_in?
@@ -28,8 +37,12 @@ class UsersController < ApplicationController
     logger.debug("Raw request: #{request.body.read}")
 
     @user = User.new(user_params)
-    if logged_in?
 
+    # If the creating user is a SuperAdmin, they can set the org ID.
+    # Anyone else creating a user (i.e. the org admins) will create
+    # that user in their own org, regardless of what data they submit.
+    if logged_in? && !current_user.has_role?('SuperAdmin')
+      @user.organization_id = current_user.organization_id
     end
 
     if @user.save
@@ -152,16 +165,15 @@ class UsersController < ApplicationController
   end
 
   def destroy
-
     # Users can edit themselves.
     # Admins can only be edited/deleted by superadmins.
     # Regular users can be edited by their own admins or superadmins.
     authorized = if current_user == @user
                    true
-                 elsif @user.has_role?('Admin', 'SuperAdmin')
+                 elsif @user.has_role?(['Admin', 'SuperAdmin'])
                    current_user.has_role?('SuperAdmin')
                  else
-                   current_user.has_role?('Admin', 'SuperAdmin')
+                   current_user.has_role?(['Admin', 'SuperAdmin']) && current_user.organization == @user.organization
                  end
     unless authorized
       render json: { errors: 'Not authorized'}, status: :unauthorized
@@ -209,15 +221,25 @@ class UsersController < ApplicationController
     logger.debug("User logged in? #{logged_in?}")
     logger.debug()
     unless logged_in?
+      logger.error("No logged-in user")
       return []
+    else
+      logger.debug("Logged-in user: #{current_user.email}")
     end
+
     logger.debug("Users: current=#{current_user.id}, accessing=#{params[:id]}")
     logger.debug("Accessing self? #{current_user.id == params[:id].to_i}")
     logger.debug("Admin? #{current_user.is_admin?}")
 
-    permitted_fields = if current_user.is_admin?
+    permitted_fields = if current_user.has_role?('SuperAdmin')
+                         logger.debug('Permitting superadmin user fields')
+                         %i[name email roles role_ids certification name password
+                            password_confirmation phone subscribe_mobile
+                            international_certification military_certification
+                            hsa_certification organization_id]
+                        elsif current_user.is_admin?
                          logger.debug('Permitting admin-only user fields')
-                         %i[roles role_ids certification name password
+                         %i[name email roles role_ids certification name password
                             password_confirmation phone subscribe_mobile
                             international_certification military_certification
                             hsa_certification]

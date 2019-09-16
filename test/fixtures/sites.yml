@@ -13,6 +13,7 @@ the_alamo:
   google_place_id: hIJX4k2TVVfXIYRIsTnhA-P-Rc
   season_start: 2018-01-01
   season_end: 2018-04-16
+  organization: vitasa
 
 the_cathedral:
   name: San Fernando Cathedral
@@ -24,5 +25,35 @@ the_cathedral:
   longitude: -98.493928
   sitestatus: Closed
   slug: san-fernando-cathedral
-  season_start: 2018-02-01
-  season_end: 2018-04-20
+  season_start: 2020-02-01
+  season_end: 2020-04-20
+  organization: vitasa
+
+
+the_cathedral:
+  name: San Fernando Cathedral
+  street: 115 Main Plaza
+  city: San Antonio
+  state: TX
+  zip: 78205
+  latitude: 29.424514
+  longitude: -98.493928
+  sitestatus: Closed
+  slug: san-fernando-cathedral
+  season_start: 2020-02-01
+  season_end: 2020-04-20
+  organization: vitasa
+
+brownsville_library:
+  name: Brownsville Public Library Main Branch
+  street: 2600 Central Blvd
+  city: Brownsville
+  state: TX
+  zip: 78520
+  latitude: 29.424514
+  longitude: -98.493928
+  sitestatus: Open
+  slug: brownsville-library
+  season_start: 2020-02-01
+  season_end: 2020-04-20
+  organization: vitasa
