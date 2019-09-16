@@ -138,7 +138,7 @@ class User < ApplicationRecord
         platform_endpoint = NotificationRegistration.where(user_id: self.id).last.endpoint
         # Now we register that endpoint set as a subscription on the mobile-updates topic
         subscription = sns.subscribe({
-            topic_arn: 'arn:aws:sns:us-west-2:813809418199:vs-prod-sites-mobile',
+            topic_arn: "arn:aws:sns:us-west-2:813809418199:vs-#{Rails.env}-#{self.organization.slug}-sites-mobile",
             protocol: 'application',
             endpoint: platform_endpoint
         })

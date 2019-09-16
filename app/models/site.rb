@@ -64,8 +64,8 @@ class Site < ApplicationRecord
         :message => {
             :default => message,
             :aps => {:alert => message},
-            :gcm => {:notification => {:text => message}}.to_json
-        },
+            :gcm => {:notification => {:text => message}}
+        }.to_json,
         :message_structure => 'json',
     })
 
@@ -84,7 +84,7 @@ class Site < ApplicationRecord
     logger.debug "Site #{self.slug} updated. Sending out push notifications to the Mobile Team via SNS"
 
     # TODO: lookup mobile team Topic
-    topic_arn = 'arn:aws:sns:us-west-2:813809418199:vs-prod-sites-mobile'
+    topic_arn = "arn:aws:sns:us-west-2:813809418199:vs-#{Rails.env}-#{self.organization.slug}-sites-mobile"
 
     sns = Aws::SNS::Client.new(region: 'us-west-2')
     message = "Mobile Site #{self.name} updated"
@@ -116,7 +116,7 @@ class Site < ApplicationRecord
   def create_sns_topic
     sns = Aws::SNS::Client.new(region: 'us-west-2')
     resp = sns.create_topic({
-      name: "vs-site-#{Rails.env}-#{self.id}",
+      name: "vs-site-#{Rails.env}-#{self.organization.slug}-#{self.id}",
     })
     self.sns_topic = resp.topic_arn
     self.save
