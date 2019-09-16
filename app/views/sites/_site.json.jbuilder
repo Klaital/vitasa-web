@@ -1,4 +1,4 @@
-json.extract! site, :id, :name, :slug,
+json.extract! site, :id, :name, :slug, :organization_id,
     :street, :city, :state, :zip, :latitude, :longitude, :google_place_id,
     :season_start, :season_end,
     :contact_name, :contact_phone,
@@ -11,4 +11,3 @@ json.calendar_overrides site.calendars, partial: 'calendars/calendar', as: :cale
 json.work_log site.work_history, partial: 'work_logs/work_log', as: :work_log
 
 json.site_features site.site_features.collect {|feature| feature.feature}
-

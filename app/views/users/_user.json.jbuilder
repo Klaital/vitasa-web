@@ -1,4 +1,5 @@
-json.extract! user, :id, :name, :email, :phone, :certification,
+json.extract! user, :id, :name, :email, :phone,
+              :organization_id, :certification,
               :subscribe_mobile, :hsa_certification, :military_certification,
               :international_certification
 
