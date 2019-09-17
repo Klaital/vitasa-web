@@ -1,6 +1,5 @@
 class SitesController < ApplicationController
-  # self.page_cache_directory = File.join(Rails.root, 'public', 'cached_pages')
-  caches_page :show, :new, :index
+  # caches_page :show, :new, :index
 
   before_action :set_site, only: [:show, :edit, :update, :destroy]
   before_action :set_eligible_sitecoordinators, only: [ :edit, :new ]
