@@ -23,7 +23,13 @@ Rails.application.routes.draw do
   # User Handling
   resources :users do
     resources :work_logs
+    put '/certifications/:id', to: 'certification_grants#create'
+    delete '/certifications/:id', to: 'certification_grants#destroy'
   end
+  post '/certifications/', to: 'certifications#create'
+  put '/certifications/:id', to: 'certifications#update'
+  delete '/certifications/:id', to: 'certifications#destroy'
+  get '/certifications/', to: 'certifications#index'
 
   get '/signup', to: 'users#new', as: :register
   post '/signup',  to: 'users#create'

@@ -1,0 +1,1 @@
+json.extract! certification, :id, :name, :organization_id

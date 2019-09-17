@@ -144,6 +144,10 @@ class SitesController < ApplicationController
     end
 
     @site.destroy
+    # Expire the cache
+    expire_page action: 'show', id: @site.id
+    expire_page action: 'index'
+
     respond_to do |format|
       format.html { redirect_to sites_url, notice: 'Site was successfully destroyed.' }
       format.json { head :no_content }

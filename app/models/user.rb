@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_many :role_grants
   has_many :roles, through: :role_grants
+  has_many :certifications, through: :certification_grants
+
   has_many :work_logs
   after_create :email_notify_admins
   before_save :register_mobile_updates
@@ -95,6 +97,10 @@ class User < ApplicationRecord
 
     # None of the requested roles found for user
     false
+  end
+
+  def has_admin?(organization_id)
+    has_role?('SuperAdmin') || (self.organization_id == organization_id && has_role?(['Admin']))
   end
 
   def suggestions

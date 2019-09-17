@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190915221508) do
+ActiveRecord::Schema.define(version: 20190916183800) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -24,6 +24,22 @@ ActiveRecord::Schema.define(version: 20190915221508) do
     t.boolean  "backup_coordinator_today"
     t.integer  "efilers_needed"
     t.index ["site_id"], name: "index_calendars_on_site_id"
+  end
+
+  create_table "certification_grants", force: :cascade do |t|
+    t.integer  "certification_id", null: false
+    t.integer  "user_id",          null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["user_id"], name: "index_certification_grants_on_user_id"
+  end
+
+  create_table "certifications", force: :cascade do |t|
+    t.integer  "organization_id", null: false
+    t.string   "name",            null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.index ["organization_id"], name: "index_certifications_on_organization_id"
   end
 
   create_table "notification_registrations", force: :cascade do |t|
