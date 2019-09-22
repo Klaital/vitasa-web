@@ -15,6 +15,14 @@ namespace :maintenance do
     system "gzip -d -c #{filename} | #{mysql(db_config)}"
   end
 
+  desc "Update the container"
+  task build: :environment do
+    login_cmd = `aws ecr get-login --no-include-email --region us-west-2`
+    `#{login_cmd}`
+    `docker build -t 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest .`
+    `docker push 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest`
+  end
+
   def current_db_config(env)
     YAML::load(ERB.new(IO.read(File.join(Rails.root, 'config', 'database.yml'))).result)[env]
   end

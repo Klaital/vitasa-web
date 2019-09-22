@@ -1,0 +1,12 @@
+version: '3'
+service:
+  vitasa-web:
+    image: 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest
+    ports:
+      - "3000:3000"
+    command: "bundle exec rails server"
+    environment:
+      - RAILS_ENV=staging
+
+  mysql-vitasa-web:
+    image: mysql/mysql-server:8.0
