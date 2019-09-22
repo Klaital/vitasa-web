@@ -68,7 +68,7 @@ end
 group :production, :staging do
   gem 'mysql2'
 end
-gem 'actionpack-page_caching'
+
 gem 'redis'
 gem 'redis-namespace'
 
