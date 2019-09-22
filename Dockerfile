@@ -1,9 +1,10 @@
-FROM ruby:2.7
-RUN apt update -qq && apt install -y nodejs build-essential patch zlib1g-dev libzma-dev libmysqlclient-dev
+FROM ruby:2.6
+RUN apt update -qq && apt install -y nodejs 
 
 RUN mkdir /vitasa
 WORKDIR /vitasa
 
+RUN gem install bundler
 COPY Gemfile /vitasa/Gemfile
 COPY Gemfile.lock /vitasa/Gemfile.lock
 RUN bundle install
