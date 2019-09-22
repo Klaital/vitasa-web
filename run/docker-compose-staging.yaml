@@ -1,5 +1,5 @@
 version: '3'
-service:
+services:
   vitasa-web:
     image: 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest
     ports:
@@ -10,3 +10,8 @@ service:
 
   mysql-vitasa-web:
     image: mysql/mysql-server:8.0
+    environment:
+      - MYSQL_DATABASE=vita
+      - MYSQL_ROOT_PASSWORD=rootpw
+      - MYSQL_USER=vita
+      - MYSQL_PASSWORD=vitastaging
