@@ -26,14 +26,12 @@ class CertificationGrantsController < ApplicationController
       return
     end
 
-    puts "User: ##{params[:user_id]} - #{@user.email}"
-    puts "Cert: ##{params[:id]} - #{@certification.name}"
     grant = CertificationGrant.find_by(user_id: @user.id, certification_id: @certification.id)
     if grant.nil?
       head :not_found
       return
     end
-    
+
     if grant.delete
       head :ok
     else
