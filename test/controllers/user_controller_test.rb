@@ -100,7 +100,6 @@ class UserControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-
   ##
   ## Legacy
   ##

@@ -8,9 +8,11 @@ class CertificationGrantsController < ApplicationController
       return
     end
     unless @user.organization_id == @certification.organization_id
+      logger.error("Certification and User are in different Orgs")
       render :json => {:errors => 'Bad Request: Certification and User are in different Organizations'}, status: :bad_request
+      return
     end
-    grant = CertificationGrant.new(certification_id: @certification_id, user_id: @user.id)
+    grant = CertificationGrant.new(certification_id: @certification.id, user_id: @user.id)
     if grant.save
       head :ok
     else
@@ -24,12 +26,22 @@ class CertificationGrantsController < ApplicationController
       return
     end
 
-    if CertificationGrant.find_by(user_id: @user.id, certification_id: @certification.id).delete
+    puts "User: ##{params[:user_id]} - #{@user.email}"
+    puts "Cert: ##{params[:id]} - #{@certification.name}"
+    grant = CertificationGrant.find_by(user_id: @user.id, certification_id: @certification.id)
+    if grant.nil?
+      head :not_found
+      return
+    end
+    
+    if grant.delete
       head :ok
     else
       render :json => {:errors => 'Could not delete grant'}, status: :internal_server_error
     end
   end
+
+
   private
 
   def set_user

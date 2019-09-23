@@ -6,7 +6,7 @@
 #
 sa_cert_one:
   name: "Paperwork Signed"
-  organization: organizations(:vitasa)
+  organization: vitasa
 sa_cert_two:
   name: "Site Coordinator Training"
-  organization: organizations(:vitasa)
+  organization: vitasa
