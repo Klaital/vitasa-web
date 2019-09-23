@@ -2,8 +2,7 @@ require 'test_helper'
 
 class UserControllerTest < ActionDispatch::IntegrationTest
 
-  test "superadmins should be able to create admins" do
-    superadmin = users(:superadmin1)
+  test "org admins and superadmins should be able to set roles" do
     superadmin_cookie = login_user('superadmin1', ['SuperAdmin'])
     assert_not_nil(superadmin_cookie)
     assert(superadmin_cookie.length > 0)
@@ -15,11 +14,89 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     }, params: {
         email: 'create_user_test@example.org',
         organization_id: organizations(:vitasa).id,
-        password: 'create_user_test',
-        password_confirmation: 'create_user_test',
+        password: 'create_user_test-password',
+        password_confirmation: 'create_user_test-password',
     }.to_json
 
     assert_response :success
+
+
+    # The user himself can't set roles
+    cookie = login_user('create_user_test')
+    put user_path(User.last), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        roles: ['Admin', 'Volunteer'],
+    }.to_json
+    assert_response :unauthorized
+    assert_equal(1, User.last.roles.length, 'Roles should not have been set')
+
+    # An admin from another org can't set roles
+    cookie = login_user('create_user_test')
+    put user_path(User.last), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        roles: ['Admin', 'Volunteer'],
+    }.to_json
+    assert_response :unauthorized
+    assert_equal(1, User.last.roles.length, 'Roles should not have been set')
+
+    # SuperAdmins can set roles
+    put user_path(User.last), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => superadmin_cookie,
+    }, params: {
+        roles: ['Admin', 'Volunteer'],
+    }.to_json
+    assert_response :success
+    assert_equal(2, User.last.roles.length, 'Roles should have been set')
+
+    # Org Admins can set roles
+    cookie = login_user('user-two', ['Admin'])
+    put user_path(User.last), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        roles: ['Admin', 'Volunteer', 'Reviewer'],
+    }.to_json
+    assert_response :success
+    assert_equal(3, User.last.roles.length, 'Roles should have been set')
+  end
+
+  test "creating users should allow different fields based on how they are registered" do
+    # Organization ID is a required field
+    # Check the happy path first
+    post users_path, headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+    }, params: {
+        name: 'Create User Test',
+        email: 'create_user_test@example.org',
+        password: 'create_usre_test',
+        password_confirmation: 'create_usre_test',
+        organization_id: organizations(:vitasa).id,
+    }.to_json
+
+    assert_response :success
+
+    # Try again without the org ID set, and validate failure
+    post users_path, headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+    }, params: {
+        name: 'Create User Test',
+        email: 'create_user_test2@example.org',
+        password: 'create_usre_test',
+        password_confirmation: 'create_usre_test',
+    }.to_json
+
+    assert_response 400
   end
 
 

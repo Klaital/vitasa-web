@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[show edit update destroy]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile]
+  wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile organization_id]
 
   def index
     filters = {}
@@ -34,9 +34,26 @@ class UsersController < ApplicationController
     end
   end
   def create
-    logger.debug("Raw request: #{request.body.read}")
+    logger.debug "Raw request: #{request.body.read}"
 
-    @user = User.new(user_params)
+    permitted_fields = if logged_in? && current_user.has_role?(['Admin', 'SuperAdmin'])
+                         %i[name email roles role_ids certification name
+                         password password_confirmation
+                         phone subscribe_mobile
+                         international_certification military_certification
+                         hsa_certification organization_id]
+                       else
+                         %i[ name email phone
+                         password password_confirmation
+                         organization_id ]
+                       end
+
+    fields = params.require(:user).permit(permitted_fields)
+    unless fields.has_key?(:organization_id)
+      render json: { errors: ['Organization ID must be provided']}, status: 400
+      return
+    end
+    @user = User.new(fields)
 
     # If the creating user is a SuperAdmin, they can set the org ID.
     # Anyone else creating a user (i.e. the org admins) will create
@@ -92,7 +109,7 @@ class UsersController < ApplicationController
       response.set_header('Content-Type', 'application/json')
       return
     end
-    unless current_user == @user || is_admin?
+    unless current_user == @user || current_user.has_admin?(@user.organization_id)
       render json: { errors: 'Not authorized'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
@@ -100,8 +117,13 @@ class UsersController < ApplicationController
 
 
     # Only update the Role Grants if any are set at all
+    if params.has_key?(:roles) && !current_user.has_admin?(@user.organization_id)
+      # Only Org Admins are allowed to set Roles
+      render json: {errors: 'Only org admins may set roles'}, status: :unauthorized
+      return
+    end
     updated_roles = false
-    if current_user.is_admin?
+    if current_user.has_admin?(@user.organization_id)
       logger.debug('Loading new roles...')
 #      role_params = params.require(:user).permit([:role_ids, :roles])
       new_roles = if params.has_key?(:role_ids)
@@ -118,7 +140,7 @@ class UsersController < ApplicationController
       end
     end
 
-    if current_user.is_admin? || current_user.id == @user.id
+    if current_user == @user || current_user.has_admin?(@user.organization_id)
       # Update their preferred sites, if set
       if params.has_key?(:preferred_sites)
         @user.preferred_sites = Site.where(slug: params[:preferred_sites])

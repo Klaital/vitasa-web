@@ -2,8 +2,8 @@
 
 # Superadmin
 superadmin1:
-  email: superadmin1@volunteer-savvy.com
-  password_digest: <%= User.digest('superadmin1@volunteer-savvy.com') %>
+  email: superadmin1@example.org
+  password_digest: <%= User.digest('superadmin1-password') %>
   subscribe_mobile: false
 
 # User One is a newly regiestered NewUser
@@ -61,38 +61,38 @@ reviewer_one:
 
 # Cameron County
 cameron_admin1:
-  email: cameron_admin1@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_admin1@volunteer-savvy.com') %>
+  email: cameron_admin1@example.org
+  password_digest: <%= User.digest('cameron_admin1-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
 cameron_admin2:
-  email: cameron_admin2@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_admin2@volunteer-savvy.com') %>
+  email: cameron_admin2@example.org
+  password_digest: <%= User.digest('cameron_admin2-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
 cameron_sc_1:
-  email: cameron_sc_1@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_sc_1@volunteer-savvy.com') %>
+  email: cameron_sc_1@example.org
+  password_digest: <%= User.digest('cameron_sc_1-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
 cameron_sc_2:
-  email: cameron_sc_2@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_sc_2@volunteer-savvy.com') %>
+  email: cameron_sc_2@example.org
+  password_digest: <%= User.digest('cameron_sc_2-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
 cameron_vol1:
-  email: cameron_vol1@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_vol1@volunteer-savvy.com') %>
+  email: cameron_vol1@example.org
+  password_digest: <%= User.digest('cameron_vol1-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
 cameron_vol2:
-  email: cameron_vol2@volunteer-savvy.com
-  password_digest: <%= User.digest('cameron_vol2@volunteer-savvy.com') %>
+  email: cameron_vol2@example.org
+  password_digest: <%= User.digest('cameron_vol2-password') %>
   subscribe_mobile: false
   organization: cameron_county
 
