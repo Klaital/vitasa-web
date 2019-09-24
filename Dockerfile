@@ -1,5 +1,5 @@
 FROM ruby:2.6
-RUN apt-get update -qq && apt-get install -y nodejs
+RUN apt-get update -qq && apt-get install -y nodejs build-essential patch ruby-dev zlib1g-dev liblzma-dev
 
 RUN mkdir /vitasa
 WORKDIR /vitasa
