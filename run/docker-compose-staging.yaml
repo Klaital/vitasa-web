@@ -1,17 +1,27 @@
 version: '3'
 services:
   vitasa-web:
-    image: 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest
+    image: vitasa-web:latest
     ports:
-      - "3000:3000"
-    command: "bundle exec rails server"
+      - "3001:3000"
+    command: ["./wait-for-it.sh", "mysql-vitasa-web:3306", "--", "bundle", "exec", "rails", "server"]
     environment:
       - RAILS_ENV=staging
-
+      - RAILS_LOG_TO_STDOUT=true
+      - RAILS_SERVE_STATIC_FILES=true
+      - DB_HOST=mysql-vitasa-web
+      - DB_PORT=3306
+      - DB_NAME=vita
+      - SNS_GCM_ARN=arn:aws:sns:us-west-2:813809418199:app/GCM/VITA-GCM
+      - SNS_APN_ARN=arn:aws:sns:us-west-2:813809418199:app/APNS/VITA-APNS
+      - SNS_TOPIC_BASE=arn:aws:sns:us-west-2:813809418199:vita-notification-
+    depends_on:
+      - mysql-vitasa-web
   mysql-vitasa-web:
-    image: mysql/mysql-server:8.0
+    image: mysql/mysql-server:5.7
     environment:
       - MYSQL_DATABASE=vita
       - MYSQL_ROOT_PASSWORD=rootpw
       - MYSQL_USER=vita
       - MYSQL_PASSWORD=vitastaging
+      - MYSQL_TCP_PORT=3306

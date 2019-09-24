@@ -16,11 +16,11 @@ development:
 staging:
   adapter: mysql2
   encoding: utf8
-  database: vitasa-staging
+  database: <%= ENV['DB_NAME'] %>
   username: vita
   password: vitastaging
-  host: mysql-vitasa-web
-  port: 3306
+  host: <%= ENV['DB_HOST'] %>
+  port: <%= ENV['DB_PORT'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
