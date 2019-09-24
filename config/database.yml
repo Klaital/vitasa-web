@@ -14,13 +14,15 @@ development:
   database: db/development.sqlite3
 
 staging:
-  adapter: mysql2
-  encoding: utf8
-  database: <%= ENV['DB_NAME'] %>
-  username: vita
-  password: vitastaging
-  host: <%= ENV['DB_HOST'] %>
-  port: <%= ENV['DB_PORT'] %>
+  <<: *default
+  database: db/staging.sqlite3
+#  adapter: mysql2
+#  encoding: utf8
+#  database: <%= ENV['DB_NAME'] %>
+#  username: vita
+#  password: vitastaging
+#  host: <%= ENV['DB_HOST'] %>
+#  port: <%= ENV['DB_PORT'] %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
