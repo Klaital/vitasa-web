@@ -84,3 +84,6 @@ gem 'tod'
 
 # For sending push notifications via SNS
 gem 'aws-sdk'
+
+gem 'rspec-rails'
+gem 'rswag'
