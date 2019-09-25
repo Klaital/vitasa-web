@@ -88,10 +88,7 @@ class SitesController < ApplicationController
     
     respond_to do |format|
       if @site.save
-        # Expire the cache
-        expire_page action: 'index'
-
-      @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
         format.html { redirect_to @site, notice: 'Site was successfully created.' }
         format.json { render :show, status: :created, location: @site }
       else
@@ -118,10 +115,6 @@ class SitesController < ApplicationController
         @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]}) unless params[:sitecoordinators].nil?
 
         if @site.update(site_params)
-          # Expire the cache
-          expire_page action: 'show', id: @site.id
-          expire_page action: 'index'
-          
           format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
           format.json { render :show, status: :ok, location: @site }
         else
@@ -150,10 +143,6 @@ class SitesController < ApplicationController
     end
 
     @site.destroy
-    # Expire the cache
-    expire_page action: 'show', id: @site.id
-    expire_page action: 'index'
-
     respond_to do |format|
       format.html { redirect_to sites_url, notice: 'Site was successfully destroyed.' }
       format.json { head :no_content }
