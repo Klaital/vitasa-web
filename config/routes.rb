@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   resources :notification_requests
   post '/notification_requests/:id/send', to: 'notification_requests#send_notification', as: 'send_notification_request'
   post '/notification_requests/:id/resend', to: 'notification_requests#resend_notification', as: 'resend_notification_request'
@@ -40,6 +42,8 @@ Rails.application.routes.draw do
 
   get '/organizations', to: 'organizations#index'
   get '/organizations/:organization_id/sites', to: 'sites#index'
+  post '/organizations', to: 'organizations#create'
+  delete '/organizations/:id', to: 'organizations#destroy'
 
   # These methods are for aggregating data into a single view, intended for driving a single UI screen on the app
 end
