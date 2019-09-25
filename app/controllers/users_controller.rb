@@ -206,14 +206,10 @@ class UsersController < ApplicationController
       return
     end
 
-    respond_to do |format|
-      if @user.delete
-        format.html { redirect_to users_path, notice: 'User was successfully deleted.' }
-        format.json { render :show, status: :ok, location: users_path }
-      else
-        format.html { render users_path }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.delete
+      head :ok
+    else
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
