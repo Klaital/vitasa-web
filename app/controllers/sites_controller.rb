@@ -71,7 +71,8 @@ class SitesController < ApplicationController
     end
 
     unless logged_in? && current_user.has_role?(['Admin', 'SuperAdmin'])
-      format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+      logger.error("Only an admin can create a site")
+      render :json => {:errors => 'Unauthorized'}, :status => :unauthorized
       return
     end
     # SuperAdmins can create resources in any org
