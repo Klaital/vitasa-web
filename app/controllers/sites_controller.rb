@@ -1,6 +1,4 @@
 class SitesController < ApplicationController
-  # caches_page :show, :new, :index
-
   before_action :set_site, only: [:show, :edit, :update, :destroy]
   before_action :set_eligible_sitecoordinators, only: [ :edit, :new ]
   skip_before_action :verify_authenticity_token
