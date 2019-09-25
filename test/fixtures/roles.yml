@@ -17,3 +17,6 @@ reviewer:
 
 superadmin:
   name: SuperAdmin
+
+monitor:
+  name: Monitor
