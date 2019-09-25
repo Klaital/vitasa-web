@@ -105,12 +105,14 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/0.json
   def update
     unless logged_in?
-      render json: { errors: 'Not authorized'}, status: :unauthorized
+      logger.error('Not logged in')
+      render json: { errors: 'Not logged in'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
     unless current_user == @user || current_user.has_admin?(@user.organization_id)
-      render json: { errors: 'Not authorized'}, status: :unauthorized
+      logger.error('Not authorized to edit this user')
+      render json: { errors: 'Not authorized to edit this user'}, status: :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
@@ -119,6 +121,7 @@ class UsersController < ApplicationController
     # Only update the Role Grants if any are set at all
     if params.has_key?(:roles) && !current_user.has_admin?(@user.organization_id)
       # Only Org Admins are allowed to set Roles
+      logger.error('Only org admins may set roles')
       render json: {errors: 'Only org admins may set roles'}, status: :unauthorized
       return
     end
