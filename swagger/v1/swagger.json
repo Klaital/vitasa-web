@@ -1,0 +1,239 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API V1",
+    "version": "v1"
+  },
+  "paths": {
+    "/organizations": {
+      "get": {
+        "summary": "List Organizations",
+        "tags": [
+          "Organizations"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization list generated"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Organization",
+        "tags": [
+          "Organizations"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization created"
+          },
+          "401": {
+            "description": "Not logged in as a SuperAdmin"
+          },
+          "422": {
+            "description": "Name or slug already taken"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login",
+        "tags": [
+          "Sessions"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          }
+        }
+      }
+    },
+    "/sites": {
+      "get": {
+        "summary": "Fetch all sites",
+        "tags": [
+          "Sites"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Sites listed"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new site",
+        "tags": [
+          "Sites"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Site created"
+          },
+          "401": {
+            "description": "Not logged in to an admin account"
+          }
+        }
+      }
+    },
+    "/sites/{slug}": {
+      "get": {
+        "summary": "Describe site",
+        "tags": [
+          "Sites"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Site details returned"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update site data",
+        "tags": [
+          "Sites"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Site updated"
+          },
+          "401": {
+            "description": "Not logged in as an admin or a coordinator assigned to this site"
+          },
+          "400": {
+            "description": "Bad or incomplete data"
+          },
+          "422": {
+            "description": "Invalid data submitted"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Destroy site",
+        "tags": [
+          "Sites"
+        ],
+        "responses": {
+          "200": {
+            "description": "Site deleted"
+          },
+          "401": {
+            "description": "Not logged in as an admin"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "Registers a new user",
+        "tags": [
+          "Users"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User registered"
+          }
+        }
+      },
+      "get": {
+        "summary": "Fetches a list of all users",
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User list generated"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Describe User",
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User list generated"
+          }
+        }
+      }
+    }
+  }
+}
