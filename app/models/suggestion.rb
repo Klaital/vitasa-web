@@ -1,5 +1,5 @@
 class Suggestion < ApplicationRecord
-    belongs_to :user
+    belongs_to :user, touch: true
     
     after_initialize :init
     

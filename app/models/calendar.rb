@@ -1,5 +1,5 @@
 class Calendar < ApplicationRecord
-  belongs_to :site
+  belongs_to :site, touch: true
 
   after_update do
     self.site.send_mobile_team_notification

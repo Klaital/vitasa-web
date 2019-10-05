@@ -1,4 +1,4 @@
 class PreferredSite < ApplicationRecord
-  belongs_to :user
-  belongs_to :site
+  belongs_to :user, touch: true
+  belongs_to :site, touch: true
 end

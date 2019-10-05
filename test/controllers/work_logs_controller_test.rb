@@ -20,8 +20,12 @@ class WorkLogsControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
 
+    # Parse the response, and ensure that the newly-created Log is actually present
+    user_data = JSON.parse(response.body)
+    user_log_ids = user_data['work_history'].collect {|x| x['id']}
     wlog = WorkLog.last
     assert_not_nil(wlog.site)
+    assert(user_log_ids.include?(wlog.id), 'New Work Log not found in response')
   end
 
   test "site coordinators should be able to approve work" do

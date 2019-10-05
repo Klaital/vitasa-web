@@ -1,5 +1,5 @@
 class SiteFeature < ApplicationRecord
-    belongs_to :site
+    belongs_to :site, touch: true
 
     VALID_SITE_FEATURES = %w{ Fixed Mobile InPersonTaxPrep DropOff Express MFT }
     validates :feature, inclusion: { 

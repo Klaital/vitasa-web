@@ -1,4 +1,7 @@
-class Organization < ApplicationRecord
+class Organization < ApplicationRecord# Invalidate the user's cache
+      @user.updated_at = Time.now
+      @user.save
+
   has_many :users
   has_many :sites
   before_validation :slugify_self
