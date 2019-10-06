@@ -73,4 +73,17 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
   end
+
+  test "admin can rename org" do
+    cookie = login_user('user-one', ['Admin'])
+    put "/organizations/#{users(:one).organization_id}", headers: {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        'name' => 'new_name',
+    }.to_json
+    assert_response :success
+    assert_equal('new_name', Organization.find(users(:one).organization_id).name, 'Org name did not actually update')
+  end
 end

@@ -44,6 +44,7 @@ Rails.application.routes.draw do
   get '/organizations/:organization_id/sites', to: 'sites#index'
   post '/organizations', to: 'organizations#create'
   delete '/organizations/:id', to: 'organizations#destroy'
+  put '/organizations/:id', to: 'organizations#update'
 
   # These methods are for aggregating data into a single view, intended for driving a single UI screen on the app
 end
