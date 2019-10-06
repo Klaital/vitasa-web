@@ -13,7 +13,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     site_data = JSON.parse(response.body)
-    assert_equal(2, site_data.length)
+    assert_equal(Site.all.count, site_data.length)
 
     # Deactivate a site, and see that it disappears from the list
     @alamo.active = false
@@ -25,7 +25,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     site_data = JSON.parse(response.body)
-    assert_equal(1, site_data.length)
+    assert_equal(Site.where(:active => true).count, site_data.length)
 
     # Request again, asking for deactivated sites
     get sites_path,
@@ -37,7 +37,7 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     site_data = JSON.parse(response.body)
-    assert_equal(2, site_data.length)
+    assert_equal(Site.all.count, site_data.length)
 
   end
 
@@ -79,5 +79,25 @@ class SitesControllerTest < ActionDispatch::IntegrationTest
     assert_equal(sc1.id, site_data['sitecoordinators'][0]['id'])
   end
 
+
+  test 'site index should be filtered to a user\'s org' do
+    # When not logged in, return all
+    get sites_path, headers: {
+        'Accept' => 'application/json',
+    }
+    site_data = JSON.parse(response.body)
+    assert_equal(Site.all.count, site_data.length)
+
+    # WHen logged in, return only that org's sites
+    cookie = login_user('user-one')
+    get sites_path, headers: {
+        'Accept' => 'application/json',
+    }
+    site_data = JSON.parse(response.body)
+    assert_equal(Site.where(organization_id: users(:one).organization_id).count, site_data.length)
+    site_data.each do |site|
+      assert_equal(users(:one).organization_id, site['organization_id'], 'Site was from the wrong org')
+    end
+  end
 
 end
