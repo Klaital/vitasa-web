@@ -99,6 +99,20 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_response 400
   end
 
+  test "Logged-in users should have the Index view filtered" do
+    vita_count = 0
+    User.all.each do |u|
+      vita_count += 1 if u.organization_id == organizations(:vitasa).id
+    end
+    assert(vita_count > 0, 'No VITASA sites in the fixtures')
+
+    cookie = login_user('user-one')
+    get users_path, headers: {
+        'Accept' => 'application/json',
+    }
+    user_data = JSON.parse(response.body)
+    assert_equal(vita_count, user_data.length)
+  end
 
   ##
   ## Legacy

@@ -5,9 +5,13 @@ class UsersController < ApplicationController
 
   def index
     filters = {}
+    if logged_in?
+      filters[:organization_id] = current_user.organization_id
+    end
     if params.has_key?(:organization_id)
       filters[:organization_id] = params[:organization_id]
     end
+    filters.compact!
 
     @users = if filters.empty?
                User.all
