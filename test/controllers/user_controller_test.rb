@@ -114,6 +114,39 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_equal(vita_count, user_data.length)
   end
 
+  test "Admins should be able to set roles" do
+    cookie = login_user('user-one', ['Admin'])
+    User.find(users(:two).id).roles = [ roles(:volunteer) ]
+    put user_path(users(:two).id), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        roles: [ 'SiteCoordinator', 'Volunteer' ]
+    }.to_json
+
+    assert_response :success
+    assert_equal(2, User.find(users(:two).id).roles.count, 'Roles not updated')
+  end
+
+  test "SuperAdmins should be able to set roles" do
+    cookie = login_user('superadmin1', ['SuperAdmin'])
+    User.find(users(:two).id).roles = [ roles(:volunteer) ]
+    put user_path(users(:two).id), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        roles: [ 'SiteCoordinator', 'Volunteer' ]
+    }.to_json
+
+    assert_response :success
+    assert_equal(2, User.find(users(:two).id).roles.count, 'Roles not updated')
+
+    user_data = JSON.parse(response.body)
+    assert_equal(2, user_data['roles'].length, 'Roles not updated in response')
+  end
+
   ##
   ## Legacy
   ##

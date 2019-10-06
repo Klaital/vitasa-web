@@ -1,4 +1,4 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Rssh-keygen -f "/home/chris/.ssh/known_hosts" -R staging.volunteer-savvy.comead about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 site-coordinator:
   name: SiteCoordinator
