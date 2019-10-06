@@ -23,7 +23,7 @@ class CalendarsController < ApplicationController
       response.set_header('Content-Type', 'application/json')
       return
     end
-    unless is_admin? || @site.coordinators.include?(current_user)
+    unless current_user.has_admin?(@site.organization_id) || @site.coordinators.include?(current_user)
       logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
@@ -31,15 +31,10 @@ class CalendarsController < ApplicationController
     end
 
     @calendar = @site.calendars.new(calendar_params)
-    respond_to do |format|
-      if @calendar.save
-        expire_schedule_cache
-        format.html { redirect_to @site, notice: 'Calendar override was successfully created.' }
-        format.json { render :show, status: :created, location: site_calendar_url(@site, @calendar) }
-      else
-        format.html { render :new }
-        format.json { render json: @site.errors, status: :unprocessable_entity }
-      end
+    if @calendar.save
+      render :show, status: :created, location: site_calendar_url(@site, @calendar)
+    else
+      render json: @site.errors, status: :unprocessable_entity
     end
   end
 
@@ -52,24 +47,17 @@ class CalendarsController < ApplicationController
       response.set_header('Content-Type', 'application/json')
       return
     end
-    unless is_admin? || @site.coordinators.include?(current_user)
+    unless current_user.has_admin?(@site.organization_id) || @site.coordinators.include?(current_user)
       logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
       return
     end
 
-    respond_to do |format|
-      if @calendar.update(calendar_params)
-        expire_schedule_cache
-        format.html { redirect_to @site, notice: 'Calendar override was successfully updated.' }
-        format.json { render :show, status: :ok, location: @site }
-      else
-        format.html do
-          redirect_to @site
-        end
-        format.json { render json: @site.errors, status: :unprocessable_entity }
-      end
+    if @calendar.update(calendar_params)
+      render :show, status: :ok, location: @site
+    else
+      render json: @site.errors, status: :unprocessable_entity
     end
   end
   
@@ -83,7 +71,7 @@ class CalendarsController < ApplicationController
       response.set_header('Content-Type', 'application/json')
       return
     end
-    unless is_admin? || @site.coordinators.include?(current_user)
+    unless current_user.has_admin?(@site.organization_id) || @site.coordinators.include?(current_user)
       logger.error("Still not allowed to delete a calendar. Admin? #{is_admin?}. SC? #{@site.coordinators.include?(current_user)}")
       render :json => { :errors => 'Not authorized'}, :status => :unauthorized
       response.set_header('Content-Type', 'application/json')
@@ -91,11 +79,7 @@ class CalendarsController < ApplicationController
     end
 
     @calendar.destroy
-    expire_schedule_cache
-    respond_to do |format|
-      format.html { redirect_to site_url(@site), notice: 'Calendar override was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    head :no_content
   end
 
   private

@@ -15,3 +15,7 @@ three:
 four:
   user: reviewer_one
   role: volunteer
+
+superadmin:
+  user: superadmin1
+  role: superadmin

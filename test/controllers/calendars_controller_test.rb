@@ -251,4 +251,21 @@ class CalendarsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "superadmin can create a calendar entry" do
+    cookie = login_user('superadmin1', ['SuperAdmin'])
+    assert_difference('Calendar.count', 1) do
+      post site_calendars_path(sites(:the_alamo).id), headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+          'Cookie' => cookie,
+      }, params: {
+          date: Date.tomorrow,
+          is_open: true,
+          notes: 'test notes'
+      }.to_json
+      assert_response :success
+    end
+
+    assert_equal('test notes', Calendar.last.notes)
+  end
 end
