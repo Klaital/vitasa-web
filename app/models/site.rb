@@ -57,7 +57,7 @@ class Site < ApplicationRecord
   def send_preferred_site_notification
     logger.debug "Site #{self.slug} updated. Sending out push notifications via SNS"
     topic_arn = self.get_sns_topic
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     message = "Site #{self.name} updated"
     response = sns.publish({
         :topic_arn => topic_arn,
@@ -114,7 +114,7 @@ class Site < ApplicationRecord
   end
 
   def create_sns_topic
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     resp = sns.create_topic({
       name: "vs-site-#{Rails.env}-#{self.organization.slug}-#{self.id}",
     })
@@ -126,7 +126,7 @@ class Site < ApplicationRecord
 
   def delete_sns_topic
     return true if self.sns_topic.nil?
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     resp = sns.delete_topic({
       topic_arn: self.sns_topic
     })

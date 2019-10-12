@@ -1,4 +1,6 @@
 class NotificationRequest < ApplicationRecord
+  belongs_to :organization
+
     VALID_AUDIENCES = %w{ volunteers sc }
     validates :audience, inclusion: { 
         in: VALID_AUDIENCES,
@@ -12,7 +14,7 @@ class NotificationRequest < ApplicationRecord
         end
 
         begin
-            sns = Aws::SNS::Client.new(region: 'us-west-2')
+            sns = Rails.configuration.sns
             message = {
                 :default => self.message,
                 :aps => { :alert => self.message },
@@ -25,7 +27,7 @@ class NotificationRequest < ApplicationRecord
             }.to_json
             topic_arn = case self.audience.to_s.downcase
                         when 'volunteers'
-                          'arn:aws:sns:us-west-2:813809418199:vita-notification-volunteers'
+                          'arn:aws:sns:us-west-2:813809418199:vita-#{Rails.env}-#{self.organization_id}-notification-volunteers'
                         when 'sc'
                           'arn:aws:sns:us-west-2:813809418199:vita-notification-sc'
                         else

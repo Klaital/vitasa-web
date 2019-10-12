@@ -15,27 +15,15 @@ class NotificationRequestsController < ApplicationController
   def show
   end
 
-  # GET /notification_requests/new
-  def new
-    @notification_request = NotificationRequest.new
-  end
-
-  # GET /notification_requests/1/edit
-  def edit
-  end
-
   # POST /notification_requests
   # POST /notification_requests.json
   def create
     @notification_request = NotificationRequest.new(notification_request_params)
 
-    respond_to do |format|
       if @notification_request.save
-        format.html { redirect_to @notification_request, notice: 'Notification request was successfully created.' }
-        format.json { render :show, status: :created, location: @notification_request }
+        render :show, status: :created, location: @notification_request 
       else
-        format.html { render :new }
-        format.json { render json: @notification_request.errors, status: :unprocessable_entity }
+        render json: @notification_request.errors, status: :unprocessable_entity 
       end
     end
   end
@@ -43,14 +31,10 @@ class NotificationRequestsController < ApplicationController
   # POST /notification_requests/1/send
   def send_notification
     resp = @notification_request.send_broadcast
-    respond_to do |format|
-      if resp
-        format.html { redirect_to @notification_request, notice: 'Notification sent.' }
-        format.json { render :show, status: :ok, location: @notification_request }
-      else
-        format.html { redirect_to @notification_request, notice: 'Unable to send notification' }
-        format.json {render :json => resp, status: 500 }
-      end
+    if resp
+      render :show, status: :ok, location: @notification_request 
+    else
+      render :json => resp, status: 500 
     end
   end
 
@@ -60,28 +44,25 @@ class NotificationRequestsController < ApplicationController
     @notification_request.save
 
     resp = @notification_request.send_broadcast
-    respond_to do |format|
-      if resp
-        format.html { redirect_to @notification_request, notice: 'Notification sent.' }
-        format.json { render :show, status: :ok, location: @notification_request }
-      else
-        format.html { redirect_to @notification_request, notice: 'Unable to send notification' }
-        format.json {render :json => resp, status: 500 }
-      end
+    if resp
+      render :show, status: :ok, location: @notification_request
+    else
+      render :json => resp, status: 500 
     end
   end
 
   # PATCH/PUT /notification_requests/1
   # PATCH/PUT /notification_requests/1.json
   def update
-    respond_to do |format|
-      if @notification_request.update(notification_request_params)
-        format.html { redirect_to @notification_request, notice: 'Notification request was successfully updated.' }
-        format.json { render :show, status: :ok, location: @notification_request }
-      else
-        format.html { render :edit }
-        format.json { render json: @notification_request.errors, status: :unprocessable_entity }
-      end
+    unless logged_in? && current_user.has_admin?(@notification_request.organization_id)
+      render json: { errors: 'Must be org admin to update notification requests' }, status: :unauthorized
+      return
+    end
+
+    if @notification_request.update(notification_request_params)
+      render :show, status: :ok, location: @notification_request
+    else
+      render json: @notification_request.errors, status: :unprocessable_entity
     end
   end
 
@@ -89,20 +70,14 @@ class NotificationRequestsController < ApplicationController
   # DELETE /notification_requests/1.json
   def destroy
     @notification_request.destroy
-    respond_to do |format|
-      format.html { redirect_to notification_requests_url, notice: 'Notification request was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+      head :no_content
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def check_permissions
-      unless is_admin?
-        respond_to do |format|
-          format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-          format.json { render :json => {:errors => "Unauthorized"}, :status => :unauthorized }
-        end
+      unless logged_in? && current_user.has_role?(['Admin'])
+        render :json => {:errors => "Unauthorized"}, :status => :unauthorized 
         return
       end
     end
