@@ -2,6 +2,23 @@ require 'test_helper'
 
 class UserControllerTest < ActionDispatch::IntegrationTest
 
+  test "users should be able to update themselves" do
+    cookie = login_user('user-one', ['Volunteer'])
+    put user_path(users(:one)), headers: {
+      'Content-Type' => 'application/json',
+      'Accept' => 'application/json',
+      'Cookie' => cookie,
+    }, params: {
+      email: 'a_new_email@example.org',
+      password: 'new-password-123',
+      password_confirmation: 'new-password-123',
+    }.to_json
+
+    assert_response :success
+    u = User.find(users(:one))
+    assert_equal('a_new_email@example.org', u.email)
+
+  end
   test "org admins and superadmins should be able to set roles" do
     superadmin_cookie = login_user('superadmin1', ['SuperAdmin'])
     assert_not_nil(superadmin_cookie)

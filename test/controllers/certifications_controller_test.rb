@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class CertificationsControllerTest < ActionDispatch::IntegrationTest
-
   test "anyone can list certifications" do
     get certifications_path, headers: {
         'Accept' => 'application/json'

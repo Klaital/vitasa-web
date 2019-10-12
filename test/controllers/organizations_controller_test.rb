@@ -86,4 +86,16 @@ class OrganizationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal('new_name', Organization.find(users(:one).organization_id).name, 'Org name did not actually update')
   end
+
+  test "superadmin can edit org" do
+    cookie = login_user('superadmin1', ['SuperAdmin'])
+    put "/organizations/#{organizations(:vitasa).id}", headers: {
+      'Content-Type' => 'application/json',
+      'Accept' => 'application/json',
+      'Cookie' => cookie,
+    }, params: {
+      'name' => 'new_name',
+    }.to_json
+    assert_response :success
+  end
 end
