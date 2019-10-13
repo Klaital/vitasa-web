@@ -100,4 +100,20 @@ class CertificationsControllerTest < ActionDispatch::IntegrationTest
       assert_response :unauthorized
     end
   end
+
+  test "user certs are included in their details" do
+    cookie = login_user('user-one', ['Admin'])
+    uut = users(:two)
+    uut.certifications = [ certifications(:sa_cert_one) ]
+
+    get "/users/#{uut.id}", headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }
+    assert_response :success
+    userJson = JSON.parse(response.body)
+    assert_equal(1, userJson['certifications'].length)
+    assert_equal('Paperwork Signed', userJson['certifications'][0]['name'])
+  end
 end

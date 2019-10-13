@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_many :role_grants
   has_many :roles, through: :role_grants
+  has_many :certification_grants
   has_many :certifications, through: :certification_grants
 
   has_many :work_logs

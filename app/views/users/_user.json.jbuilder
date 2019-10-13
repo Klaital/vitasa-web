@@ -1,8 +1,11 @@
 json.cache! ['v1', user] do
   json.extract! user, :id, :name, :email, :phone,
-              :organization_id, :certification,
-              :subscribe_mobile, :hsa_certification, :military_certification,
-              :international_certification
+              :organization_id,
+              :subscribe_mobile
+
+  json.certifications user.certifications,
+                      partial: 'certifications/certification',
+                      as: :certification
 
   json.work_history user.work_logs,
                     partial: 'work_logs/work_log',
