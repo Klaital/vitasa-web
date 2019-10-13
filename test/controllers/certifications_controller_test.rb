@@ -24,6 +24,9 @@ class CertificationsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_not_nil(Certification.last.organization_id)
     assert_equal(users(:one).organization_id, Certification.last.organization_id, 'Cert was not created in the user\'s org')
+
+    certJson = JSON.parse(response.body)
+    assert_equal(Certification.last.id, certJson['id'], 'Response body did not include Cert details')
   end
 
   test "admins can grant certifications" do

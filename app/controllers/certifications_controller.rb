@@ -20,7 +20,7 @@ class CertificationsController < ApplicationController
     @certification.organization_id = current_user.organization_id
 
     if @certification.save(certification_params)
-      head :ok
+      render partial: 'certifications/certification', locals: {certification: @certification}
     else
       render json: @certification.errors, status: :bad_request
     end
