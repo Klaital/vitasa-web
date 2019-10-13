@@ -109,27 +109,26 @@ class SitesController < ApplicationController
   # PATCH/PUT /sites/1
   # PATCH/PUT /sites/1.json
   def update
-    respond_to do |format|
-      if is_admin? || (logged_in? && current_user.has_role?('SiteCoordinator'))
-        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
-        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
-        @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]}) unless params[:sitecoordinators].nil?
+    if @site.nil?
+      render :json => {:errors => "Invalid ID or slug. Site not found for '#{params[:id]}'"}, :status => :not_found
+      return
+    end
+    unless logged_in?
+      render json: {errors: 'Must be logged in to update a site'}, status: :unauthorized
+      return
+    end
+    if current_user.has_admin?(@site.organization_id) || (@site.coordinators.include?(current_user) && current_user.has_role?('SiteCoordinator'))
+      @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+      @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+      @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]}) unless params[:sitecoordinators].nil?
 
-        if @site.update(site_params)
-          format.html { redirect_to site_path(@site.slug), notice: 'Site was successfully updated.' }
-          format.json { render :show, status: :ok, location: @site }
-        else
-          format.html do
-            @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
-            @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
-            render :edit
-          end
-          format.json { render json: @site.errors, status: :unprocessable_entity }
-        end
+      if @site.update(site_params)
+        render :show, status: :ok, location: @site
       else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
+        render json: @site.errors, status: :unprocessable_entity
       end
+    else
+      render :json => {:errors => 'Unauthorized'}, :status => :unauthorized
     end
   end
 
@@ -160,13 +159,9 @@ class SitesController < ApplicationController
       end
 
       if @site.nil?
-        respond_to do |format|
-          format.html { render :file => 'public/404', :status => :not_found, :layout => false }
-          format.json { render :json => {:errors => "Invalid ID or slug. Site not found for '#{params[:id]}'"}, :status => :not_found }
-        end
+        render :json => {:errors => "Invalid ID or slug. Site not found for '#{params[:id]}'"}, :status => :not_found
         return
       end
-      
     end
 
     def site_signup_metadata(site_id)
