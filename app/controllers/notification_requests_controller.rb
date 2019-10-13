@@ -20,11 +20,10 @@ class NotificationRequestsController < ApplicationController
   def create
     @notification_request = NotificationRequest.new(notification_request_params)
 
-      if @notification_request.save
-        render :show, status: :created, location: @notification_request 
-      else
-        render json: @notification_request.errors, status: :unprocessable_entity 
-      end
+    if @notification_request.save
+      render :show, status: :created, location: @notification_request 
+    else
+      render json: @notification_request.errors, status: :unprocessable_entity 
     end
   end
 
@@ -91,3 +90,4 @@ class NotificationRequestsController < ApplicationController
       params.require(:notification_request).permit(:audience, :message)
     end
 end
+
