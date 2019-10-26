@@ -33,6 +33,7 @@ class CertificationGrantsController < ApplicationController
     end
 
     if grant.delete
+      @user.touch # manually expire the user view cache
       head :ok
     else
       render :json => {:errors => 'Could not delete grant'}, status: :internal_server_error
