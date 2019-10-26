@@ -11,13 +11,19 @@ class CertificationsController < ApplicationController
   end
 
   def create
-    unless logged_in? && current_user.has_role?(['Admin'])
+    unless logged_in? && current_user.has_role?(['Admin', 'SuperAdmin'])
       render :json => {:errors => 'Unauthorized'}, :status => :unauthorized
       return
     end
 
     @certification = Certification.new(certification_params)
-    @certification.organization_id = current_user.organization_id
+
+    # Allow Admins only to create certs in their org, but superadmins can create them on any org
+    unless current_user.has_role?(['SuperAdmin'])
+      # Only actually overwrite the requested org ID if the user has one set.
+      # SuperAdmins can change their Org at will, including setting it to null.
+      @certification.organization_id = current_user.organization_id if current_user.organization_id != nil
+    end
 
     if @certification.save(certification_params)
       render partial: 'certifications/certification', locals: {certification: @certification}
