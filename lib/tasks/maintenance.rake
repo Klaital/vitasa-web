@@ -18,7 +18,7 @@ namespace :maintenance do
   desc "Update the container"
   task build: :environment do
     puts "Authenticating with ECR..."
-    login_cmd = `aws ecr get-login --region us-west-2`
+    login_cmd = `aws ecr get-login --no-include-email --region us-west-2`
     `#{login_cmd}`
     puts "Building image..."
     `docker build -t 813809418199.dkr.ecr.us-west-2.amazonaws.com/vitasa-web:latest .`

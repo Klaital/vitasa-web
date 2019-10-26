@@ -12,15 +12,15 @@ class SitesController < ApplicationController
     if params[:deactivated] == 'true'
       filters.delete(:active)
     end
+    if logged_in?
+      filters[:organization_id] = current_user.organization_id
+    end
     if params.has_key?(:organization_id)
       filters[:organization_id] = params[:organization_id]
     end
     if params.has_key?(:features) && !params[:features].empty?
       featured_sites = SiteFeature.where(:feature => @capabilities)
       filters[:id] = featured_sites.collect {|f| f.site_id}
-    end
-    if logged_in?
-      filters[:organization_id] = current_user.organization_id
     end
 
     @sites = if filters.empty?

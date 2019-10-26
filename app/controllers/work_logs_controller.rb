@@ -25,19 +25,17 @@ class WorkLogsController < ApplicationController
   # PUT /users/{user_id}/work_log/{worklog_id}
   def update
     if @work_log.update(work_log_params)
-      respond_to do |format|
-        format.json { render @work_log, status: 201 }
-      end
-    else
-      respond_to do |format|
-        format.json { render json: @work_log.errors, status: :unprocessable_entity }
-      end
+      render json: @work_log, status: 201
+      render json: @work_log.errors, status: :unprocessable_entity
     end
   end
 
   # DELETE /users/{user_id}/work_log/{worklog_id}
   def destroy
     if @work_log.delete
+      logger.debug "Manually expiring user/site view caches in the controller"
+      @work_log.site.touch
+      @work_log.user.touch
       head :ok
     else
       head 500
