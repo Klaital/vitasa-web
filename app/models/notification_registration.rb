@@ -3,7 +3,7 @@ class NotificationRegistration < ApplicationRecord
   before_destroy :delete_arns
 
   def delete_arns
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     # Deregister the endpoint and subscription from the SNS application
     unless self.endpoint.nil?
       platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: self.endpoint, :client => sns)      
@@ -17,7 +17,7 @@ class NotificationRegistration < ApplicationRecord
   end
 
   def register_sns
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     user = self.user_id.nil? ? nil : User.find(self.user_id)
   
     # If the user already has a device registered, delete that Endpoint first

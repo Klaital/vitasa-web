@@ -133,7 +133,7 @@ class User < ApplicationRecord
 
   def register_mobile_updates
     if self.subscribe_mobile_changed?
-      sns = Aws::SNS::Client.new(region: 'us-west-2')
+      sns = Rails.configuration.sns
       if self.subscribe_mobile
         sns_app_arn = case NotificationRegistration.where(user_id: self.id).last.platform
                       when 'android'

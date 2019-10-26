@@ -86,7 +86,7 @@ class Site < ApplicationRecord
     # TODO: lookup mobile team Topic
     topic_arn = "arn:aws:sns:us-west-2:813809418199:vs-#{Rails.env}-#{self.organization.slug}-sites-mobile"
 
-    sns = Aws::SNS::Client.new(region: 'us-west-2')
+    sns = Rails.configuration.sns
     message = "Mobile Site #{self.name} updated"
     response = sns.publish({
                                :topic_arn => topic_arn,
@@ -127,7 +127,7 @@ class Site < ApplicationRecord
   def delete_sns_topic
     return true if self.sns_topic.nil?
     sns = Rails.configuration.sns
-    resp = sns.delete_topic({
+    sns.delete_topic({
       topic_arn: self.sns_topic
     })
   end
