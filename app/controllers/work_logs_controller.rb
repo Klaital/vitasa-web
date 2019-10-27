@@ -10,22 +10,21 @@ class WorkLogsController < ApplicationController
     logger.debug "Logging work with settings: #{work_log_params}"
     wl = WorkLog.new(work_log_params.merge('user_id'=>@user.id))
     if wl.save
-      respond_to do |format|
-        format.html { flash[:success] = "Work logged!"; redirect_to @user }
-        format.json { render User.find(params[:user_id]), status: 201 }
-      end
+      wl.site.touch
+      wl.user.touch
+      render User.find(params[:user_id]), status: 201
     else
-      respond_to do |format|
-        format.html { render @work_log }
-        format.json { render json: log.errors, status: :unprocessable_entity }
-      end
+      render json: log.errors, status: :unprocessable_entity
     end
   end
 
   # PUT /users/{user_id}/work_log/{worklog_id}
   def update
     if @work_log.update(work_log_params)
+      @work_log.site.touch
+      @work_log.user.touch
       render json: @work_log, status: 201
+    else
       render json: @work_log.errors, status: :unprocessable_entity
     end
   end
