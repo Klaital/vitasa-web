@@ -7,8 +7,25 @@ class CertificationsControllerTest < ActionDispatch::IntegrationTest
     }
     assert_response :success
   end
-  test "admins can create certifications" do
+  test "admins can not create certifications" do
     admin_cookie = login_user('user-one', ['Admin'])
+    assert_not_nil(admin_cookie)
+    assert(admin_cookie.length > 0)
+
+    assert_no_difference('Certification.count') do
+      post certifications_path, headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+          'Cookie' => admin_cookie,
+      }, params: {
+          'name' => 'Test Certification',
+      }.to_json
+      assert_response :unauthorized
+    end
+  end
+
+  test "superadmins can create certifications" do
+    admin_cookie = login_user('user-one', ['SuperAdmin'])
     assert_not_nil(admin_cookie)
     assert(admin_cookie.length > 0)
 
@@ -19,14 +36,29 @@ class CertificationsControllerTest < ActionDispatch::IntegrationTest
           'Cookie' => admin_cookie,
       }, params: {
           'name' => 'Test Certification',
+          'organization_id' => organizations(:vitasa).id,
       }.to_json
       assert_response :success
     end
     assert_not_nil(Certification.last.organization_id)
-    assert_equal(users(:one).organization_id, Certification.last.organization_id, 'Cert was not created in the user\'s org')
+    assert_equal(organizations(:vitasa).id, Certification.last.organization_id, 'Cert was not created in the correct org')
 
     certJson = JSON.parse(response.body)
     assert_equal(Certification.last.id, certJson['id'], 'Response body did not include Cert details')
+
+    assert_difference('Certification.count', 1) do
+      post certifications_path, headers: {
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+          'Cookie' => admin_cookie,
+      }, params: {
+          'name' => 'Test Certification 2',
+          'organization_id' => organizations(:cameron_county).id,
+      }.to_json
+      assert_response :success
+    end
+    assert_not_nil(Certification.last.organization_id)
+    assert_equal(organizations(:cameron_county).id, Certification.last.organization_id, 'Cert was not created in the correct org')
   end
 
   test "admins can grant certifications" do
