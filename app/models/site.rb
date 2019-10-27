@@ -55,8 +55,14 @@ class Site < ApplicationRecord
 
   # Send updates to anyone who has flagged this as a preferred site
   def send_preferred_site_notification
-    logger.debug "Site #{self.slug} updated. Sending out push notifications via SNS"
     topic_arn = self.get_sns_topic
+    if topic_arn.blank?
+      logger.error "Failed to get or create a topic"
+      return
+    else
+      logger.debug "Site #{self.slug} updated. Sending out push notifications via SNS to Topic #{topic_arn}"
+    end
+
     sns = Rails.configuration.sns
     message = "Site #{self.name} updated"
     response = sns.publish({
@@ -113,10 +119,13 @@ class Site < ApplicationRecord
     end
   end
 
+  def site_updates_sns_topic_name
+    "vs-site-#{Rails.env}-#{self.organization.slug}-#{self.id}"
+  end
   def create_sns_topic
     sns = Rails.configuration.sns
     resp = sns.create_topic({
-      name: "vs-site-#{Rails.env}-#{self.organization.slug}-#{self.id}",
+      name: self.site_updates_sns_topic_name,
     })
     self.sns_topic = resp.topic_arn
     self.save

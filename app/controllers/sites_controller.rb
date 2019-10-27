@@ -87,22 +87,14 @@ class SitesController < ApplicationController
       @site.organization = current_user.organization
     end
     
-    respond_to do |format|
-      if @site.save
-        @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
-        format.html { redirect_to @site, notice: 'Site was successfully created.' }
-        format.json { render :show, status: :created, location: @site }
-      else
-        logger.error("Errors: #{@site.errors.to_hash.to_json}")
-        logger.debug("Raw request: #{request.body.read}")
+    if @site.save
+      @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
+      render :show, status: :created, location: @site
+    else
+      logger.error("Errors: #{@site.errors.to_hash.to_json}")
+      # logger.debug("Raw request: #{request.body.read}")
 
-        format.html do
-          @eligible_sitecoordinators = User.all.map {|u| u.has_role?('SiteCoordinator') ? [u.email, u.id] : nil}.compact
-          @eligible_sitecoordinators = [] unless @eligible_sitecoordinators
-          render :new
-        end
-        format.json { render json: @site.errors, status: :unprocessable_entity }
-      end
+      render json: @site.errors, status: :unprocessable_entity
     end
   end
 

@@ -5,12 +5,12 @@ Rails.application.configure do
 
   unless Rails.env.production?
     config.sns = Aws::SNS::Client.new(region: 'us-west-2', stub_responses: true)
-    config.sns.stub_responses(:subscribe, -> (context) {{'subscription_arn' => SecureRandom.uuid}})
+    config.sns.stub_responses(:subscribe, -> (context) {{subscription_arn: SecureRandom.uuid}})
     config.sns.stub_responses(:unsubscribe, -> (context) {{}})
     config.sns.stub_responses(:publish, -> (context) {
-      {'message_id' => SecureRandom.uuid}
+      {message_id: SecureRandom.uuid}
     })
-    config.sns.stub_responses(:create_topic, -> (context) {{'topic_arn' => SecureRandom.uuid}})
+    config.sns.stub_responses(:create_topic, -> (context) {{topic_arn: SecureRandom.uuid}})
     config.sns.stub_responses(:delete_topic, -> (context) {{}})
   end
 end
