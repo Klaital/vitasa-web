@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[show edit update destroy]
   skip_before_action :verify_authenticity_token
-  wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile organization_id]
+  wrap_parameters :user, include: %i[password password_confirmation role_ids roles email phone certification name subscribe_mobile organization_id sms_optin]
 
   def index
     filters = {}
@@ -221,15 +221,9 @@ class UsersController < ApplicationController
 
     log = WorkLog.new(work_log_params.merge)
     if log.save
-      respond_to do |format|
-        format.html { flash[:success] = 'Work logged!'; redirect_to @user }
-        format.json { render @user, status: 201 }
-      end
+      render @user, status: 201
     else
-      respond_to do |format|
-        format.html {render 'new'}
-        format.json { render json: log.errors, status: :unprocessable_entity }
-      end
+      render json: log.errors, status: :unprocessable_entity
     end
   end
 
@@ -260,20 +254,16 @@ class UsersController < ApplicationController
                          logger.debug('Permitting superadmin user fields')
                          %i[name email roles role_ids certification name password
                             password_confirmation phone subscribe_mobile
-                            international_certification military_certification
-                            hsa_certification organization_id]
+                            organization_id sms_optin]
                         elsif current_user.is_admin?
                          logger.debug('Permitting admin-only user fields')
                          %i[name email roles role_ids certification name password
                             password_confirmation phone subscribe_mobile
-                            international_certification military_certification
-                            hsa_certification]
+                            sms_optin]
                        elsif current_user.id == params[:id].to_i
                          logger.debug('Permitting self-user fields')
                          %i[name email password password_confirmation phone
-                            subscribe_mobile international_certification
-                            hsa_certification
-                            military_certification]
+                            subscribe_mobile sms_optin]
                        else
                          logger.debug('Permitting no user fields')
                          []

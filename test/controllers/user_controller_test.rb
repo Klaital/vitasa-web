@@ -15,7 +15,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     }.to_json
 
     assert_response :success
-    u = User.find(users(:one))
+    u = User.find(users(:one).id)
     assert_equal('a_new_email@example.org', u.email)
 
   end
@@ -164,6 +164,22 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     assert_equal(2, user_data['roles'].length, 'Roles not updated in response')
   end
 
+  test "SMS Optin should be visible on profiles" do
+    cookie = login_user('user-one', ['Volunteer'])
+    put user_path(users(:one).id), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        'email' => users(:one).email,
+        'sms_optin' => true,
+    }.to_json
+    assert_response :success
+
+    user_data = JSON.parse(response.body)
+    assert_equal(true, user_data['sms_optin'], 'SMS Opt-in flag not updated')
+  end
+  
   ##
   ## Legacy
   ##

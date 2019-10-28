@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190916183800) do
+ActiveRecord::Schema.define(version: 20191027234135) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -207,6 +207,7 @@ ActiveRecord::Schema.define(version: 20190916183800) do
     t.boolean  "military_certification"
     t.boolean  "international_certification", default: false, null: false
     t.integer  "organization_id"
+    t.boolean  "sms_optin",                   default: false, null: false
   end
 
   create_table "users_sites", id: false, force: :cascade do |t|
