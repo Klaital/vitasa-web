@@ -179,7 +179,33 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     user_data = JSON.parse(response.body)
     assert_equal(true, user_data['sms_optin'], 'SMS Opt-in flag not updated')
   end
-  
+
+  test "should be able to update a user with Subscribe Mobile" do
+    cookie = login_user('user-one', ['Volunteer'])
+    put user_path(users(:one).id), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        'email' => users(:one).email,
+        'subscribe_mobile' => true,
+    }.to_json
+    assert_response :success
+    u = User.find(users(:one).id)
+    assert_equal(true, u.subscribe_mobile, 'Subscribe Mobile flag was not set')
+
+    put user_path(users(:one).id), headers: {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'Cookie' => cookie,
+    }, params: {
+        'name' => 'new test name',
+        'subscribe_mobile' => false,
+    }.to_json
+    assert_response :success
+
+  end
+
   ##
   ## Legacy
   ##
