@@ -112,7 +112,11 @@ class SitesController < ApplicationController
     if current_user.has_admin?(@site.organization_id) || (@site.coordinators.include?(current_user) && current_user.has_role?('SiteCoordinator'))
       @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
       @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
-      @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]}) unless params[:sitecoordinators].nil?
+
+      unless params[:sitecoordinators].nil?
+        @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]})
+        @site.coordinators.each {|u| u.touch}
+      end
 
       if @site.update(site_params)
         render :show, status: :ok, location: @site
