@@ -143,6 +143,7 @@ class UsersController < ApplicationController
       logger.debug("New Roleset: #{new_roles}")
       unless new_roles.empty?
         @user.roles = new_roles
+        @user.touch
         updated_roles = true
       end
     end
