@@ -120,7 +120,7 @@ class Site < ApplicationRecord
   end
 
   def site_updates_sns_topic_name
-    "vs-#{Rails.env}-org#{self.organization.id}-site#{self.id}"
+    "vs-#{Rails.env}-org#{self.organization_id}-site#{self.id}"
   end
   def create_sns_topic
     sns = Rails.configuration.sns

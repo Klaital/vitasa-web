@@ -7,7 +7,12 @@ class NotificationRequestsController < ApplicationController
   # GET /notification_requests
   # GET /notification_requests.json
   def index
-    @notification_requests = NotificationRequest.all
+    @notification_requests = if logged_in?
+                               NotificationRequest.where(organization_id: current_user.organization_id)
+                             else
+                               NotificationRequest.all
+                             end
+
   end
 
   # GET /notification_requests/1
@@ -18,7 +23,12 @@ class NotificationRequestsController < ApplicationController
   # POST /notification_requests
   # POST /notification_requests.json
   def create
+    unless logged_in?
+      render json: { errors: 'Not logged in'}, status: :unauthorized
+      return
+    end
     @notification_request = NotificationRequest.new(notification_request_params)
+    @notification_request.organization_id = current_user.organization_id
 
     if @notification_request.save
       render :show, status: :created, location: @notification_request 
@@ -29,6 +39,11 @@ class NotificationRequestsController < ApplicationController
 
   # POST /notification_requests/1/send
   def send_notification
+    unless logged_in?
+      render json: { errors: 'Not logged in'}, status: :unauthorized
+      return
+    end
+
     resp = @notification_request.send_broadcast
     if resp
       render :show, status: :ok, location: @notification_request 

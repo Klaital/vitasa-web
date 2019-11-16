@@ -44,14 +44,17 @@ class NotificationRegistration < ApplicationRecord
     topics << 'sc' if user.has_role?('SiteCoordinator')
 
     topics << user.preferred_sites.collect {|ps| ps.get_sns_topic}
+    user.roles.each do |role|
+      topics << user.organization.role_topic_arn(role.name)
+    end
     topics.flatten!
     
     topics.each do |t|
         topic_arn = case t
           when 'volunteers'
-            Rails.configuration.sns_topic_volunteers_arn
+            self.user.organization.volunteers_topic_arn
           when 'sc'
-            Rails.configuration.sns_topic_sc_arn
+            self.user.organization.site_coordinators_topic_arn
           else
             t
           end
@@ -65,6 +68,8 @@ class NotificationRegistration < ApplicationRecord
           else
             ''
           end
+
+        continue if sns_app_arn.nil?
 
         # Create a handle on the releant protocol's SNS Application
         platform_application = Aws::SNS::PlatformApplication.new(arn: sns_app_arn, :client => sns)

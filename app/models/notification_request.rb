@@ -27,9 +27,12 @@ class NotificationRequest < ApplicationRecord
             }.to_json
             topic_arn = case self.audience.to_s.downcase
                         when 'volunteers'
-                          'arn:aws:sns:us-west-2:813809418199:vita-#{Rails.env}-#{self.organization_id}-notification-volunteers'
+                          self.organization.volunteers_topic_arn
                         when 'sc'
-                          'arn:aws:sns:us-west-2:813809418199:vita-notification-sc'
+                          self.organization.site_coordinators_topic_arn
+                        when /role-/
+                          role_name = self.audience.to_s.split('-')[1].downcase
+                          self.organization.role_topic_arn(role_name)
                         else
                           nil
                         end
