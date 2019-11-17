@@ -2,11 +2,7 @@ class NotificationRequest < ApplicationRecord
   belongs_to :organization
 
     VALID_AUDIENCES = %w{ volunteers sc }
-    validates :audience, inclusion: { 
-        in: VALID_AUDIENCES,
-        message: "%{value} is not a valid audience. Must be one of #{VALID_AUDIENCES.join(', ')}" 
-    }
-
+    validates :audience, presence: true, format: { with: /\A(volunteers|sc|role-.*)\Z/, message: "%{value} is not a valid audience. Must be one of 'volunteers, 'sc', and 'role-$rolename'"}
 
     def send_broadcast
         unless self.sent.nil?

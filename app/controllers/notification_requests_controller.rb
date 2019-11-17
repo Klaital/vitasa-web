@@ -12,7 +12,6 @@ class NotificationRequestsController < ApplicationController
                              else
                                NotificationRequest.all
                              end
-
   end
 
   # GET /notification_requests/1
@@ -31,9 +30,9 @@ class NotificationRequestsController < ApplicationController
     @notification_request.organization_id = current_user.organization_id
 
     if @notification_request.save
-      render :show, status: :created, location: @notification_request 
+      render json: @notification_request, status: :created
     else
-      render json: @notification_request.errors, status: :unprocessable_entity 
+      render json: @notification_request.errors, status: :unprocessable_entity
     end
   end
 

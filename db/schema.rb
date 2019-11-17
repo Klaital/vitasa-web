@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191027234135) do
+ActiveRecord::Schema.define(version: 20191116233007) do
 
   create_table "calendars", force: :cascade do |t|
     t.date     "date"
@@ -58,8 +58,9 @@ ActiveRecord::Schema.define(version: 20191027234135) do
     t.text     "message"
     t.datetime "sent"
     t.string   "message_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "organization_id", default: 1, null: false
   end
 
   create_table "organizations", force: :cascade do |t|

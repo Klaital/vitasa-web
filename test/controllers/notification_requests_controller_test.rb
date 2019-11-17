@@ -27,14 +27,45 @@ class NotificationRequestsControllerTest < ActionDispatch::IntegrationTest
     get notification_requests_url
     assert_response :success
   end
+  #
+  # test "should not create request if logged in to a superadmin without an org" do
+  #   u = users(:one)
+  #   u.organization_id = nil
+  #   u.save
+  #   cookie = login_user('user-one', ['SuperAdmin'])
+  #
+  #   assert_no_difference('NotificationRequest.count') do
+  #     post notification_requests_path, headers: {
+  #         'Cookie' => cookie,
+  #         'Accept' => 'application/json',
+  #         'Content-Type' => 'application/json'
+  #     }, params: {
+  #         audience: @notification_request.audience,
+  #         message: @notification_request.message,
+  #         sent: @notification_request.sent
+  #     }.to_json
+  #   end
+  #   assert_response :unprocessable_entity
+  # end
 
-  test "should get new only when logged in" do
-    get new_notification_request_url
-    assert_response :unauthorized
+  test "should create request if logged in" do
+    u = users(:one)
+    u.organization_id = organizations(:vitasa).id
+    u.save
+    cookie = login_user('user-one', ['Admin'])
 
-    cookie = login('user-two', ['Admin'])
-    get new_notification_request_url, headers: {'Cookie': cookie}
-    assert_response :success
+    assert_difference('NotificationRequest.count', 1) do
+      post notification_requests_path, headers: {
+          'Cookie' => cookie,
+          'Accept' => 'application/json',
+          'Content-Type' => 'application/json',
+      }, params: {
+          audience: @notification_request.audience,
+          message: @notification_request.message,
+      }.to_json
+      assert_response :success
+    end
+
   end
 
   test "should not create notification_request unless logged in" do
@@ -42,7 +73,6 @@ class NotificationRequestsControllerTest < ActionDispatch::IntegrationTest
       post notification_requests_url, params: { notification_request: { audience: @notification_request.audience, message: @notification_request.message, sent: @notification_request.sent } }
     end
 
-#    assert_redirected_to notification_request_url(NotificationRequest.last)
     assert_response :unauthorized
   end
 
@@ -51,18 +81,8 @@ class NotificationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should not get edit unless logged in" do
-    get edit_notification_request_url(@notification_request)
-    assert_response :unauthorized
-
-    cookie = login('user-two')
-    get edit_notification_request_url(@notification_request), headers: {'Cookie': cookie}
-    assert_response :success
-  end
-
   test "should not update notification_request unless logged in" do
     patch notification_request_url(@notification_request), params: { notification_request: { audience: @notification_request.audience, message: @notification_request.message, sent: @notification_request.sent } }
-#    assert_redirected_to notification_request_url(@notification_request)
     assert_response :unauthorized
   end
 
@@ -76,6 +96,6 @@ class NotificationRequestsControllerTest < ActionDispatch::IntegrationTest
     assert_difference('NotificationRequest.count', -1) do
       delete notification_request_url(@notification_request), headers: {'Cookie': cookie}
     end
-    assert_redirected_to notification_requests_url
+    assert_response :success
   end
 end
