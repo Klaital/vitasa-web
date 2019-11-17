@@ -1,29 +1,42 @@
 require 'test_helper'
 
 class NotificationRegistrationsControllerTest < ActionDispatch::IntegrationTest
-  def login(username='user-one', roles = nil)
-    user = User.find_by(:email => "#{username}@example.org")
-    assert_not_nil(user)
-    user.roles = roles.map {|role_name| Role.find_by(name: role_name)} unless roles.nil?
-    
-    post login_url, 
-	    params: {
-	    	email: "#{username}@example.org",
-		password: "#{username}-password",
-            }.to_json,
-            headers: {
-	      'Content-Type' => 'application/json',
-	      'Accept' => 'application/json',
-	    }
-    assert_response :success
-    assert_response(:success, "Login failed for user #{username}") 
-    response.headers['Set-Cookie']
-  end
 
   setup do
     @notification_registration = notification_registrations(:one)
   end
 
+  test "should register sms only if optin" do
+    user = users(:one)
+    user.phone = '555-555-1234'
+    user.sms_optin = false
+    user.save
+
+    cookie = login_user('user-one')
+
+    post notification_registrations_path, headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+    }, params: {
+      platform: 'sms',
+    }.to_json
+    assert_response :bad_request
+
+    user.sms_optin = true
+    user.save
+
+    post notification_registrations_path, headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Cookie': cookie,
+    }, params: {
+        platform: 'sms',
+
+    }.to_json
+    assert_response :success
+
+  end
   test "should get index" do
     get notification_registrations_url
     assert_response :success
@@ -62,7 +75,7 @@ class NotificationRegistrationsControllerTest < ActionDispatch::IntegrationTest
     assert_equal(0, NotificationRegistration.where(user_id: user.id).count)
 
     # Create a first registration    
-    cookie = login('user-one')
+    cookie = login_user('user-one')
     assert_difference('NotificationRegistration.count', 1) do
       post notification_registrations_url, 
         params: {

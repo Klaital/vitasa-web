@@ -19,7 +19,7 @@ class NotificationRegistration < ApplicationRecord
   def register_sns
     sns = Rails.configuration.sns
     user = self.user_id.nil? ? nil : User.find(self.user_id)
-  
+
     # If the user already has a device registered, delete that Endpoint first
     NotificationRegistration.where(user_id: self.user_id).find_each do |registration|
       next if registration.id == self.id
@@ -69,23 +69,30 @@ class NotificationRegistration < ApplicationRecord
             ''
           end
 
-        continue if sns_app_arn.nil?
+        next if sns_app_arn.nil?
 
-        # Create a handle on the releant protocol's SNS Application
-        platform_application = Aws::SNS::PlatformApplication.new(arn: sns_app_arn, :client => sns)
 
-        # Construct a new platform endpoint for this user's device
-        platform_endpoint = platform_application.create_platform_endpoint({
-          token: self.token
-        })
-        # And save it for future housekeeping
-        self.endpoint = platform_endpoint.arn
+        endpoint_arn = if self.platform == 'sms'
+          user.phone
+        else
+          # Create a handle on the releant protocol's SNS Application
+          platform_application = Aws::SNS::PlatformApplication.new(arn: sns_app_arn, :client => sns)
+
+          # Construct a new platform endpoint for this user's device
+          platform_endpoint = platform_application.create_platform_endpoint({
+                                                                               token: self.token
+                                                                           })
+          # And save it for future housekeeping
+          self.endpoint = platform_endpoint.arn
+          platform_endpoint.arn
+        end
+
 
         # Now we register that endpoint as a subscription on the relevant topics
         subscription = sns.subscribe({
             topic_arn: topic_arn,
             protocol: 'application',
-            endpoint: platform_endpoint.arn
+            endpoint: endpoint_arn,
         })
         logger.info("SNS subscription: #{subscription}")
 

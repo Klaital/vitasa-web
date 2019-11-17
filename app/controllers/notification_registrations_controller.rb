@@ -26,25 +26,24 @@ class NotificationRegistrationsController < ApplicationController
   # POST /notification_registrations
   # POST /notification_registrations.json
   def create
+    unless logged_in?
+      render :json => {:errors => 'Unauthorized'}, :status => :unauthorized
+      return
+    end
     @notification_registration = NotificationRegistration.new(notification_registration_params)
+    @notification_registration.user_id = current_user.id
+    if !current_user.sms_optin && @notification_registration.platform == 'sms'
+      render :json => {:errors => 'User has not opted in for SMS notifications'}, :status => :bad_request
+      return
+    end
 
-    respond_to do |format|
-      if logged_in?
-        @notification_registration.user_id = current_user.id
-        if @notification_registration.save
 
-          @notification_registration.register_sns
+    if @notification_registration.save
 
-          format.html { redirect_to @notification_registration, notice: 'Notification registration was successfully created.' }
-          format.json { render :show, status: :created, location: @notification_registration }
-        else
-          format.html { render :new }
-          format.json { render json: @notification_registration.errors, status: :unprocessable_entity }
-        end
-      else
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
-      end
+      @notification_registration.register_sns
+      render :show, status: :created, location: @notification_registration
+    else
+      render json: @notification_registration.errors, status: :unprocessable_entity
     end
   end
 
