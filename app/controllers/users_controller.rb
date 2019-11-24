@@ -40,6 +40,23 @@ class UsersController < ApplicationController
   def create
     logger.debug "Raw request: #{request.body.read}"
 
+
+    if params[:authcode].nil?
+      render json: {errors: 'No authcode included in registration'}, status: :bad_request
+      return
+    end
+    if params[:authcode].empty?
+      render json: {errors: 'No authcode included in registration'}, status: :bad_request
+      return
+    end
+
+    organization = Organization.find_by(authcode: params[:authcode])
+    if organization.nil?
+      render json: {errors: 'Invalid authcode'}, status: :bad_request
+      return
+    end
+
+
     permitted_fields = if logged_in? && current_user.has_role?(['Admin', 'SuperAdmin'])
                          %i[name email roles role_ids certification name
                          password password_confirmation
@@ -53,10 +70,7 @@ class UsersController < ApplicationController
                        end
 
     fields = params.require(:user).permit(permitted_fields)
-    unless fields.has_key?(:organization_id)
-      render json: { errors: ['Organization ID must be provided']}, status: 400
-      return
-    end
+    fields[:organization_id] = organization.id
     @user = User.new(fields)
 
     # If the creating user is a SuperAdmin, they can set the org ID.

@@ -1,7 +1,9 @@
 vitasa:
   name: VITA San Antonio
   slug: vitasa
+  authcode: vitasa
 
 cameron_county:
   name: VITA Cameron County
   slug: cameron-county
+  authcode: cameron-county

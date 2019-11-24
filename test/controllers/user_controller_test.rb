@@ -30,7 +30,7 @@ class UserControllerTest < ActionDispatch::IntegrationTest
         'Cookie' => superadmin_cookie,
     }, params: {
         email: 'create_user_test@example.org',
-        organization_id: organizations(:vitasa).id,
+        authcode: 'vitasa',
         password: 'create_user_test-password',
         password_confirmation: 'create_user_test-password',
     }.to_json
@@ -90,22 +90,22 @@ class UserControllerTest < ActionDispatch::IntegrationTest
     # Organization ID is a required field
     # Check the happy path first
     post users_path, headers: {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
     }, params: {
+        authcode: 'vitasa',
         name: 'Create User Test',
         email: 'create_user_test@example.org',
-        password: 'create_usre_test',
-        password_confirmation: 'create_usre_test',
-        organization_id: organizations(:vitasa).id,
+        password: 'create_user_test',
+        password_confirmation: 'create_user_test',
     }.to_json
-
     assert_response :success
+    assert_equal(organizations(:vitasa).id, User.last.organization_id)
 
     # Try again without the org ID set, and validate failure
     post users_path, headers: {
-        'Accept' => 'application/json',
-        'Content-Type' => 'application/json',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
     }, params: {
         name: 'Create User Test',
         email: 'create_user_test2@example.org',
