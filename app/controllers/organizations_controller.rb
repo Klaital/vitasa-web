@@ -19,7 +19,8 @@ class OrganizationsController < ApplicationController
       return
     end
 
-    org = Organization.new(name: params[:name])
+    org_params = params.require(:organization).permit([:name, :authcode, :contact, :phone, :email, :latitude, :longitude])
+    org = Organization.new(org_params)
     if org.save
       render json: {partial: 'organizations/organization', organization: org}, status: :ok
     else
@@ -40,7 +41,7 @@ class OrganizationsController < ApplicationController
       return
     end
 
-    org_params = params.require(:organization).permit([:name])
+    org_params = params.require(:organization).permit([:name, :authcode, :contact, :phone, :email, :latitude, :longitude])
     if @organization.update(org_params)
       head :ok
     else
