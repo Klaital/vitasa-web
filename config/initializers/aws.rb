@@ -3,7 +3,7 @@ Rails.application.configure do
   config.sns_apn_application_arn = ENV['SNS_APN_ARN']
   config.sns = Aws::SNS::Client.new(region: 'us-west-2')
 
-  unless Rails.env.production? || Rails.env.development?
+  if Rails.env.test?
     config.sns = Aws::SNS::Client.new(region: 'us-west-2', stub_responses: true)
     config.sns.stub_responses(:subscribe, -> (context) {{subscription_arn: SecureRandom.uuid}})
     config.sns.stub_responses(:unsubscribe, -> (context) {{}})
