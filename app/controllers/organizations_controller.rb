@@ -4,6 +4,11 @@ class OrganizationsController < ApplicationController
   # GET /organizations
   # GET /organizations.json
   def index
+    unless logged_in?
+      logger.error("Must be logged in to list organizations")
+      render json: {errors: "Must be logged in to list organizations"}, status: :unauthorized
+      return
+    end
     @organizations = Organization.all
   end
 

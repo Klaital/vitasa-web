@@ -7,3 +7,4 @@ json.phone organization.phone
 json.email organization.email
 json.latitude organization.latitude
 json.longitude organization.longitude
+json.authcode organization.authcode
