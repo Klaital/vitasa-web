@@ -51,7 +51,7 @@ class NotificationRequestsController < ApplicationController
     end
   end
 
-  # POST /notification_requests/1//resend
+  # POST /notification_requests/1/resend
   def resend_notification
     @notification_request.sent = nil
     @notification_request.save
