@@ -49,6 +49,7 @@ class NotificationRequest < ApplicationRecord
           end
         rescue => exception
           logger.error("Failed to send broadcast: #{exception}")
+          self.organization.create_sns_topics
           return nil
         end
 
