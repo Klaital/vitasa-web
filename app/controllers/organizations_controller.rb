@@ -1,6 +1,6 @@
 class OrganizationsController < ApplicationController
   skip_before_action :verify_authenticity_token
-  wrap_parameters :organization, include: %i[name]
+  wrap_parameters :organization, include: %i[name authcode contact phone email latitude longitude]
   # GET /organizations
   # GET /organizations.json
   def index

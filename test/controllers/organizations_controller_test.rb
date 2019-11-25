@@ -1,13 +1,26 @@
 require 'test_helper'
 
 class OrganizationsControllerTest < ActionDispatch::IntegrationTest
-  test "anyone can query org list" do
+  test "public cannot query org list" do
     get organizations_path, headers: {
         'Accept' => 'application/json',
     }
+    assert_response :unauthorized
+  end
+
+  test "can set authcode field" do
+    cookie = login_user('user-one', ['SuperAdmin'])
+    put "/organizations/#{organizations(:vitasa).id}", headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Cookie': cookie,
+    }, params: {
+        authcode: '1234',
+    }.to_json
     assert_response :success
-    org_data = JSON.parse(response.body)
-    assert_equal(Organization.all.length, org_data.length, 'Incorrect org count in Index')
+
+    vita = Organization.find(organizations(:vitasa).id)
+    assert_equal('1234', vita.authcode)
   end
 
   test "superadmin can create an org" do
