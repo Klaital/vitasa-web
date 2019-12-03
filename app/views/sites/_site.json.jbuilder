@@ -12,4 +12,8 @@ json.cache! ['v1', site] do
   json.work_log site.work_history, partial: 'work_logs/work_log', as: :work_log
 
   json.site_features site.site_features.collect {|feature| feature.feature}
+
+  if Rails.env.development?
+    json.sns_topic site.sns_topic
+  end
 end

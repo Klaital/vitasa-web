@@ -66,7 +66,7 @@ class User < ApplicationRecord
   validates :phone,
             format: {
               with: VALID_PHONE_REGEX,
-              message: 'The phone number must have 10 digits.'
+              message: 'The phone number must have 10 digits.',
             },
             allow_blank: true
 

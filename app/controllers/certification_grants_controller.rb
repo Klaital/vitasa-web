@@ -14,6 +14,8 @@ class CertificationGrantsController < ApplicationController
     end
     grant = CertificationGrant.new(certification_id: @certification.id, user_id: @user.id)
     if grant.save
+      @user.touch
+      @user.save
       head :ok
     else
       render :json => {:errors => grant.errors}, status: :unprocessable_entity
@@ -34,6 +36,7 @@ class CertificationGrantsController < ApplicationController
 
     if grant.delete
       @user.touch # manually expire the user view cache
+      @user.save
       head :ok
     else
       render :json => {:errors => 'Could not delete grant'}, status: :internal_server_error
