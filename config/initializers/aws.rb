@@ -1,6 +1,6 @@
 Rails.application.configure do 
-  config.sns_gcm_application_arn = ENV['SNS_GCM_ARN']
-  config.sns_apn_application_arn = ENV['SNS_APN_ARN']
+  config.sns_gcm_application_arn = ENV['SNS_GCM_ARN'] | 'arn:aws:sns:us-west-2:813809418199:app/GCM/VITA-GCM'
+  config.sns_apn_application_arn = ENV['SNS_APN_ARN'] | 'arn:aws:sns:us-west-2:813809418199:app/APNS/VITA-APNS'
   config.sns = Aws::SNS::Client.new(region: 'us-west-2')
 
   if Rails.env.test?
