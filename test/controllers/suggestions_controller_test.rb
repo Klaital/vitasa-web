@@ -6,7 +6,7 @@ class SuggestionsControllerTest < ActionDispatch::IntegrationTest
     @cathedral = sites(:the_cathedral)
 
     @new_user = users(:one)
-    user_role = Role.find_by(name: 'NewUser')
+    user_role = Role.find_by(name: 'None')
     @new_user.roles = [ user_role ]
 
     @admin = users(:two)

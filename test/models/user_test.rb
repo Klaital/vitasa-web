@@ -13,12 +13,12 @@ class UserTest < ActiveSupport::TestCase
 
     new_user = false
     user.roles.each do |role|
-      if role.name == 'NewUser'
+      if role.name == 'Volunteer'
         new_user = true
         break
       end
     end
-    assert(new_user, 'New User didn\'t automatically get the NewUser role')
+    assert(new_user, "New User didn't automatically get the Volunteer role. Got #{user.roles.map {|r| r.name}.join(', ')}")
   end
 
   test "admin roles should be detectable via is_admin?" do

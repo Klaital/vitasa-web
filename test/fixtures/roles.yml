@@ -21,3 +21,5 @@ superadmin:
 monitor:
   name: Monitor
 
+none:
+  name: None
