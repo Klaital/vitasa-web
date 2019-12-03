@@ -6,7 +6,7 @@ class User < ApplicationRecord
 
   has_many :work_logs
   after_create :email_notify_admins
-  before_save :register_mobile_updates
+  before_save :register_notification_updates
   belongs_to :organization
 
   after_initialize do
@@ -131,38 +131,54 @@ class User < ApplicationRecord
     end
   end
 
-  def register_mobile_updates
-    if self.subscribe_mobile_changed?
-      if NotificationRegistration.where(user_id: self.id).count == 0
-        logger.error "User is not registered for notifications. Skipping Mobile registration"
-        return false
+  def register_mobile_subscription(device)
+    if NotificationRegistration.where(user_id: self.id).count == 0
+      logger.error "User is not registered for notifications. Skipping Mobile registration"
+      return false
+    end
+
+    sns = Rails.configuration.sns
+    if self.subscribe_mobile
+      protocol = case device.platform
+                    when 'sms'
+                      'sms'
+                    else
+                      'application'
+                    end
+
+      # Now we register that endpoint set as a subscription on the mobile-updates topic
+      subscription = sns.subscribe({
+                                       topic_arn: "arn:aws:sns:us-west-2:813809418199:vs-#{Rails.env}-#{self.organization.slug}-sites-mobile",
+                                       protocol: protocol,
+                                       endpoint: device.endpoint,
+                                   })
+      logger.info("SNS subscription: #{subscription}")
+      self.mobile_subscription_arn = subscription.subscription_arn
+    else
+      # Unsubscribe from updates on mobile sites
+      unless self.mobile_subscription_arn.nil?
+        sns.unsubscribe(subscription_arn: self.mobile_subscription_arn)
+        self.mobile_subscription_arn = nil
       end
-      
-      sns = Rails.configuration.sns
-      if self.subscribe_mobile
-        sns_app_arn = case NotificationRegistration.where(user_id: self.id).last.platform
-                      when 'android'
-                        Rails.configuration.sns_gcm_application_arn
-                      when 'ios'
-                        Rails.configuration.sns_apn_application_arn
-                      end
-        # Pull up the most recent endpoint for this user
-        platform_endpoint = NotificationRegistration.where(user_id: self.id).last.endpoint
-        # Now we register that endpoint set as a subscription on the mobile-updates topic
-        subscription = sns.subscribe({
-            topic_arn: "arn:aws:sns:us-west-2:813809418199:vs-#{Rails.env}-#{self.organization.slug}-sites-mobile",
-            protocol: 'application',
-            endpoint: platform_endpoint
-        })
-        logger.info("SNS subscription: #{subscription}")
-        self.mobile_subscription_arn = subscription.subscription_arn
-      else
-        # Unsubscribe from updates on mobile sites
-        unless self.mobile_subscription_arn.nil?
-          sns.unsubscribe(subscription_arn: self.mobile_subscription_arn)
-          self.mobile_subscription_arn = nil
-        end
+    end
+  end
+
+  def register_notification_updates
+    new_registration = if self.sms_optin
+                     NotificationRegistration.where(user_id: self.id, platform: 'sms').last
+                   else
+                     NotificationRegistration.where(user_id: self.id, platform: %w(android ios)).last
+                   end
+    if self.sms_optin_changed?
+      # remove all other subscriptions so that this user can use the new one
+      NotificationRegistration.where(user_id: self.id).each do |device|
+        next if device.id == new_registration.id
+        device.delete
       end
+
+      register_mobile_subscription(new_registration)
+    elsif self.subscribe_mobile_changed?
+      register_mobile_subscription(new_registration)
     end
   end
 end

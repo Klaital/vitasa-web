@@ -6,7 +6,7 @@ class NotificationRegistration < ApplicationRecord
     sns = Rails.configuration.sns
     # Deregister the endpoint and subscription from the SNS application
     unless self.endpoint.nil?
-      platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: self.endpoint, :client => sns)      
+      platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: self.endpoint, :client => sns)
       platform_endpoint.delete
     end
     
@@ -22,6 +22,7 @@ class NotificationRegistration < ApplicationRecord
 
     # If the user already has a device registered, delete that Endpoint first
     NotificationRegistration.where(user_id: self.user_id).find_each do |registration|
+      next unless registration.platform == self.platform # Only delete other registrations from the same platform. This is intended to keep mobile registrations from stomping SMS registrations.
       logger.debug("Deleting old NR: #{registration}")
       next if registration.id == self.id
 
@@ -80,6 +81,7 @@ class NotificationRegistration < ApplicationRecord
 
 
       endpoint_arn = if self.platform == 'sms'
+        self.endpoint = user.phone # Save the endpoint for future housekeeping
         user.phone
       else
         # Create a handle on the releant protocol's SNS Application
