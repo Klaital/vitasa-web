@@ -1,6 +1,6 @@
 New suggestion posted at <%= @suggestion.created_at %>:
 
-Posted by <%= @suggestion.user.name %><%= (@suggestion.from_public) ? 'on behalf of a visitor' : '' %>
+Posted by <%= @suggestion.user.nil? ? 'an anonymous submission' : @suggestion.user.name %><%= (@suggestion.from_public) ? 'on behalf of a visitor' : '' %>
 
 Subject: <%= @suggestion.subject %>
 
