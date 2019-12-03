@@ -132,11 +132,8 @@ class User < ApplicationRecord
   end
 
   def register_mobile_subscription(device)
-    if NotificationRegistration.where(user_id: self.id).count == 0
-      logger.error "User is not registered for notifications. Skipping Mobile registration"
-      return false
-    end
-
+    return false if device.nil?
+    
     sns = Rails.configuration.sns
     if self.subscribe_mobile
       protocol = case device.platform
