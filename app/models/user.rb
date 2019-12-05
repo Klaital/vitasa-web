@@ -167,22 +167,26 @@ class User < ApplicationRecord
                      NotificationRegistration.where(user_id: self.id, platform: %w(android ios)).last
                        end
 
-    if new_registration.nil?
-      logger.error("No devices registered.")
-      return false
-    end
+    logger.error("No devices registered.") if new_registration.nil?
 
     if self.sms_optin_changed?
+      if new_registration.nil?
+        logger.debug "Create a device registration for the user's mobile phone #{self.phone}"
+        new_registration = NotificationRegistration.new(user_id: self.id, platform: 'sms', endpoint: self.phone)
+        new_registration.save
+      end
+
       # remove all other subscriptions so that this user can use the new one
       NotificationRegistration.where(user_id: self.id).each do |device|
         next if device.id == new_registration.id
+        logger.debug("Deleting old device registration: #{device}")
         device.delete
       end
 
       register_mobile_subscription(new_registration)
 
       # Re-register notifications for all subscribed sites and roles
-      new_registration.subscribe_sns
+      new_registration.register_sns
     elsif self.subscribe_mobile_changed?
       register_mobile_subscription(new_registration)
     end

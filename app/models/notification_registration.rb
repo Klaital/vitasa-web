@@ -3,7 +3,7 @@ class NotificationRegistration < ApplicationRecord
   before_save do
     # Force phone numbers to have the US country prefix
     if self.platform == 'sms' && self.endpoint !~ /\A\+\d/
-      self.endpoint = "+1#{self.endpoint}"
+      self.endpoint = "+1#{self.endpoint}".gsub('-', '')
     end
   end
   before_destroy :delete_arns
@@ -17,14 +17,14 @@ class NotificationRegistration < ApplicationRecord
     end
     
     unless self.subscription.nil?
-      subscription = Aws::SNS::Subscription.new(arn: self.subscription, :client => sns)
-      subscription.delete
+      sns.unsubscribe({subscription_arn: self.subscription})
     end
   end
 
   def register_sns
     sns = Rails.configuration.sns
     user = self.user_id.nil? ? nil : User.find(self.user_id)
+    return false if user.nil?
 
     # If the user already has a device registered, delete that Endpoint first
     NotificationRegistration.where(user_id: self.user_id).find_each do |registration|
@@ -33,7 +33,7 @@ class NotificationRegistration < ApplicationRecord
       next if registration.id == self.id
 
       # Deregister the endpoint and subscription from the SNS application
-      unless registration.endpoint.nil?
+      unless registration.endpoint.nil? || registration.platform == 'sms'
         logger.debug("Deleting old endpoint: #{registration.endpoint}")
         platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: registration.endpoint, :client => sns)      
         platform_endpoint.delete
@@ -52,12 +52,14 @@ class NotificationRegistration < ApplicationRecord
     end
 
     topics = []
-    topics << 'volunteers' unless user.nil?
-    topics << 'sc' if user.has_role?('SiteCoordinator')
 
     topics << user.preferred_sites.collect {|ps| ps.get_sns_topic}
-    user.roles.each do |role|
-      topics << user.organization.role_topic_arn(role.name)
+    unless user.organization.nil?
+      topics << 'volunteers'
+      topics << 'sc' if user.has_role?('SiteCoordinator')
+      user.roles.each do |role|
+        topics << user.organization.role_topic_arn(role.name)
+      end
     end
     topics.flatten!
     
@@ -87,8 +89,8 @@ class NotificationRegistration < ApplicationRecord
 
 
       endpoint_arn = if self.platform == 'sms'
-        self.endpoint = user.phone # Save the endpoint for future housekeeping
-        user.phone
+        self.endpoint = "+1" + user.phone # Save the endpoint for future housekeeping
+        self.endpoint
       else
         # Create a handle on the releant protocol's SNS Application
         platform_application = Aws::SNS::PlatformApplication.new(arn: sns_app_arn, :client => sns)
