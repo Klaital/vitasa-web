@@ -89,7 +89,7 @@ class NotificationRegistration < ApplicationRecord
 
 
       endpoint_arn = if self.platform == 'sms'
-        self.endpoint = "+1" + user.phone # Save the endpoint for future housekeeping
+        self.endpoint = "+1" + user.phone.gsub(/[\(\) \-]/, '') # Save the endpoint for future housekeeping
         self.endpoint
       else
         # Create a handle on the releant protocol's SNS Application
