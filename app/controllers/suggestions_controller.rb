@@ -103,18 +103,32 @@ class SuggestionsController < ApplicationController
   # DELETE /suggestions/1.json
   def destroy
     # Admins and the creating user are permitted to destroy a suggestion. No one else
-    unless logged_in? && (is_admin? || @suggestion.user == current_user)
-      respond_to do |format|
-        format.html { render :file => 'public/401', :status => :unauthorized, :layout => false }
-        format.json { render :json => {:errors => 'Unauthorized'}, :status => :unauthorized }
-      end
+    unless logged_in?
+      logger.error('must be logged in to delete suggestions')
+      render json: { errors: 'Not logged in'}, status: :unauthorized
+      return
+    end
+    authorized = false
+    if @suggestion.user.nil?
+      authorized = is_admin?
+      logger.debug("Suggestion is anonymous. Can only be deleted by an admin. ? #{authorized}")
+    elsif @suggestion.user == current_user
+      authorized = true
+      logger.debug("Suggestion is owned by the requesting user")
+    else
+      authorized = current_user.has_admin?(@suggestion.user.organization_id)
+      logger.debug("Suggestion is owned. Can only be deleted by an admin of the right org. Owning org: #{@suggestion.user.organization_id}. Requester Org: #{current_user.organization_id} => #{authorized}")
+    end
+
+    unless authorized
+      render json: { errors: 'Not authorized to delete this suggestion'}, status: :unauthorized
       return
     end
 
-    @suggestion.destroy
-    respond_to do |format|
-      format.html { redirect_to new_suggestion_url, notice: 'Suggestion was successfully deleted.' }
-      format.json { head :no_content }
+    if @suggestion.destroy
+      head :no_content
+    else
+      render json: {errors: @suggestion.errors}, status: :bad_request
     end
   end
 

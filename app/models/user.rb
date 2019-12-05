@@ -133,7 +133,7 @@ class User < ApplicationRecord
 
   def register_mobile_subscription(device)
     return false if device.nil?
-    
+
     sns = Rails.configuration.sns
     if self.subscribe_mobile
       protocol = case device.platform
