@@ -75,6 +75,7 @@ class Site < ApplicationRecord
         :message_structure => 'json',
     })
 
+    logger.debug(response)
     if response.message_id
       logger.info "Update to #{self.slug} -- Sent Push via SNS: MessageID=#{response.message_id}"
     else

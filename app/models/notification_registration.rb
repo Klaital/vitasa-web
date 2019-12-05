@@ -1,5 +1,11 @@
 class NotificationRegistration < ApplicationRecord
   belongs_to :user
+  before_save do
+    # Force phone numbers to have the US country prefix
+    if self.platform == 'sms' && self.endpoint !~ /\A\+\d/
+      self.endpoint = "+1#{self.endpoint}"
+    end
+  end
   before_destroy :delete_arns
 
   def delete_arns
