@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_and_belongs_to_many :sites_coordinated, class_name: 'Site', join_table: 'users_sites'
 
   before_save do
-    self.email = email.downcase
+    self.email = email.downcase.strip
 
     # By default, users should get the NewUser role, which restricts them from
     # modifying anything until an Admin approves them.
