@@ -114,8 +114,11 @@ class SitesController < ApplicationController
       @site.site_features = params[:site_features].collect {|f| SiteFeature.create(feature: f)} unless params[:site_features].nil?
 
       unless params[:sitecoordinators].nil?
-        @site.coordinators = User.where(:id => params[:sitecoordinators].collect{|x| x[:id]})
+        new_coordinators = params[:sitecoordinators].collect{|x| x[:id]}
+        logger.debug("Updating Sitecoordinators list for #{@site.slug}: #{new_coordinators.join(', ')}")
+        @site.coordinators = User.where(:id => new_coordinators)
         @site.coordinators.each {|u| u.touch}
+        @site.touch
       end
 
       if @site.update(site_params)
