@@ -13,6 +13,10 @@ Rails.application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  config.cache_store = :memory_store
+  config.public_file_server.headers = {
+      'Cache-Control' => 'public, max-age=172800'
+  }
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
@@ -93,5 +97,4 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_controller.page_cache_directory = Rails.root.join "public/page_cache"
 end
