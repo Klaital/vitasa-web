@@ -39,8 +39,11 @@ class NotificationRegistrationsController < ApplicationController
 
     # Users with sms_optin turned on override any device push notifications
     if current_user.sms_optin && current_user.phone.length > 0
+      logger.info("User #{current_user.email} has SMS Optin override")
       @notification_registration.platform = 'sms'
       @notification_registration.token = current_user.phone
+    else
+      logger.info("User #{current_user.email} does not have SMS Optin. Using given values: #{@notification_registration.platform} / #{@notification_registration.token}")
     end
 
 
