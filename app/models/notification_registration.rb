@@ -30,13 +30,23 @@ class NotificationRegistration < ApplicationRecord
     NotificationRegistration.where(user_id: self.user_id).find_each do |registration|
       if registration.platform == 'sms' && !user.sms_optin
         logger.debug("User is no longer opted in to SMS. Deleting registration")
-        platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: registration.endpoint, :client => sns)
-        platform_endpoint.delete
-        if registration.subscription !~ /\A[0-9a-f]{8}-/
-          logger.debug("Deleting old subscription: #{registration.subscription}")
-          subscription = Aws::SNS::Subscription.new(arn: registration.subscription, :client => sns)
-          subscription.delete
+        begin
+          platform_endpoint = Aws::SNS::PlatformEndpoint.new(arn: registration.endpoint, :client => sns)
+          platform_endpoint.delete
+        rescue  Aws::SNS::Errors::InvalidParameter => e
+          logger.error("Can't delete endpoint #{registration.endpoint}")
         end
+        begin
+          if registration.subscription !~ /\A[0-9a-f]{8}-/
+            logger.debug("Deleting old subscription: #{registration.subscription}")
+            subscription = Aws::SNS::Subscription.new(arn: registration.subscription, :client => sns)
+            subscription.delete
+          end
+        rescue  Aws::SNS::Errors::InvalidParameter => e
+          logger.error("Can't delete endpoint #{registration.subscription}")
+        end
+
+        registration.delete
         next
       end
 
