@@ -186,6 +186,7 @@ class User < ApplicationRecord
       register_mobile_subscription(new_registration)
 
       # Re-register notifications for all subscribed sites and roles
+      logger.debug("Registering new device for this user")
       new_registration.register_sns
     elsif self.subscribe_mobile_changed?
       register_mobile_subscription(new_registration)

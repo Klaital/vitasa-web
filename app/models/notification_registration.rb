@@ -43,7 +43,9 @@ class NotificationRegistration < ApplicationRecord
             subscription.delete
           end
         rescue  Aws::SNS::Errors::InvalidParameter => e
-          logger.error("Can't delete endpoint #{registration.subscription}")
+          logger.error("Can't delete endpoint #{registration.subscription}: #{e}")
+        rescue ArgumentError => e
+          logger.error("Can't delete endpoint #{registration.subscription}: #{e}")
         end
 
         registration.delete
