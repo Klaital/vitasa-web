@@ -37,6 +37,12 @@ class NotificationRegistrationsController < ApplicationController
       return
     end
 
+    # Users with sms_optin turned on override any device push notifications
+    if current_user.sms_optin && current_user.phone.length > 0
+      @notification_registration.platform = 'sms'
+      @notification_registration.token = current_user.phone
+    end
+
 
     if @notification_registration.save
 
